@@ -14,8 +14,6 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "customers")
 public class Customer extends User {
-    @Column(nullable = false)
-    private double accountBalance;
 
     // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // private List<Booking> bookingHistory; 
@@ -24,7 +22,6 @@ public class Customer extends User {
      * Default constructor required by Hibernate. Initializes a new Customer with role set to Customer.
      */
     public Customer() {
-        this.accountBalance = 1000;
     }
 
     /**
@@ -39,18 +36,11 @@ public class Customer extends User {
      * @param accountBalance the balance of that user.
      */
     public Customer(String email, String password, String firstName, String lastName, boolean emailVerified, double accountBalance) {
-        super(email, password, firstName, lastName, "Customer", emailVerified);
-        this.accountBalance = accountBalance;
+        super(email, password, firstName, lastName, "Customer", emailVerified, accountBalance);
     }
 
     // --------------- Getters and Setters (start) ------------------
-    public double getAccountBalance() {
-        return this.accountBalance;
-    }
 
-    public void setAccountBalance(double accountBalance) {
-        this.accountBalance = accountBalance;
-    }
     // --------------- Getters and Setters (end) ------------------
 
 }

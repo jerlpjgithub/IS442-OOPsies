@@ -19,7 +19,7 @@ public class TicketingOfficer extends User {
      * @param firstName the first name of the user.
      * @param lastName  the last name of the user.
      */
-    public TicketingOfficer(String email, String password, String firstName, String lastName, String role, boolean emailVerified) {
-        super(email, password, firstName, lastName, "ticketingofficer", emailVerified);
+    public TicketingOfficer(String email, String password, String firstName, String lastName, String role, boolean emailVerified, double accountBalance) {
+        super(email, password, firstName, lastName, "officer", emailVerified, accountBalance);
     }
 }

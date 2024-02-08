@@ -1,9 +1,15 @@
 package com.oopsies.server.entity;
 
+import java.util.Set;
+import java.util.HashSet;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * The User class represents an abstract class users within the system.
@@ -17,29 +23,44 @@ import jakarta.persistence.*;
  */
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@MappedSuperclass
+@Entity
+@Table(name = "users",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = "email")
+        })
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank
+    @Size(max = 50)
+    @Email
     private String email;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Size(max = 120)
     private String password;
 
-    @Column(nullable = false)
+    @Column()
+    @Size(max = 50)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column()
+    @Size(max = 50)
     private String lastName;
 
-    @Column(nullable = false)
-    private String role;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     @Column(nullable = false)
     private boolean emailVerified;
+
+    @Column(nullable = false)
+    private double accountBalance;
 
     /**
      * Default constructor required by Hibernate. Initializes a new user with email verification status set to true.
@@ -58,21 +79,23 @@ public abstract class User {
      * @param lastName  the last name of the user.
      * @param role      the role of the user within the system.
      */
-    public User(String email, String password, String firstName, String lastName, String role, boolean emailVerified) {
+    public User(String email, String password, String firstName, String lastName, String role, boolean emailVerified, double accountBalance) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
         this.emailVerified = emailVerified;
+        this.accountBalance = accountBalance;
     }
 
     // --------------- Getters and Setters (start) ------------------
-    public int getId() {
+
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -108,12 +131,12 @@ public abstract class User {
         this.lastName = lastName;
     }
 
-    public String getRole() {
-        return this.role;
+    public Set<Role> getRoles() {
+        return this.roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public boolean isEmailVerified() {
@@ -127,6 +150,15 @@ public abstract class User {
     public void setEmailVerified(boolean emailVerified) {
         this.emailVerified = emailVerified;
     }
+
+    public double getAccountBalance() {
+        return this.accountBalance;
+    }
+
+    public void setAccountBalance(double accountBalance) {
+        this.accountBalance = accountBalance;
+    }
+    
     // --------------- Getters and Setters (end) ------------------
 
 }
