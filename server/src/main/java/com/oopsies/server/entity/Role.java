@@ -21,7 +21,6 @@ public class Role {
 
     /**
      * Parametrized constructor for creating a new Role instance with specified attributes.
-     *
      * @param name      the name of the user within the system.
      */
     public Role(EnumRole name) {

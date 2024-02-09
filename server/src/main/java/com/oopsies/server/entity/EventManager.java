@@ -1,5 +1,7 @@
 package com.oopsies.server.entity;
 
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 /**
@@ -31,7 +33,7 @@ public class EventManager extends User {
      * @param firstName the first name of the user.
      * @param lastName  the last name of the user.
      */
-    public EventManager(String email, String password, String firstName, String lastName, String role, boolean emailVerified, double accountBalance) {
-        super(email, password, firstName, lastName, "manager", emailVerified, accountBalance);
+    public EventManager(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance) {
+        super(email, password, firstName, lastName, role, emailVerified, accountBalance);
     }
 }

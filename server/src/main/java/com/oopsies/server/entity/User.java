@@ -28,7 +28,7 @@ import jakarta.validation.constraints.Size;
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "email")
         })
-public abstract class User {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -70,6 +70,14 @@ public abstract class User {
     }
 
     /**
+     * Constructor for email and password params for signup.
+     */
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    /**
      * Parametrized constructor for creating a new User instance with specified attributes.
      * It initializes user activity log and portfolios as well.
      *
@@ -79,12 +87,11 @@ public abstract class User {
      * @param lastName  the last name of the user.
      * @param role      the role of the user within the system.
      */
-    public User(String email, String password, String firstName, String lastName, String role, boolean emailVerified, double accountBalance) {
+    public User(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = role;
         this.emailVerified = emailVerified;
         this.accountBalance = accountBalance;
     }

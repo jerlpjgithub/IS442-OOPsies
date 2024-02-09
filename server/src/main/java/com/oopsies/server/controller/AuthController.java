@@ -1,17 +1,37 @@
 package com.oopsies.server.controller;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oopsies.server.util.JwtUtil;
+import com.oopsies.server.entity.EnumRole;
+import com.oopsies.server.entity.Role;
+import com.oopsies.server.entity.User;
+import com.oopsies.server.payload.request.LoginRequest;
+import com.oopsies.server.payload.request.SignupRequest;
+import com.oopsies.server.payload.response.JwtResponse;
+import com.oopsies.server.payload.response.MessageResponse;
 
-@CrossOrigin(origins = "*", maxAge=3600)
+import com.oopsies.server.repository.RoleRepository;
+import com.oopsies.server.repository.UserRepository;
+import com.oopsies.server.security.jwt.JwtUtils;
+import com.oopsies.server.services.UserDetailsImpl;
+
+import jakarta.validation.Valid;
+
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -19,50 +39,82 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
 
-    
+    @Autowired
+    UserRepository userRepository;
 
-    @PostMapping("/login")
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
+    @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        // Placeholder for authentication logic
-        // You should authenticate your user with the provided credentials here
 
-        // If authentication is successful, generate JWT
-        String role = "USER"; // This should be determined based on the authenticated user
-        String token = JwtUtil.generateToken(loginRequest.getEmail(), role);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        JwtResponse jwtResponse = new JwtResponse(jwt, userDetails.getId(), userDetails.getEmail(), roles);
+        return ResponseEntity.ok(jwtResponse);
     }
 
-    public static class LoginRequest {
-        private String email;
-        private String password;
-
-        public String getEmail() {
-            return email;
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
         }
 
-        public void setEmail(String email) {
-            this.email = email;
+        // Create user account
+        User user = new User(signupRequest.getEmail(), encoder.encode(signupRequest.getPassword()));
+
+        Set<String> strRoles = signupRequest.getRole();
+        Set<Role> roles = new HashSet<>();
+
+        if (strRoles == null) {
+            Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+            roles.add(userRole);
+        } else {
+            strRoles.forEach(role -> {
+                switch (role) {
+                    case "manager":
+                        Role managerRole = roleRepository.findByName(EnumRole.ROLE_MANAGER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(managerRole);
+
+                        break;
+                    case "officer":
+                        Role officerRole = roleRepository.findByName(EnumRole.ROLE_OFFICER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(officerRole);
+
+                        break;
+
+                    default:
+                        Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(userRole);
+                }
+            });
         }
 
-        public String getPassword() {
-            return password;
-        }
+        user.setRoles(roles);
+        userRepository.save(user);
 
-        public void setPassword(String password) {
-            this.password = password;
-        }
-    }
-
-    public static class JwtResponse {
-        private String token;
-
-        public JwtResponse(String token) {
-            this.token = token;
-        }
-
-        public String getToken() {
-            return this.token;
-        }
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

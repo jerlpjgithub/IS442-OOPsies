@@ -8,5 +8,5 @@ import com.oopsies.server.entity.EnumRole;
 import com.oopsies.server.entity.Role;
 
 public interface RoleRepository extends JpaRepository<Role, Integer>{
-    Optional<Role> findByRole(EnumRole role);
+    Optional<Role> findByName(EnumRole name);
 }
