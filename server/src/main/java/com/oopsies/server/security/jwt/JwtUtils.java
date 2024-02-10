@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
 import com.oopsies.server.entity.User;
-import com.oopsies.server.security.services.UserDetailsImpl;
+import com.oopsies.server.services.UserDetailsImpl;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

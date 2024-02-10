@@ -1,4 +1,4 @@
-package com.oopsies.server.security.services;
+package com.oopsies.server.services;
 
 import java.time.Instant;
 import java.util.Optional;

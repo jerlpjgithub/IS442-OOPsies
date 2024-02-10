@@ -31,8 +31,8 @@ import com.oopsies.server.payload.response.MessageResponse;
 import com.oopsies.server.repository.RoleRepository;
 import com.oopsies.server.repository.UserRepository;
 import com.oopsies.server.security.jwt.JwtUtils;
-import com.oopsies.server.security.services.RefreshTokenService;
-import com.oopsies.server.security.services.UserDetailsImpl;
+import com.oopsies.server.services.RefreshTokenService;
+import com.oopsies.server.services.UserDetailsImpl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -61,7 +61,7 @@ public class AuthController {
     RefreshTokenService refreshTokenService;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));

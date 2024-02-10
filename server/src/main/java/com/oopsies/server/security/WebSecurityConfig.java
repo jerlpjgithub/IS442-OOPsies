@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.oopsies.server.security.jwt.AuthEntryPointJwt;
 import com.oopsies.server.security.jwt.AuthTokenFilter;
-import com.oopsies.server.security.services.UserDetailsServiceImpl;
+import com.oopsies.server.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity
@@ -61,7 +61,7 @@ public class WebSecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth ->
-                auth.requestMatchers("auth/**").permitAll()
+                auth.requestMatchers("auth/**", "image/**").permitAll()
                     .anyRequest().authenticated()
             );
         
