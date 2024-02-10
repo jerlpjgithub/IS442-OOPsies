@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
     if (token) {
       setLoggedIn(true);
       setAuthUser(JSON.parse(token));
@@ -25,14 +25,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post("http://localhost:8080/login", {
+      const response = await axios.post("http://localhost:8080/api/auth/signin", {
         email: email,
         password: password,
       });
       console.log(response.data);
       setAuthUser(response.data.data);
       setLoggedIn(true);
-      localStorage.setItem("authToken", JSON.stringify(response.data.data));
+      localStorage.setItem("token", JSON.stringify(response.data.data));
       return response.data;
     } catch (error) {
       console.log(error);
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     setAuthUser(null);
     setLoggedIn(false);
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
   }, []);
 
   return (
