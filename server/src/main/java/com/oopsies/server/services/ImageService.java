@@ -1,72 +1,55 @@
 package com.oopsies.server.services;
 
-import java.util.List;
-import java.util.Optional;
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.oopsies.server.entity.Image;
-import com.oopsies.server.payload.response.MessageResponse;
 import com.oopsies.server.repository.ImageRepository;
-import com.oopsies.server.util.ImageUtil;
-
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 
 @Service
 public class ImageService {
+
     @Autowired
     private ImageRepository imageRepository;
 
     private static final List<String> CONTENT_TYPES = Arrays.asList(
             "image/png", "image/jpeg", "image/gif");
 
-    public MessageResponse saveImage(MultipartFile file) throws IOException {
-        // Ensure the file has a supported content type
-        String contentType = file.getContentType();
-        if (contentType == null || !CONTENT_TYPES.contains(contentType)) {
-            throw new IllegalArgumentException("Invalid file type. Only PNG, JPEG, and GIF images are allowed.");
+    public Image saveImage(String name, String base64Image) {
+        String contentType = "";
+        if (base64Image.contains(":") && base64Image.contains(";")) {
+            // Extract the content type from the base64 string
+            contentType = base64Image.substring(base64Image.indexOf(":") + 1, base64Image.indexOf(";"));
         }
 
-        Image img = new Image();
-        img.setName(file.getOriginalFilename());
-        img.setType(contentType);
-        img.setImageData(ImageUtil.compressImage(file.getBytes()));
-
-        // Save the image entity to the database
-        imageRepository.save(img);
-        System.out.println("reached");
-
-        // Message
-        return new MessageResponse("Image uploaded successfully: " + file.getOriginalFilename());
-    }
-
-    @Transactional
-    public Image getInfoByImageByName(String name) {
-        Optional<Image> dbImage = imageRepository.findByName(name);
-
-        if (dbImage.isPresent()) {
-            Image image = dbImage.get();
-            image.setImageData(ImageUtil.decompressImage(image.getImageData()));
-            return image;
-        } else {
-            throw new EntityNotFoundException("Image with name " + name + " not found");
+        // Check if the content type is supported
+        if (!contentType.isEmpty() && !CONTENT_TYPES.contains(contentType)) {
+            throw new IllegalArgumentException("Unsupported content type: " + contentType);
         }
+
+        // Extract the base64 data
+        String base64Data = base64Image.substring(base64Image.indexOf(",") + 1);
+
+        byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
+        Image image = new Image();
+        image.setName(name);
+        image.setImageData(decodedBytes);
+        return imageRepository.save(image);
     }
 
-    @Transactional
-    public byte[] getImage(String name) {
-        Optional<Image> dbImage = imageRepository.findByName(name);
-
-        if (dbImage.isPresent()) {
-            return ImageUtil.decompressImage(dbImage.get().getImageData());
-        } else {
-            throw new EntityNotFoundException("Image with name " + name + " not found");
-        }
+    public Image getImageById(Long id) {
+        return imageRepository.findById(id).orElseThrow(() -> new RuntimeException("Image not found"));
     }
 
+    public Image getImageByName(String name) {
+        return imageRepository.findByName(name).orElseThrow(() -> new RuntimeException("Image not found"));
+    }
+
+    public byte[] decodeImage(Image image) {
+        return Base64.getEncoder().encode(image.getImageData());
+    }
 }
