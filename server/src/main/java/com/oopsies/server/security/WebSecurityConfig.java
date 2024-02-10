@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.oopsies.server.security.jwt.AuthEntryPointJwt;
 import com.oopsies.server.security.jwt.AuthTokenFilter;
-import com.oopsies.server.services.UserDetailsServiceImpl;
+import com.oopsies.server.security.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity

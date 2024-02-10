@@ -2,34 +2,16 @@ package com.oopsies.server.payload.response;
 
 import java.util.List;
 
-public class JwtResponse {
-    private String token;
-    private String type = "Bearer";
+public class UserInfoResponse {
     private Long id;
     private String email;
     private List<String> roles;
 
-    public JwtResponse(String token, Long id, String email, List<String> roles) {
-        this.token = token;
+
+    public UserInfoResponse(Long id, String email, List<String> roles) {
         this.id = id;
         this.email = email;
         this.roles = roles;
-    }
-
-    public String getToken() {
-        return this.token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public Long getId() {
@@ -55,5 +37,6 @@ public class JwtResponse {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
+    
 
 }

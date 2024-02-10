@@ -1,4 +1,4 @@
-package com.oopsies.server.services;
+package com.oopsies.server.security.services;
 
 import java.util.*;
 import java.util.stream.Collectors;
