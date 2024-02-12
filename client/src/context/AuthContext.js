@@ -13,12 +13,12 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
-  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [isAuthenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token && token !== 'undefined') {
-      setLoggedIn(true);
+      setAuthenticated(true);
       setAuthUser(JSON.parse(token));
     }
   }, []);
@@ -29,10 +29,9 @@ export const AuthProvider = ({ children }) => {
         email: email,
         password: password,
       });
-      console.log(response.data);
-      setAuthUser(response.data.data);
-      setLoggedIn(true);
-      localStorage.setItem("token", JSON.stringify(response.data.data));
+      setAuthUser(response.data);
+      setAuthenticated(true);
+      localStorage.setItem("token", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       console.log(error);
@@ -42,12 +41,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     setAuthUser(null);
-    setLoggedIn(false);
+    setAuthenticated(false);
     localStorage.removeItem("token");
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authUser, login, logout }}>
+    <AuthContext.Provider value={{ authUser, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
