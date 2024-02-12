@@ -3,21 +3,28 @@ package com.oopsies.server.util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import com.oopsies.server.entity.EnumRole;
 import com.oopsies.server.entity.Role;
 import com.oopsies.server.repository.RoleRepository;
-import com.oopsies.server.entity.EnumRole;
+import com.oopsies.server.services.ImageService;
 
 /**
-     * RoleInitializer inserts the necessary ROLES into the roles table on run if these roles do not exist.
+     * DatabaseDataInjection inserts the necessary database into the DB if they do not exist.
+     * This is to ensure consistency within development, since we are not using a cloud-based storage.
  */
 @Component
-public class RoleInitializer implements CommandLineRunner {
+public class DatabaseDataInjection implements CommandLineRunner {
 
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private ImageService imageService;
+
     @Override
     public void run(String... args) throws Exception {
+        // Roles Injection
         if (roleRepository.findByName(EnumRole.ROLE_USER).isEmpty()) {
             roleRepository.save(new Role(EnumRole.ROLE_USER));
         }
@@ -27,5 +34,12 @@ public class RoleInitializer implements CommandLineRunner {
         if (roleRepository.findByName(EnumRole.ROLE_MANAGER).isEmpty()) {
             roleRepository.save(new Role(EnumRole.ROLE_MANAGER));
         }
+
+        // Image injections
+        // login_background
+        // if (imageService.getImageByName("login_background") == null) {
+        //     imageService.saveImage("login_background", "");
+        // }
+
     }
 }
