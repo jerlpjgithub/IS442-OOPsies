@@ -1,4 +1,6 @@
 import React from 'react';
+import { useAuth } from "../context/AuthContext.js";
+import { useNavigate } from 'react-router-dom';
 import {
   Layout,
   Form,
@@ -9,15 +11,43 @@ import {
   Col,
   Typography,
   Divider,
+  notification
 } from 'antd';
 import { MailOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
 import login_background from "../assets/login-background.jpg";
 
 
 const LoginPage = () => {
-  const onFinish = (values) => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const onFinish = async (values) => {
     console.log('Success:', values);
     // Implement your login logic here
+    try {
+      const response = await login(values['email'], values['password']);
+      console.log(response);
+
+      if (response && response.id && response.email && response.roles) {
+        // Login successful, redirect to home page
+        navigate('/');
+      } else {
+        // Login unsuccessful
+        notification.error({
+          message: 'Login Failed',
+          description: 'Please check your email and password.',
+          placement: 'bottom',
+        });
+      }
+
+    } catch (error) {
+      notification.error({
+        message: 'Login Failed',
+        description: 'Please check your email and password.',
+        placement: 'bottom',
+      });
+    }
+
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -62,10 +92,10 @@ const LoginPage = () => {
                 <Typography.Paragraph style={{ color: "#808080", margin: "0" }}>OR</Typography.Paragraph>
               </Divider>
 
-              <Button 
-              icon={<GoogleOutlined />} 
-              type="outline"
-              style={{ borderColor: "#d9d9d9", display: 'block', width: '100%', marginBottom: "20px"}}
+              <Button
+                icon={<GoogleOutlined />}
+                type="outline"
+                style={{ borderColor: "#d9d9d9", display: 'block', width: '100%', marginBottom: "20px" }}
               >
                 <Typography.Text style={{ color: "#808080" }}>Continue with Google</Typography.Text>
               </Button>
