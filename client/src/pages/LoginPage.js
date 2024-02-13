@@ -28,7 +28,7 @@ const LoginPage = () => {
       const response = await login(values['email'], values['password']);
       console.log(response);
 
-      if (response && response.id && response.email && response.roles) {
+      if (response && response.data.id && response.data.email && response.data.roles) {
         // Login successful, redirect to home page
         navigate('/');
       } else {
