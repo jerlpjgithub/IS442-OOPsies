@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, Card } from 'antd';
+import { Form, Input, Button, Checkbox, Card,Typography} from 'antd';
 
 function RegisterPage() {
     const [loading, setLoading] = useState(false);
@@ -35,10 +35,10 @@ function RegisterPage() {
                         <Input.Password placeholder="Password" />
                     </Form.Item>
                     <Form.Item
-                        name="username"
+                        name="confirmPassword"
                         rules={[{ required: true, message: 'Please confirm your Password!' }]}
                     >
-                        <Input placeholder="Password" />
+                        <Input.Password placeholder="Confirm Password" />
                     </Form.Item>
 
                     <Form.Item>
@@ -47,6 +47,7 @@ function RegisterPage() {
                         </Button>
                     </Form.Item>
                 </Form>
+                <Typography.Paragraph style={{ textAlign: "center", color: "#808080" }}>Already have an account? <a href="/login">Sign in now!</a></Typography.Paragraph>
             </Card>
         </div>
     );
