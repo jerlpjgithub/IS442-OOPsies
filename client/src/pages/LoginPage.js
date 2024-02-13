@@ -118,7 +118,7 @@ const LoginPage = () => {
                 </Button>
               </Form.Item>
             </Form>
-            <Typography.Paragraph style={{ textAlign: "center", color: "#808080" }}>Don't have an account? <a href="#">Sign up now</a></Typography.Paragraph>
+            <Typography.Paragraph style={{ textAlign: "center", color: "#808080" }}>Don't have an account? <a href="/register">Sign up now</a></Typography.Paragraph>
           </Content>
         </Layout>
       </Col>
