@@ -62,7 +62,29 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const refreshAccessToken = async () => {
+    try {
+      const response = await axios.post("http://localhost:8080/api/auth/refreshtoken");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   // Refresh token function and axios interceptor remain unchanged
+  axios.interceptors.response.use(
+    response => response,
+    async (error) => {
+      const originalRequest = error.config;
+
+      if (error.response.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        await refreshAccessToken();
+        return axios(originalRequest);
+      }
+
+      return Promise.reject(error);
+    }
+  );
 
   return (
     <AuthContext.Provider value={{ authUser, isAuthenticated, login, logout }}>
