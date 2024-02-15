@@ -13,21 +13,23 @@ import jakarta.validation.constraints.Size;
 
 /**
  * The User class represents an abstract class users within the system.
- * It includes details such as email, password, first and last names, roles, email verification status,
+ * It includes details such as email, password, first and last names, roles,
+ * email verification status,
  * associated user activity log, and portfolios.
  *
- * The class is annotated with JPA annotations to define the table mapping, unique constraints,
+ * The class is annotated with JPA annotations to define the table mapping,
+ * unique constraints,
  * and relationships with other entities.
  *
- * JsonIdentityInfo is used to handle circular references correctly when serializing entities to JSON.
+ * JsonIdentityInfo is used to handle circular references correctly when
+ * serializing entities to JSON.
  */
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
-@Table(name = "users",
-        uniqueConstraints = {
-            @UniqueConstraint(columnNames = "email")
-        })
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email")
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,9 +53,7 @@ public class User {
     private String lastName;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     @Column(nullable = false)
@@ -62,8 +62,12 @@ public class User {
     @Column(nullable = false)
     private double accountBalance;
 
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
     /**
-     * Default constructor required by Hibernate. Initializes a new user with email verification status set to true.
+     * Default constructor required by Hibernate. Initializes a new user with email
+     * verification status set to true.
      */
     public User() {
         this.emailVerified = false;
@@ -72,13 +76,17 @@ public class User {
     /**
      * Constructor for email and password params for signup.
      */
-    public User(String email, String password) {
+    public User(String email, String password, String firstName, String lastName) {
         this.email = email;
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
+    /**
 
     /**
-     * Parametrized constructor for creating a new User instance with specified attributes.
+     * Parametrized constructor for creating a new User instance with specified
+     * attributes.
      * It initializes user activity log and portfolios as well.
      *
      * @param email     the email of the user, must be unique.
@@ -87,7 +95,8 @@ public class User {
      * @param lastName  the last name of the user.
      * @param role      the role of the user within the system.
      */
-    public User(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance) {
+    public User(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified,
+            double accountBalance) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -165,7 +174,15 @@ public class User {
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
     }
-    
+
+    public Provider getProvider() {
+        return this.provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
+
     // --------------- Getters and Setters (end) ------------------
 
 }
