@@ -99,12 +99,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Refresh token function and axios interceptor remain unchanged
   axios.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      return response;
+    },
     async (error) => {
       const originalRequest = error.config;
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if (
+        error.response &&
+        error.response.headers["token-expired"] === "true"
+      ) {
         originalRequest._retry = true;
         try {
           await refreshAccessToken();
@@ -113,8 +117,7 @@ export const AuthProvider = ({ children }) => {
           // Silently catch errors during the refresh token process
         }
       }
-      // Return rejection silently without logging to console
-      return Promise.reject({ ...error, _silent: true });
+      return Promise.reject(error);
     }
   );
 
