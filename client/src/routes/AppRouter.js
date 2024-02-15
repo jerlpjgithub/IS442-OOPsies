@@ -19,7 +19,7 @@ export const AppRouter = () => {
         <Routes>
             // Public Routes
             <Route element={<PublicRoute strict={true} />}>
-                <Route path='/login' element={<LoginPage />} />
+                <Route index path='/login' element={<LoginPage />} />
                 <Route path='/register' element={<RegisterPage />} />
             </Route>
             // Private Routes
