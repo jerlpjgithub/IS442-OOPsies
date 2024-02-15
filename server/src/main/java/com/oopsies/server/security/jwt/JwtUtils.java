@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
 import com.oopsies.server.entity.User;
+import com.oopsies.server.exception.JwtTokenExpiredException;
 import com.oopsies.server.services.UserDetailsImpl;
 
 import io.jsonwebtoken.*;
@@ -18,6 +19,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtUtils {
@@ -84,6 +86,7 @@ public class JwtUtils {
             logger.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
             logger.error("JWT token is expired: {}", e.getMessage());
+            throw new JwtTokenExpiredException("JWT token expired");
         } catch (UnsupportedJwtException e) {
             logger.error("JWT token is unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
