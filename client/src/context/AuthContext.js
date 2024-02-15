@@ -1,5 +1,11 @@
-import React, { useState, createContext, useEffect, useContext, useCallback } from "react";
-import axios from 'axios';
+import React, {
+  useState,
+  createContext,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
+import axios from "axios";
 
 // Set withCredentials globally if your backend relies on it for session or cookie handling
 axios.defaults.withCredentials = true;
@@ -12,7 +18,7 @@ export const useAuth = () => {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
+};
 
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
@@ -24,27 +30,48 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      // Ensure this endpoint correctly verifies the user's authentication status
-      const response = await axios.get("http://localhost:8080/api/auth/status", {
-        withCredentials: true // Ensure withCredentials is set if needed
-      });
-      if (response.status === 200 && response.data) { // Make sure the backend sends `isAuthenticated` status
+      const response = await axios.get(
+        "http://localhost:8080/api/auth/status",
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200 && response.data) {
         setAuthenticated(true);
-        setAuthUser(response.data.email); // Adjust according to the actual response structure
+        setAuthUser(response.data.email);
+      } else {
+        setAuthUser(null);
+        setAuthenticated(false);
       }
-    } catch (error) {
-      console.error("Authentication check failed:", error);
-      setAuthenticated(false); // Ensure isAuthenticated is set to false if check fails
+    } catch {
+      // Attempt to refresh the token without logging errors to console
+      refreshAccessToken().catch(() => {});
     }
-  }
+  };
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/signin", { email, password });
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/signin",
+        { email, password }
+      );
       if (response.data && response.status === 200) {
         setAuthUser(response.data); // Adjust according to your response structure
         setAuthenticated(true);
       }
+      return response;
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+  };
+
+  const register = async (email, password, firstName, lastName) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/signup",
+        { email, password, firstName, lastName }
+      );
       return response;
     } catch (error) {
       console.error("Login failed:", error);
@@ -64,30 +91,37 @@ export const AuthProvider = ({ children }) => {
 
   const refreshAccessToken = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/refreshtoken");
-    } catch (error) {
-      console.log(error);
+      await axios.post("http://localhost:8080/api/auth/refreshtoken");
+    } catch {
+      setAuthenticated(false);
+      setAuthUser(null);
+      // Silently handle the refresh token failure
     }
-  }
+  };
 
   // Refresh token function and axios interceptor remain unchanged
   axios.interceptors.response.use(
-    response => response,
+    (response) => response,
     async (error) => {
       const originalRequest = error.config;
-
-      if (error.response.status === 401 && !originalRequest._retry) {
+      if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        await refreshAccessToken();
-        return axios(originalRequest);
+        try {
+          await refreshAccessToken();
+          return axios(originalRequest);
+        } catch {
+          // Silently catch errors during the refresh token process
+        }
       }
-
-      return Promise.reject(error);
+      // Return rejection silently without logging to console
+      return Promise.reject({ ...error, _silent: true });
     }
   );
 
   return (
-    <AuthContext.Provider value={{ authUser, isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ authUser, isAuthenticated, login, logout, register }}
+    >
       {children}
     </AuthContext.Provider>
   );
