@@ -3,7 +3,6 @@ package com.oopsies.server.entity;
 import jakarta.persistence.*;
 import java.util.*;
 
-
 public class BookingDetails {
     private String eventName;
     private int numTickets;
