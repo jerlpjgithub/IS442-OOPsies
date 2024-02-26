@@ -3,11 +3,24 @@ package com.oopsies.server.entity;
 import jakarta.persistence.*;
 import java.util.*;
 
+@Entity
+@Table(name = "BookingDetails")
+
 public class BookingDetails {
     private String eventName;
     private int numTickets;
     private int paymentDetails;
 
+    /**
+      * Parametrized constructor for creating a new User instance with specified attributes.
+      * It initializes user activity log and portfolios as well.
+      *
+      * @param eventName    
+      * @param numTickets  the password of the user.
+      * @param paymentDetails the first name of the user.
+
+      */
+      
     public BookingDetails(String eventName, int numTickets, int paymentDetails) {
         this.eventName = eventName;
         this.numTickets = numTickets;
