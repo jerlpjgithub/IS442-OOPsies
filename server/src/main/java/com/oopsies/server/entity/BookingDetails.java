@@ -1,37 +1,34 @@
-package com.oopsies.server.entity;
+// package com.oopsies.server.entity;
 
-import jakarta.persistence.*;
-import java.util.*;
+// import jakarta.persistence.*;
+// import java.util.*;
 
-@Entity
-@Table(name = "BookingDetails")
+// @Entity
+// @Table(name = "BookingDetails")
 
-public class BookingDetails {
-    private String eventName;
-    private int numTickets;
-    private int paymentDetails;
+// public class BookingDetails {
+//     private String eventName;
+//     private int numTickets;
+//     private int paymentDetails;
 
-    /**
-      * Parametrized constructor for creating a new User instance with specified attributes.
-      * It initializes user activity log and portfolios as well.
-      *
-      * @param eventName    
-      * @param numTickets  the password of the user.
-      * @param paymentDetails the first name of the user.
 
-      */
+//       *
+//       * @param eventName    
+//       @param numTickets  the password of the user.
+//      @param paymentDetails the first name of the user.
+
       
-    public BookingDetails(String eventName, int numTickets, int paymentDetails) {
-        this.eventName = eventName;
-        this.numTickets = numTickets;
-        this.paymentDetails = paymentDetails;
-    }
+//     public BookingDetails(String eventName, int numTickets, int paymentDetails) {
+//         this.eventName = eventName;
+//         this.numTickets = numTickets;
+//         this.paymentDetails = paymentDetails;
+//     }
 
-    public List<Object> getBookingDetails() {
-        List<Object> bookingDetails = new ArrayList<>();
-        bookingDetails.add(eventName);
-        bookingDetails.add(numTickets);
-        bookingDetails.add(paymentDetails);
-        return bookingDetails;
-    }
-}
+//     public List<Object> getBookingDetails() {
+//         List<Object> bookingDetails = new ArrayList<>();
+//         bookingDetails.add(eventName);
+//         bookingDetails.add(numTickets);
+//         bookingDetails.add(paymentDetails);
+//         return bookingDetails;
+//     }
+// }
