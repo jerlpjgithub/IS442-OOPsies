@@ -1,7 +1,9 @@
 package com.oopsies.server.entity;
 
+import java.util.List;
 import java.util.Set;
 
+import com.oopsies.server.services.TicketService;
 import jakarta.persistence.*;
 
 /**
@@ -18,10 +20,13 @@ import jakarta.persistence.*;
 @Table(name = "eventmanagers")
 public class EventManager extends User {
 
+    private final TicketService ticketService;
+
     /**
      * Default constructor required by Hibernate.
      */
-    public EventManager() {
+    public EventManager(TicketService ticketService) {
+        this.ticketService = ticketService;
     }
 
     /**
@@ -33,7 +38,19 @@ public class EventManager extends User {
      * @param firstName the first name of the user.
      * @param lastName  the last name of the user.
      */
-    public EventManager(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance) {
+    public EventManager(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance, TicketService ticketService) {
         super(email, password, firstName, lastName, role, emailVerified, accountBalance);
+        this.ticketService = ticketService;
+    }
+
+    public void setEventCancellationFee(int eventId, double cancellationFee) {
+        List<Ticket> tickets = this.getTicketsByEvent(eventId);
+        for (Ticket ticket: tickets) {
+            ticket.setCancellationFee(cancellationFee);
+        }
+    }
+
+    private List<Ticket> getTicketsByEvent(int eventId) {
+        return ticketService.getAllTicketsForEvent(eventId);
     }
 }

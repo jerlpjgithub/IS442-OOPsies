@@ -16,6 +16,9 @@ public class Ticket {
     @Column(nullable = false)
     private double price;
 
+    @Column(nullable = false)
+    private double cancellationFee;
+
     @OneToOne
     @JoinColumn(name = "image_id")
     private Image image;
@@ -44,6 +47,14 @@ public class Ticket {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public double getCancellationFee() {
+        return this.cancellationFee;
+    }
+
+    public void setCancellationFee(double cancellationFee) {
+        this.cancellationFee = cancellationFee;
     }
 
     public Image getImage() {
