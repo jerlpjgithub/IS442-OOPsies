@@ -27,6 +27,10 @@ public class Booking {
     @Temporal(TemporalType.DATE)
     @Column(name = "cancelDate")
     private Date cancelDate;
+    
+    // For 1-1 with refund
+    // @OneToOne(mappedBy = "booking")
+    // private Refund refund;
 
     // Getters and Setters
     public int getBookingID() {
