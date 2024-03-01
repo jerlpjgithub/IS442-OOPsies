@@ -1,4 +1,4 @@
-package com.oopsies.server.entity;
+package com.oopsies.server;
 
 import java.io.File;
 import java.net.URI;
@@ -96,26 +96,26 @@ public class EmailSender {
         }
     }
 
-//     public static void main(String[] args) {
-//         String MyUsername = "laiu.asher@gmail.com";
-//         String MyPassword = "18081808";
-//         String MyHost = "smtp.gmail.com";
-//         int MyPost = 587;
+    public static void main(String[] args) {
+        String MyUsername = "laiu.asher@gmail.com";
+        String MyPassword = "18081808";
+        String MyHost = "smtp.gmail.com";
+        int MyPost = 587;
 
-//         EmailSender emailSender = new EmailSender(MyHost, MyPost, MyUsername, MyPassword);
+        EmailSender emailSender = new EmailSender(MyHost, MyPost, MyUsername, MyPassword);
 
-//         Session session = emailSender.getSession();
+        Session session = emailSender.getSession();
 
-//         try {
-//             emailSender.sendMail("laiu.asher@gmail.com", "asher.laiu.2022@economics.smu.edu.sg");
+        try {
+            emailSender.sendMail("laiu.asher@gmail.com", "asher.laiu.2022@economics.smu.edu.sg");
 
-//         } catch(MessagingException | IOException e) {
-//             System.out.println("Error in sending email");
-//             e.printStackTrace();
+        } catch(MessagingException | IOException e) {
+            System.out.println("Error in sending email");
+            e.printStackTrace();
 
-//         }
+        }
 
 
 
-//     }
+    }
 }

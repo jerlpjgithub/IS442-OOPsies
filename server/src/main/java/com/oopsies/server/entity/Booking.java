@@ -3,6 +3,7 @@ package com.oopsies.server.entity;
 import jakarta.persistence.*;
 import java.util.Date;
 
+
 @Entity
 @Table(name = "Booking")
 public class Booking {
