@@ -3,8 +3,6 @@ package com.oopsies.server.entity;
 
 import jakarta.persistence.*;
 import java.util.Date;
-import java.util.Objects;
-
 
 @Entity
 @Table(name = "refund")
@@ -12,7 +10,7 @@ public class Refund {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int refundId;
+  private Long refundId;
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "booking_id", referencedColumnName = "bookingID")
@@ -32,7 +30,7 @@ public class Refund {
   public Refund() {
   }
 
-  public Refund(int refundId, Booking booking, Date refundDate) {
+  public Refund(Long refundId, Booking booking, Date refundDate) {
     this.refundId = refundId;
     this.booking = booking;
     this.refundDate = refundDate;
@@ -48,11 +46,11 @@ public class Refund {
 
   /* Getters and Setters */
 
-  public int getRefundId() {
+  public Long getRefundId() {
     return this.refundId;
   }
 
-  public void setRefundId(int refundId) {
+  public void setRefundId(Long refundId) {
     this.refundId = refundId;
   }
 
