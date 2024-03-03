@@ -3,8 +3,10 @@ package com.oopsies.server.entity;
 import java.util.List;
 import java.util.Set;
 
+import com.oopsies.server.services.EventService;
 import com.oopsies.server.services.TicketService;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The EventManager class represents an entity model for a EventManager a subclass of User.
@@ -20,14 +22,10 @@ import jakarta.persistence.*;
 @Table(name = "eventmanagers")
 public class EventManager extends User {
 
-    private final TicketService ticketService;
-
     /**
      * Default constructor required by Hibernate.
      */
-    public EventManager(TicketService ticketService) {
-        this.ticketService = ticketService;
-    }
+    public EventManager() { }
 
     /**
      * Parametrized constructor for creating a new EventManager instance with specified attributes.
@@ -40,17 +38,9 @@ public class EventManager extends User {
      */
     public EventManager(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance, TicketService ticketService) {
         super(email, password, firstName, lastName, role, emailVerified, accountBalance);
-        this.ticketService = ticketService;
     }
 
-    public void setEventCancellationFee(int eventId, double cancellationFee) {
-        List<Ticket> tickets = this.getTicketsByEvent(eventId);
-        for (Ticket ticket: tickets) {
-            ticket.setCancellationFee(cancellationFee);
-        }
-    }
-
-    private List<Ticket> getTicketsByEvent(int eventId) {
-        return ticketService.getAllTicketsForEvent(eventId);
+    public void setEventCancellationFee(Event event, double cancellationFee) {
+        event.setCancellationFee(cancellationFee);
     }
 }

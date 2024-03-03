@@ -12,14 +12,9 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookingID;
 
+    @Id
     @Column(name = "eventID")
     private int eventID;
-
-    @Column(name = "ticketID")
-    private int ticketID;
-
-    @Column(name = "numTickets")
-    private int numTickets;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "bookingDate")
@@ -48,22 +43,6 @@ public class Booking {
 
     public void setEventID(int eventID) {
         this.eventID = eventID;
-    }
-
-    public int getTicketID() {
-        return ticketID;
-    }
-
-    public void setTicketID(int ticketID) {
-        this.ticketID = ticketID;
-    }
-
-    public int getNumTickets() {
-        return numTickets;
-    }
-
-    public void setNumTickets(int numTickets) {
-        this.numTickets = numTickets;
     }
 
     public Date getBookingDate() {

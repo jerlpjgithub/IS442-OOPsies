@@ -1,4 +1,4 @@
-package com.oopsies.server.payments;
+package com.oopsies.server.exception;
 
 public class UserInsufficientFundsException extends Exception {
     public UserInsufficientFundsException() {

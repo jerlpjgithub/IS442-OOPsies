@@ -13,12 +13,10 @@ public class TicketService {
     @Autowired
     private TicketRepository ticketRepository;
 
-    public TicketService(TicketRepository ticketRepository) {
-        this.ticketRepository = ticketRepository;
-    }
+    public TicketService() { }
 
-    public List<Ticket> getAllTicketsForEvent(int eventId) {
-        return ticketRepository.findTicketsByEventId(eventId);
+    public List<Ticket> getAllTicketsForBooking(int bookingId) {
+        return ticketRepository.findTicketsByBookingId(bookingId);
     }
 }
 

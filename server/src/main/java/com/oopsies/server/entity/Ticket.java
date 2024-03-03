@@ -7,17 +7,11 @@ import jakarta.persistence.*;
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int ticketId;
 
     // Map this to event
     @Column(nullable = false)
-    private int eventId;
-
-    @Column(nullable = false)
-    private double price;
-
-    @Column(nullable = false)
-    private double cancellationFee;
+    private int bookingId;
 
     @OneToOne
     @JoinColumn(name = "image_id")
@@ -26,35 +20,19 @@ public class Ticket {
     public Ticket() {}
 
     public int getId() {
-        return this.id;
+        return this.ticketId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.ticketId = id;
     }
 
     public int getEventId() {
-        return this.eventId;
+        return this.bookingId;
     }
 
-    public void setEventId(int eventId) {
-        this.eventId = eventId;
-    }
-
-    public double getPrice() {
-        return this.price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double getCancellationFee() {
-        return this.cancellationFee;
-    }
-
-    public void setCancellationFee(double cancellationFee) {
-        this.cancellationFee = cancellationFee;
+    public void setEventId(int bookingId) {
+        this.bookingId = bookingId;
     }
 
     public Image getImage() {
