@@ -25,9 +25,9 @@ public class BookingController {
         Payment payment = new Payment();
     }
 
-    @PostMapping("/send-email"){
+    @PostMapping("/send-email")
     public void SendEmail(){
         Emailsender email = new Emailsender();
     }
-    
+
 }
