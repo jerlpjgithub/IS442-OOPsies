@@ -12,7 +12,6 @@ public class Event {
     private Long id;
 
     private String eventName;
-    private int eventID;
     private long managerID;
     private Date dateTime;
     private String venue;
@@ -24,10 +23,9 @@ public class Event {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Ticket> tickets;
 
-    public Event(Long id, String eventName, int eventID, long managerID, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice, List<Ticket> tickets) {
+    public Event(Long id, String eventName, long managerID, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice, List<Ticket> tickets) {
         this.id = id;
         this.eventName = eventName;
-        this.eventID = eventID;
         this.managerID = managerID;
         this.dateTime = dateTime;
         this.venue = venue;
@@ -38,9 +36,8 @@ public class Event {
         this.tickets = tickets;
     }
 
-    public void updateDetails(String eventName, int eventID, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
+    public void updateDetails(String eventName, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
         this.eventName = eventName;
-        this.eventID = eventID;
         this.dateTime = dateTime;
         this.venue = venue;
         this.eventCancelled = eventCancelled;
@@ -65,14 +62,6 @@ public class Event {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
-    }
-
-    public int getEventID() {
-        return this.eventID;
-    }
-
-    public void setEventID(int eventID) {
-        this.eventID = eventID;
     }
 
     public void setManagerID(long managerID){
