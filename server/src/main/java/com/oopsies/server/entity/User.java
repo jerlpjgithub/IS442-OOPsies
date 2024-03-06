@@ -175,6 +175,14 @@ public class User {
         this.accountBalance = accountBalance;
     }
 
+    public void incrementAccountBalance(double amount) {
+        this.accountBalance += accountBalance;
+    }
+
+    public void decrementAccountBalance(double amount) {
+        this.accountBalance -= accountBalance;
+    }
+
     public Provider getProvider() {
         return this.provider;
     }

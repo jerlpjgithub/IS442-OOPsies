@@ -1,8 +1,12 @@
 package com.oopsies.server.entity;
 
+import java.util.List;
 import java.util.Set;
 
+import com.oopsies.server.services.EventService;
+import com.oopsies.server.services.TicketService;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The EventManager class represents an entity model for a EventManager a subclass of User.
@@ -21,8 +25,7 @@ public class EventManager extends User {
     /**
      * Default constructor required by Hibernate.
      */
-    public EventManager() {
-    }
+    public EventManager() { }
 
     /**
      * Parametrized constructor for creating a new EventManager instance with specified attributes.
@@ -33,7 +36,11 @@ public class EventManager extends User {
      * @param firstName the first name of the user.
      * @param lastName  the last name of the user.
      */
-    public EventManager(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance) {
+    public EventManager(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance, TicketService ticketService) {
         super(email, password, firstName, lastName, role, emailVerified, accountBalance);
+    }
+
+    public void setEventCancellationFee(Event event, double cancellationFee) {
+        event.setCancellationFee(cancellationFee);
     }
 }
