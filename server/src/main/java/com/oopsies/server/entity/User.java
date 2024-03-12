@@ -65,6 +65,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
+
     /**
      * Default constructor required by Hibernate. Initializes a new user with email
      * verification status set to true.
