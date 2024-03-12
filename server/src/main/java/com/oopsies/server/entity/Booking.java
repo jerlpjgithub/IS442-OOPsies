@@ -12,8 +12,8 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookingID;
 
-    @Column(name = "eventID")
-    private int eventID;
+    @Column(name = "event")
+    private Event event;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "bookingDate")
@@ -22,6 +22,9 @@ public class Booking {
     @Temporal(TemporalType.DATE)
     @Column(name = "cancelDate")
     private Date cancelDate;
+
+    @Column(name = "numTickets")
+    private int numTickets;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -51,9 +54,9 @@ public class Booking {
     //     return eventID;
     // }
 
-    // public void setEventID(int eventID) {
-    //     this.eventID = eventID;
-    // }
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
     public Date getBookingDate() {
         return bookingDate;
@@ -69,5 +72,9 @@ public class Booking {
 
     public void setCancelDate(Date cancelDate) {
         this.cancelDate = cancelDate;
+    }
+
+    public void setNumTickets(int numTickets){
+        this.numTickets = numTickets;
     }
 }
