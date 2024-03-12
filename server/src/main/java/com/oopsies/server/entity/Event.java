@@ -7,20 +7,24 @@ import java.util.List;
 @Entity
 @Table (name = "events")
 public class Event {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String eventName;
     private long managerID;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dateTime;
+
     private String venue;
     private boolean eventCancelled;
     private int capacity;
     private double cancellationFee;
     private double ticketPrice;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
     private List<Ticket> tickets;
 
     public Event(Long id, String eventName, long managerID, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice, List<Ticket> tickets) {

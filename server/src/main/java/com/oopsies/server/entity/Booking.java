@@ -27,8 +27,8 @@ public class Booking {
     private int numTickets;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId")
-    private long userId;
+    @JoinColumn(name = "user_id")
+    private Long userId;
     
     // For 1-1 with refund
     // @OneToOne(mappedBy = "booking")
@@ -43,7 +43,7 @@ public class Booking {
         this.bookingID = bookingID;
     }
 
-    public long getUserId(){
+    public Long getUserId(){
         return this.userId;
     }
 
