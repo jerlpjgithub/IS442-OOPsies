@@ -12,62 +12,64 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 public class BookingController {
 
-    @Autowired
-    private BookingService bookingService;
+  @Autowired
+  private BookingService bookingService;
 
-    public BookingController(BookingService bookingService){
-      this.bookingService = bookingService;
+  public BookingController(BookingService bookingService) {
+    this.bookingService = bookingService;
+  }
+
+  @PostMapping(path = "/{user_id}/create-booking")
+  public ResponseEntity<?> createBooking(@PathVariable(value = "user_id") long userId,
+      @RequestParam long eventId,
+      @RequestParam int numGuests) {
+    try {
+      Booking _booking = bookingService.createBooking(userId, eventId, numGuests);
+      return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Successfully created booking"));
+    } catch (IllegalArgumentException exc) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(exc.getMessage()));
+    } catch (Exception exc) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("404 NOT FOUND"));
     }
+  }
 
-    @PostMapping(path = "/{user_id}/create-booking")
-    public ResponseEntity<?> createBooking(@PathVariable(value="user_id") long user_id,
-      @RequestBody Booking booking
-      ){
-        try {
-          Booking _booking = bookingService.createBooking(user_id, booking);
-          return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Successfully created booking"));
-        }
-        catch (Exception exc) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("404 NOT FOUND"));
-        }
-    }
+  @GetMapping(path = "/get-booking/{user_id}")
+  public ResponseEntity<?> getBookingsByUserId(@PathVariable("user_id") long user_id) {
+    // try{
+    List<BookingDTO> _bookings = bookingService.findBookingsByUserId(user_id);
+    return ResponseEntity.status(HttpStatus.OK).body(_bookings);
+    // }
+    // catch(Exception exc){
+    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new
+    // MessageResponse("404 NOT FOUND"));
+    // }
 
-    @GetMapping(path = "/get-booking/{user_id}")
-    public ResponseEntity<?> getBookingsByUserId(@PathVariable("user_id") long user_id){
-      // try{
-        List<BookingDTO> _bookings = bookingService.findBookingsByUserId(user_id);
-        return ResponseEntity.status(HttpStatus.OK).body(_bookings);
-      // }
-      // catch(Exception exc){
-      //   return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("404 NOT FOUND"));
-      // }
-      
-    }
+  }
 
-//     @Autowired
-//     private PaymentService paymentService;
+  // @Autowired
+  // private PaymentService paymentService;
 
-//     @PostMapping("/bookings")
-//     public Booking CreateBookingInstance(){
-//         Booking booking = new Booking();
-//     }
+  // @PostMapping("/bookings")
+  // public Booking CreateBookingInstance(){
+  // Booking booking = new Booking();
+  // }
 
-//     @RequestMapping(value = "/bookings/payment", method = RequestMethod.POST)
-//     // assuming that user ID is passed via request headers
-//     public ResponseEntity<?> createPayment(@RequestParam("userId") String userId) {
-//         // TODO get user object
-//         // TODO get booking object
-//         // TODO process payment
-// //        paymentService.processPayment();
-//     }
+  // @RequestMapping(value = "/bookings/payment", method = RequestMethod.POST)
+  // // assuming that user ID is passed via request headers
+  // public ResponseEntity<?> createPayment(@RequestParam("userId") String userId)
+  // {
+  // // TODO get user object
+  // // TODO get booking object
+  // // TODO process payment
+  // // paymentService.processPayment();
+  // }
 
-//     @PostMapping("/send-email")
-//     public void SendEmail(){
-//         Emailsender email = new Emailsender();
-//     }
+  // @PostMapping("/send-email")
+  // public void SendEmail(){
+  // Emailsender email = new Emailsender();
+  // }
 
 }
