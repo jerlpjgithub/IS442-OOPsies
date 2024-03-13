@@ -29,12 +29,11 @@ public class BookingService {
     this.bookingRepository = bookingRepository;
   }
 
-  public Booking createBooking(long user_id, Booking booking, int numGuests) {
-    if (numGuests > 4) {
+  public Booking createBooking(long user_id, Booking booking, int numTickets) {
+    if (numTickets > 5) {
       throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
     }
     // totalGuests are the booker + their friends
-    int totalGuests = numGuests + 1;
     User user = userRepository.getReferenceById(user_id);
     Long eventId = booking.getEventID();
     if (eventId == null) {
@@ -43,11 +42,11 @@ public class BookingService {
     // Find the event
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new IllegalArgumentException("Event not found"));
-    if (event.getCapacity() < (totalGuests)) {
+    if (event.getCapacity() < numTickets) {
       throw new IllegalArgumentException("Event capacity is less than number of guests");
     }
     // Reduce event capacity by numGuests + the og booker
-    event.setCapacity(event.getCapacity() - (totalGuests));
+    event.setCapacity(event.getCapacity() - numTickets);
     booking.setUser(user);
     return bookingRepository.save(booking);
   }
