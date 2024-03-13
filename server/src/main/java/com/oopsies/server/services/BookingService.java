@@ -1,9 +1,9 @@
 package com.oopsies.server.services;
 
 import com.oopsies.server.dto.BookingDTO;
-import com.oopsies.server.entity.*;
+import com.oopsies.server.entity.Booking;
+import com.oopsies.server.entity.User;
 import com.oopsies.server.repository.BookingRepository;
-import com.oopsies.server.repository.EventRepository;
 import com.oopsies.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,66 +11,56 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 public class BookingService {
 
-  @Autowired
-  private BookingRepository bookingRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
 
-  @Autowired
-  private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @Autowired
-  private EventRepository eventRepository;
-
-  public BookingService(BookingRepository bookingRepository) {
-    this.bookingRepository = bookingRepository;
-  }
-
-
-  public Booking createBooking(long userId, long eventId, int numTickets) {
-    // to satisfy Events' second biz req
-    if (numTickets > 5) {
-      throw new IllegalArgumentException("Cannot book more than 5 tickets");
+    public BookingService(BookingRepository bookingRepository) { 
+      this.bookingRepository = bookingRepository;
     }
-    
-    Booking booking = new Booking();
-    booking.setUserId(userId);
 
-    // Fetch the event from the database
-    Event event = eventRepository.findById(eventId)
-        .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+    public Booking createBooking(long user_id, Booking booking){
+      // Fetch the user based on the provided user_id
+      User user = userRepository.getReferenceById(user_id);
 
-    booking.setEvent(eventId);
-    event.setCapacity(event.getCapacity() - numTickets);
-    booking.setNumTickets(numTickets);
-    return bookingRepository.save(booking);
-  }
+      // Set the fetched user in the booking entity
+      booking.setUser(user);
 
-  // public List<Booking> findBookingsByUserId(long userId) {
-  // return bookingRepository.findByUserId(userId);
-  // }
+      // Now you can save the booking entity
+      return bookingRepository.save(booking);
+    }
 
-  // public Booking getBookingByBookingId(int bookingId) {
-  // return bookingRepository.findBookingByBookingID(bookingId);
-  // }
+    // public List<Booking> findBookingsByUserId(long userId) {
+    //     return bookingRepository.findByUserId(userId);
+    // }
 
-  // public List<Booking> getBookingsByEventId(int eventId) {
-  // return bookingRepository.findBookingsByEventID(eventId);
-  // }
+    // public Booking getBookingByBookingId(int bookingId) {
+    //     return bookingRepository.findBookingByBookingID(bookingId);
+    // }
 
-  public List<BookingDTO> findBookingsByUserId(long userId) {
-    List<Booking> bookings = bookingRepository.findByUserId(userId);
-    return bookings.stream()
-        .map(this::convertToDTO)
-        .collect(Collectors.toList());
-  }
+    // public List<Booking> getBookingsByEventId(int eventId) {
+    //     return bookingRepository.findBookingsByEventID(eventId);
+    // }
 
-  private BookingDTO convertToDTO(Booking booking) {
-    BookingDTO dto = new BookingDTO();
-    dto.setBookingID(booking.getBookingID());
-    dto.setBookingDate(booking.getBookingDate());
-    dto.setCancelDate(booking.getCancelDate());
-    return dto;
-  }
+    public List<BookingDTO> findBookingsByUserId(long userId) {
+        List<Booking> bookings = bookingRepository.findByUserId(userId);
+        return bookings.stream()
+                      .map(this::convertToDTO)
+                      .collect(Collectors.toList());
+    }
+
+    private BookingDTO convertToDTO(Booking booking) {
+        BookingDTO dto = new BookingDTO();
+        dto.setBookingID(booking.getBookingID());
+        dto.setBookingDate(booking.getBookingDate());
+        dto.setCancelDate(booking.getCancelDate());
+        return dto;
+    }
 }
+

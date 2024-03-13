@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ticketId;
+    private int ticketId;
 
     // Map this to event
     @Column(nullable = false)
@@ -17,17 +17,13 @@ public class Ticket {
     @JoinColumn(name = "image_id")
     private Image image;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-
     public Ticket() {}
 
-    public Long getId() {
+    public int getId() {
         return this.ticketId;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.ticketId = id;
     }
 
