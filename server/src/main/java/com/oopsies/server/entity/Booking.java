@@ -12,8 +12,8 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookingID;
 
-    @Column(name = "event")
-    private Event event;
+    @Column(name = "eventId")
+    private Long eventId;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "bookingDate")
@@ -47,15 +47,15 @@ public class Booking {
         return this.userId;
     }
 
-    public void setUserId(long userId){
+    public void setUserId(Long userId){
         this.userId = userId;
     }
-    // public int getEventID() {
-    //     return eventID;
-    // }
+    public Long getEventId() {
+        return this.eventId;
+    }
 
-    public void setEvent(Event event) {
-        this.event = event;
+    public void setEvent(Long eventId) {
+        this.eventId = eventId;
     }
 
     public Date getBookingDate() {

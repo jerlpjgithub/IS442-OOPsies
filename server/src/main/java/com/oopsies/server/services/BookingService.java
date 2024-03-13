@@ -41,7 +41,7 @@ public class BookingService {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
-    booking.setEvent(event);
+    booking.setEvent(eventId);
     event.setCapacity(event.getCapacity() - numTickets);
     booking.setNumTickets(numTickets);
     return bookingRepository.save(booking);
