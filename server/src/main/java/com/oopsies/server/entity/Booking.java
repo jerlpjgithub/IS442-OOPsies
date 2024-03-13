@@ -12,8 +12,8 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookingID;
 
-    @Column(name = "eventID")
-    private int eventID;
+    @Column(name = "eventId")
+    private Long eventId;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "bookingDate")
@@ -23,9 +23,12 @@ public class Booking {
     @Column(name = "cancelDate")
     private Date cancelDate;
 
+    @Column(name = "numTickets")
+    private int numTickets;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Long userId;
     
     // For 1-1 with refund
     // @OneToOne(mappedBy = "booking")
@@ -40,20 +43,20 @@ public class Booking {
         this.bookingID = bookingID;
     }
 
-    public User getUser(){
-        return this.user;
+    public Long getUserId(){
+        return this.userId;
     }
 
-    public void setUser(User user){
-        this.user = user;
+    public void setUserId(Long userId){
+        this.userId = userId;
     }
-    // public int getEventID() {
-    //     return eventID;
-    // }
+    public Long getEventId() {
+        return this.eventId;
+    }
 
-    // public void setEventID(int eventID) {
-    //     this.eventID = eventID;
-    // }
+    public void setEvent(Long eventId) {
+        this.eventId = eventId;
+    }
 
     public Date getBookingDate() {
         return bookingDate;
@@ -69,5 +72,9 @@ public class Booking {
 
     public void setCancelDate(Date cancelDate) {
         this.cancelDate = cancelDate;
+    }
+
+    public void setNumTickets(int numTickets){
+        this.numTickets = numTickets;
     }
 }
