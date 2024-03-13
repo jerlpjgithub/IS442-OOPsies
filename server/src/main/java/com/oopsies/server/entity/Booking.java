@@ -13,7 +13,7 @@ public class Booking {
     private int bookingID;
 
     @Column(name = "eventID")
-    private int eventID;
+    private Long eventID;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "bookingDate")
@@ -47,9 +47,10 @@ public class Booking {
     public void setUser(User user){
         this.user = user;
     }
-    // public int getEventID() {
-    //     return eventID;
-    // }
+
+    public Long getEventID() {
+        return eventID;
+    }
 
     // public void setEventID(int eventID) {
     //     this.eventID = eventID;

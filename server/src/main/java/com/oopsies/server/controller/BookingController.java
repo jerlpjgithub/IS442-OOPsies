@@ -25,10 +25,10 @@ public class BookingController {
 
     @PostMapping(path = "/{user_id}/create-booking")
     public ResponseEntity<?> createBooking(@PathVariable(value="user_id") long user_id,
-      @RequestBody Booking booking
+      @RequestBody Booking booking, @RequestParam int numGuests
       ){
         try {
-          Booking _booking = bookingService.createBooking(user_id, booking);
+          Booking _booking = bookingService.createBooking(user_id, booking, numGuests);
           return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Successfully created booking"));
         }
         catch (Exception exc) {
