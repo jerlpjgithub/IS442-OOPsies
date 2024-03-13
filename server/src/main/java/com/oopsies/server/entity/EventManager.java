@@ -3,7 +3,7 @@ package com.oopsies.server.entity;
 import java.util.List;
 import java.util.Set;
 
-import com.oopsies.server.services.EventService;
+
 import com.oopsies.server.services.TicketService;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
