@@ -16,3 +16,13 @@
     }
   }
   
+  .search-bar {
+    position: absolute;
+    right: 0;
+    width: 50px;
+    transition: width 0.5s;
+  }
+  
+  .search-bar:focus-within {
+    width: 200px;
+  }
