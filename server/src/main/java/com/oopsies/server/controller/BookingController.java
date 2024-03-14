@@ -31,6 +31,9 @@ public class BookingController {
           Booking _booking = bookingService.createBooking(user_id, booking, numTickets);
           return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Successfully created booking"));
         }
+        catch (IllegalArgumentException exc) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(exc.getMessage()));
+        }
         catch (Exception exc) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("404 NOT FOUND"));
         }

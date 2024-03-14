@@ -23,6 +23,8 @@ public class Event {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Ticket> tickets;
 
+    public Event() { }
+
     public Event(Long id, String eventName, long managerID, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice, List<Ticket> tickets) {
         this.id = id;
         this.eventName = eventName;
