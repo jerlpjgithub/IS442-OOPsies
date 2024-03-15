@@ -8,15 +8,34 @@ import './Navbar.css';
 import Profile from './components/Profile'; // Import your Profile component
 const { useBreakpoint } = Grid;
 const { Header } = Layout;
-const items = [
-    { key: '1', label: 'Upcoming Events' },
-    { key: '2', label: 'Your Tickets' },
-];
+
+const getItems = (role) => {
+    // Default role is customer?
+    const commonItems = [
+        { key: '1', label: 'Upcoming Events' },
+        { key: '2', label: 'Your Tickets' },
+    ];
+
+    if (role === 'ROLE_OFFICER') {
+        return [
+            { key: '1', label: 'Your Events' },
+        ];
+    } else if (role === 'ROLE_MANAGER') {
+        return [
+            { key: '1', label: 'Your Events' },
+            { key: '2', label: 'Add Event' },
+        ];
+    }
+
+    return commonItems;
+};
 
 const App = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+    const role = 'ROLE_MANAGER'; // Add in logic to retrieve user's role
+    const items = getItems(role);
     const [searchWidth, setSearchWidth] = useState('50px');
     const screens = useBreakpoint();
     const dropdownMenu = (
