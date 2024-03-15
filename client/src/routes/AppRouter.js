@@ -19,12 +19,12 @@ export const AppRouter = () => {
         <Routes>
             // Public Routes
             <Route element={<PublicRoute strict={true} />}>
-                <Route index path='/login' element={<LoginPage />} />
-                <Route path='/register' element={<RegisterPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
             </Route>
             // Private Routes
-            <Route exact path={"/"} element={<PrivateRoute />}>
-                <Route path='/home' element={<HomePage />} />
+            <Route element={<PrivateRoute />}>
+                <Route path="/home" element={<HomePage />} />
             </Route>
         </Routes>
     );

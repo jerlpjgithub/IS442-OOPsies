@@ -1,4 +1,4 @@
-package com.oopsies.server.security.jwt;
+package com.oopsies.server.util;
 
 import java.security.Key;
 import java.util.Date;
@@ -14,12 +14,15 @@ import com.oopsies.server.entity.User;
 import com.oopsies.server.exception.JwtTokenExpiredException;
 import com.oopsies.server.services.UserDetailsImpl;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtUtils {
