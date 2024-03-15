@@ -49,6 +49,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const googleLogin = async (credentialResponse) => {
+    try {
+      const response = await axios.post(process.env.REACT_APP_GOOGLE_REDIRECT_URI, credentialResponse);
+      if (response.data && response.status == 200) {
+        setAuthUser(response.data);
+        setAuthenticated(true);
+      }
+      return response;
+    } catch (error) {
+      console.log("login failed", error);
+      throw error;
+    }
+  }
+
   const login = async (email, password) => {
     try {
       const response = await axios.post(
@@ -123,7 +137,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ authUser, isAuthenticated, login, logout, register }}
+      value={{ authUser, isAuthenticated, login, logout, register, googleLogin }}
     >
       {children}
     </AuthContext.Provider>

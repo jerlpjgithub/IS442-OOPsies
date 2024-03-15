@@ -1,5 +1,7 @@
 package com.oopsies.server.controller;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oopsies.server.dto.GoogleLoginDTO;
 import com.oopsies.server.entity.EnumRole;
+import com.oopsies.server.entity.GoogleUser;
 import com.oopsies.server.entity.RefreshToken;
 import com.oopsies.server.entity.Role;
 import com.oopsies.server.entity.User;
@@ -33,9 +38,12 @@ import com.oopsies.server.payload.response.MessageResponse;
 
 import com.oopsies.server.repository.RoleRepository;
 import com.oopsies.server.repository.UserRepository;
-import com.oopsies.server.security.jwt.JwtUtils;
+import com.oopsies.server.util.JwtUtils;
+
+import com.oopsies.server.services.GoogleOAuth2Service;
 import com.oopsies.server.services.RefreshTokenService;
 import com.oopsies.server.services.UserDetailsImpl;
+import com.oopsies.server.services.UserDetailsServiceImpl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -45,161 +53,198 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+        @Autowired
+        AuthenticationManager authenticationManager;
 
-    @Autowired
-    UserRepository userRepository;
+        @Autowired
+        UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
+        @Autowired
+        RoleRepository roleRepository;
 
-    @Autowired
-    PasswordEncoder encoder;
+        @Autowired
+        UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    JwtUtils jwtUtils;
+        @Autowired
+        PasswordEncoder encoder;
 
-    @Autowired
-    RefreshTokenService refreshTokenService;
+        @Autowired
+        JwtUtils jwtUtils;
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        @Autowired
+        RefreshTokenService refreshTokenService;
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        @Autowired
+        GoogleOAuth2Service googleOAuth2Service;
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        @PostMapping("/google/callback")
+        public ResponseEntity<?> googleAuthenticateUser(@RequestBody GoogleLoginDTO googleLoginRequest) {
+                try {
+                        GoogleUser googleUser = googleOAuth2Service.getUserInfo(googleLoginRequest.getCredential());
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+                        User user = userRepository.findByEmail(googleUser.getEmail()).orElseGet(() -> {
+                                String randomPassword = UUID.randomUUID().toString().replace("-", "");
+                                User newUser = new User(googleUser.getEmail(), encoder.encode(randomPassword),
+                                                googleUser.getName(), "");
 
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+                                // Default Role User is set
+                                Set<Role> roles = new HashSet<>();
+                                Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
+                                                .orElseThrow(() -> new RuntimeException(
+                                                                "Error: User role is not found."));
+                                roles.add(userRole);
 
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+                                newUser.setRoles(roles);
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+                                return userRepository.save(newUser);
+                        });
 
-        ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
+                        // Load UserDetails using your custom UserDetailsService
+                        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService
+                                        .loadUserByUsername(user.getEmail());
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                .body(new UserInfoResponse(userDetails.getId(),
-                        userDetails.getEmail(),
-                        roles));
-    }
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+                                        userDetails.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    @GetMapping("/status")
-    public ResponseEntity<?> checkAuthenticationStatus() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = authentication != null && !(authentication instanceof AnonymousAuthenticationToken)
-                && authentication.isAuthenticated();
+                        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
-        if (isAuthenticated) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+                        List<String> roles = userDetails.getAuthorities().stream()
+                                        .map(GrantedAuthority::getAuthority)
+                                        .collect(Collectors.toList());
 
-            List<String> roles = userDetails.getAuthorities().stream()
-                    .map(item -> item.getAuthority())
-                    .collect(Collectors.toList());
-
-            return ResponseEntity.ok(new UserInfoResponse(userDetails.getId(),
-                    userDetails.getEmail(), roles));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MessageResponse("User is not authenticated"));
-        }
-    }
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already taken!"));
-        }
-
-        // Create user account
-        User user = new User(
-            signupRequest.getEmail(), 
-            encoder.encode(signupRequest.getPassword()),
-            signupRequest.getFirstName(),
-            signupRequest.getLastName());
-
-        Set<String> strRoles = signupRequest.getRole();
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "manager":
-                        Role managerRole = roleRepository.findByName(EnumRole.ROLE_MANAGER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(managerRole);
-
-                        break;
-                    case "officer":
-                        Role officerRole = roleRepository.findByName(EnumRole.ROLE_OFFICER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(officerRole);
-
-                        break;
-
-                    default:
-                        Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
-
-        user.setRoles(roles);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-    }
-
-    @PostMapping("/signout")
-    public ResponseEntity<?> logoutUser() {
-        Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principle.toString() != "anonymousUser") {
-            Long userId = ((UserDetailsImpl) principle).getId();
-            refreshTokenService.deleteByUserId(userId);
-        }
-
-        ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
-        ResponseCookie jwtRefreshCookie = jwtUtils.getCleanJwtRefreshCookie();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                .body(new MessageResponse("You've been signed out!"));
-    }
-
-    @PostMapping("/refreshtoken")
-    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
-        String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
-
-        if ((refreshToken != null) && (refreshToken.length() > 0)) {
-            return refreshTokenService.findByToken(refreshToken)
-                    .map(refreshTokenService::verifyExpiration)
-                    .map(RefreshToken::getUser)
-                    .map(user -> {
-                        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
+                        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+                        ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
 
                         return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                                .body(new MessageResponse("Token is successfully refreshed!"));
-                    })
-                    .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!"));
+                                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                                .body(new UserInfoResponse(userDetails.getId(),
+                                                userDetails.getEmail(),
+                                                roles));
+                } catch (GeneralSecurityException | IOException e) {
+                        return ResponseEntity
+                                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body("An error occurred while processing Google login: " + e.getMessage());
+                }
         }
 
-        return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is empty!"));
-    }
+        @PostMapping("/signin")
+        public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
+                Authentication authentication = authenticationManager.authenticate(
+                                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+                                                loginRequest.getPassword()));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+                ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+
+                List<String> roles = userDetails.getAuthorities().stream()
+                                .map(item -> item.getAuthority())
+                                .collect(Collectors.toList());
+
+                RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+                ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
+
+                return ResponseEntity.ok()
+                                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                                .body(new UserInfoResponse(userDetails.getId(),
+                                                userDetails.getEmail(),
+                                                roles));
+        }
+
+        @GetMapping("/status")
+        public ResponseEntity<?> checkAuthenticationStatus() {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                boolean isAuthenticated = authentication != null
+                                && !(authentication instanceof AnonymousAuthenticationToken)
+                                && authentication.isAuthenticated();
+
+                if (isAuthenticated) {
+                        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+                        List<String> roles = userDetails.getAuthorities().stream()
+                                        .map(item -> item.getAuthority())
+                                        .collect(Collectors.toList());
+
+                        return ResponseEntity.ok(new UserInfoResponse(userDetails.getId(),
+                                        userDetails.getEmail(), roles));
+                } else {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                        .body(new MessageResponse("User is not authenticated"));
+                }
+        }
+
+        @PostMapping("/signup")
+        public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+                if (userRepository.existsByEmail(signupRequest.getEmail())) {
+                        return ResponseEntity
+                                        .badRequest()
+                                        .body(new MessageResponse("Error: Email is already taken!"));
+                }
+
+                // Create user account
+                User user = new User(
+                                signupRequest.getEmail(),
+                                encoder.encode(signupRequest.getPassword()),
+                                signupRequest.getFirstName(),
+                                signupRequest.getLastName());
+
+                // Default Role User is set
+                Set<Role> roles = new HashSet<>();
+                Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Error: User role is not found."));
+                roles.add(userRole);
+
+                user.setRoles(roles);
+                userRepository.save(user);
+
+                return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        }
+
+        @PostMapping("/signout")
+        public ResponseEntity<?> logoutUser() {
+                Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                if (principle.toString() != "anonymousUser") {
+                        Long userId = ((UserDetailsImpl) principle).getId();
+                        refreshTokenService.deleteByUserId(userId);
+                }
+
+                ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
+                ResponseCookie jwtRefreshCookie = jwtUtils.getCleanJwtRefreshCookie();
+
+                return ResponseEntity.ok()
+                                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                                .body(new MessageResponse("You've been signed out!"));
+        }
+
+        @PostMapping("/refreshtoken")
+        public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+                String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
+
+                if ((refreshToken != null) && (refreshToken.length() > 0)) {
+                        return refreshTokenService.findByToken(refreshToken)
+                                        .map(refreshTokenService::verifyExpiration)
+                                        .map(RefreshToken::getUser)
+                                        .map(user -> {
+                                                ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
+
+                                                return ResponseEntity.ok()
+                                                                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                                                                .body(new MessageResponse(
+                                                                                "Token is successfully refreshed!"));
+                                        })
+                                        .orElseThrow(() -> new TokenRefreshException(refreshToken,
+                                                        "Refresh token is not in database!"));
+                }
+
+                return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is empty!"));
+        }
 }

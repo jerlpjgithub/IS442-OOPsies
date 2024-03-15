@@ -1,4 +1,4 @@
-package com.oopsies.server.security.jwt;
+package com.oopsies.server.util;
 
 import java.security.Key;
 import java.util.Date;
