@@ -31,6 +31,9 @@ public class BookingService {
   @Autowired
   private PaymentService paymentService;
 
+  @Autowired
+  private TicketService ticketService;
+
   public BookingService(BookingRepository bookingRepository) {
     this.bookingRepository = bookingRepository;
   }
@@ -59,11 +62,15 @@ public class BookingService {
       throw new IllegalArgumentException("Event capacity is less than number of guests");
     }
 
-    paymentService.processPayment(user.get(), event, numTickets);
+    long paymentId = paymentService.processPayment(user.get(), event, numTickets);
     // Reduce event capacity by numGuests + the og booker
-    event.setCapacity(event.getCapacity() - numTickets);
     booking.setUser(user.get());
-    return bookingRepository.save(booking);
+    Booking newBooking = bookingRepository.save(booking);
+    eventService.updateEventCapacity(event, numTickets);
+    for (int i = 0; i < numTickets; i++) {
+      ticketService.createNewTicket(newBooking.getBookingID());
+    }
+    return newBooking;
   }
 
   // public List<Booking> findBookingsByUserId(long userId) {

@@ -10,7 +10,7 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int bookingID;
+    private long bookingID;
 
     @Column(name = "eventID")
     private Long eventID;
@@ -32,11 +32,11 @@ public class Booking {
     // private Refund refund;
 
     // Getters and Setters
-    public int getBookingID() {
+    public long getBookingID() {
         return bookingID;
     }
 
-    public void setBookingID(int bookingID) {
+    public void setBookingID(long bookingID) {
         this.bookingID = bookingID;
     }
 

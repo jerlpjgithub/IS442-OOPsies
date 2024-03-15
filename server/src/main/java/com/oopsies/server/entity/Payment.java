@@ -9,7 +9,7 @@
  public class Payment {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
-     private int paymentId;
+     private long paymentId;
 
      @ManyToOne(cascade = CascadeType.ALL)
      @JoinColumn(name = "user_id")
@@ -35,11 +35,11 @@
 
      // --------------- Getters and Setters (start) ------------------
 
-     public int getPaymentId() {
+     public long getPaymentId() {
          return paymentId;
      }
 
-     public void setPaymentId(int paymentId) {
+     public void setPaymentId(long paymentId) {
          this.paymentId = paymentId;
      }
 

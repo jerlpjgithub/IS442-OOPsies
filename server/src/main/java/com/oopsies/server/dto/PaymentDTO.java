@@ -3,7 +3,7 @@ package com.oopsies.server.dto;
 import java.util.Date;
 
 public class PaymentDTO {
-    private int paymentID;
+    private long paymentID;
     private double amount;
     private Date paymentDate;
 
@@ -12,17 +12,17 @@ public class PaymentDTO {
     public PaymentDTO() {
     }
 
-    public PaymentDTO(int paymentID, double amount, Date paymentDate) {
+    public PaymentDTO(long paymentID, double amount, Date paymentDate) {
         this.paymentID = paymentID;
         this.amount = amount;
         this.paymentDate = paymentDate;
     }
 
-    public int getPaymentID() {
+    public long getPaymentID() {
         return this.paymentID;
     }
 
-    public void setPaymentID(int paymentID) {
+    public void setPaymentID(long paymentID) {
         this.paymentID = paymentID;
     }
 
@@ -42,7 +42,7 @@ public class PaymentDTO {
         this.paymentDate = paymentDate;
     }
 
-    public PaymentDTO paymentID(int paymentID) {
+    public PaymentDTO paymentID(long paymentID) {
         setPaymentID(paymentID);
         return this;
     }

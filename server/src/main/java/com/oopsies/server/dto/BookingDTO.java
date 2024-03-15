@@ -2,7 +2,7 @@ package com.oopsies.server.dto;
 import java.util.Date;
 
 public class BookingDTO {
-    private int bookingID;
+    private long bookingID;
     private Date bookingDate;
     private Date cancelDate;
 
@@ -11,17 +11,17 @@ public class BookingDTO {
     public BookingDTO() {
     }
 
-    public BookingDTO(int bookingID, Date bookingDate, Date cancelDate) {
+    public BookingDTO(long bookingID, Date bookingDate, Date cancelDate) {
       this.bookingID = bookingID;
       this.bookingDate = bookingDate;
       this.cancelDate = cancelDate;
     }
 
-    public int getBookingID() {
+    public long getBookingID() {
       return this.bookingID;
     }
 
-    public void setBookingID(int bookingID) {
+    public void setBookingID(long bookingID) {
       this.bookingID = bookingID;
     }
 
@@ -41,7 +41,7 @@ public class BookingDTO {
       this.cancelDate = cancelDate;
     }
 
-    public BookingDTO bookingID(int bookingID) {
+    public BookingDTO bookingID(long bookingID) {
       setBookingID(bookingID);
       return this;
     }

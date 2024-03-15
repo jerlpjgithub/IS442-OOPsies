@@ -24,6 +24,12 @@
          return event.map(this::convertToDTO);
      }
 
+     public void updateEventCapacity(EventDTO eventDTO, int count) {
+         Event event = eventRepository.findEventById(eventDTO.getId()).get();
+         event.setCapacity(event.getCapacity() - count);
+         eventRepository.save(event);
+     }
+
      private EventDTO convertToDTO(Event event) {
          EventDTO dto = new EventDTO();
          dto.setId(event.getId());

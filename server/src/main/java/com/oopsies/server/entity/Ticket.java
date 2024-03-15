@@ -7,11 +7,11 @@ import jakarta.persistence.*;
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int ticketId;
+    private long ticketId;
 
     // Map this to event
     @Column(nullable = false)
-    private int bookingId;
+    private long bookingId;
 
     @OneToOne
     @JoinColumn(name = "image_id")
@@ -19,19 +19,19 @@ public class Ticket {
 
     public Ticket() {}
 
-    public int getId() {
+    public long getId() {
         return this.ticketId;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.ticketId = id;
     }
 
-    public int getEventId() {
+    public long getBookingId() {
         return this.bookingId;
     }
 
-    public void setEventId(int bookingId) {
+    public void setBookingId(long bookingId) {
         this.bookingId = bookingId;
     }
 
