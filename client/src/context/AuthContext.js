@@ -21,8 +21,13 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [authUser, setAuthUser] = useState(null);
-  const [isAuthenticated, setAuthenticated] = useState(false);
+  const [authUser, setAuthUser] = useState(() => {
+    const user = localStorage.getItem("authUser");
+    return user ? JSON.parse(user) : null;
+  });
+  const [isAuthenticated, setAuthenticated] = useState(
+    localStorage.getItem("isAuthenticated") === "true"
+  );
 
   useEffect(() => {
     checkAuthStatus();
@@ -38,13 +43,17 @@ export const AuthProvider = ({ children }) => {
       );
       if (response.status === 200 && response.data) {
         setAuthenticated(true);
-        setAuthUser(response.data.email);
+        localStorage.setItem("isAuthenticated", "true");
+        setAuthUser(response.data); // Assume response.data is the user object
+        localStorage.setItem("authUser", JSON.stringify(response.data));
       } else {
         setAuthUser(null);
+        localStorage.removeItem("authUser");
         setAuthenticated(false);
+        localStorage.removeItem("isAuthenticated");
       }
-    } catch {
-      // Attempt to refresh the token without logging errors to console
+    } catch (error) {
+      console.error("Checking auth status failed:", error);
       refreshAccessToken().catch(() => {});
     }
   };
@@ -52,16 +61,18 @@ export const AuthProvider = ({ children }) => {
   const googleLogin = async (credentialResponse) => {
     try {
       const response = await axios.post(process.env.REACT_APP_GOOGLE_REDIRECT_URI, credentialResponse);
-      if (response.data && response.status == 200) {
+      if (response.data && response.status === 200) {
         setAuthUser(response.data);
+        localStorage.setItem("authUser", JSON.stringify(response.data));
         setAuthenticated(true);
+        localStorage.setItem("isAuthenticated", "true");
       }
       return response;
     } catch (error) {
       console.log("login failed", error);
       throw error;
     }
-  }
+  };
 
   const login = async (email, password) => {
     try {
@@ -70,8 +81,10 @@ export const AuthProvider = ({ children }) => {
         { email, password }
       );
       if (response.data && response.status === 200) {
-        setAuthUser(response.data); // Adjust according to your response structure
+        setAuthUser(response.data); // Assume response.data is the user object
+        localStorage.setItem("authUser", JSON.stringify(response.data));
         setAuthenticated(true);
+        localStorage.setItem("isAuthenticated", "true");
       }
       return response;
     } catch (error) {
@@ -88,7 +101,7 @@ export const AuthProvider = ({ children }) => {
       );
       return response;
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Registration failed:", error);
       throw error;
     }
   };
@@ -97,7 +110,9 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post("http://localhost:8080/api/auth/logout");
       setAuthUser(null);
+      localStorage.removeItem("authUser");
       setAuthenticated(false);
+      localStorage.removeItem("isAuthenticated");
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -108,7 +123,9 @@ export const AuthProvider = ({ children }) => {
       await axios.post("http://localhost:8080/api/auth/refreshtoken");
     } catch {
       setAuthenticated(false);
+      localStorage.removeItem("isAuthenticated");
       setAuthUser(null);
+      localStorage.removeItem("authUser");
       // Silently handle the refresh token failure
     }
   };
