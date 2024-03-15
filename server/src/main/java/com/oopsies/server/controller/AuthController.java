@@ -2,7 +2,10 @@ package com.oopsies.server.controller;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +36,15 @@ import com.oopsies.server.entity.User;
 import com.oopsies.server.exception.TokenRefreshException;
 import com.oopsies.server.payload.request.LoginRequest;
 import com.oopsies.server.payload.request.SignupRequest;
-import com.oopsies.server.payload.response.UserInfoResponse;
 import com.oopsies.server.payload.response.MessageResponse;
-
+import com.oopsies.server.payload.response.UserInfoResponse;
 import com.oopsies.server.repository.RoleRepository;
 import com.oopsies.server.repository.UserRepository;
-import com.oopsies.server.util.JwtUtils;
-
 import com.oopsies.server.services.GoogleOAuth2Service;
 import com.oopsies.server.services.RefreshTokenService;
 import com.oopsies.server.services.UserDetailsImpl;
 import com.oopsies.server.services.UserDetailsServiceImpl;
+import com.oopsies.server.util.JwtUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
