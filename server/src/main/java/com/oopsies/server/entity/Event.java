@@ -134,4 +134,19 @@ public class Event {
         this.tickets = tickets;
     }
 
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", eventName='" + eventName + '\'' +
+                ", managerID=" + managerID +
+                ", dateTime=" + dateTime +
+                ", venue='" + venue + '\'' +
+                ", eventCancelled=" + eventCancelled +
+                ", capacity=" + capacity +
+                ", cancellationFee=" + cancellationFee +
+                ", ticketPrice=" + ticketPrice +
+                ", tickets=" + tickets +
+                '}';
+    }
 }

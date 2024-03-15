@@ -71,4 +71,15 @@ public class Booking {
     public void setCancelDate(Date cancelDate) {
         this.cancelDate = cancelDate;
     }
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingID=" + bookingID +
+                ", eventID=" + eventID +
+                ", bookingDate=" + bookingDate +
+                ", cancelDate=" + cancelDate +
+                ", user=" + user +
+                '}';
+    }
 }

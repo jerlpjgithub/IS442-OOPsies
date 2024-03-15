@@ -77,11 +77,12 @@ public class User {
     /**
      * Constructor for email and password params for signup.
      */
-    public User(String email, String password, String firstName, String lastName) {
+    public User(String email, String password, String firstName, String lastName, double accountBalance) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.accountBalance = accountBalance;
     }
     /**
 
@@ -177,11 +178,11 @@ public class User {
     }
 
     public void incrementAccountBalance(double amount) {
-        this.accountBalance += accountBalance;
+        this.accountBalance += amount;
     }
 
     public void decrementAccountBalance(double amount) {
-        this.accountBalance -= accountBalance;
+        this.accountBalance -= amount;
     }
 
     public Provider getProvider() {
@@ -194,4 +195,18 @@ public class User {
 
     // --------------- Getters and Setters (end) ------------------
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", roles=" + roles +
+                ", emailVerified=" + emailVerified +
+                ", accountBalance=" + accountBalance +
+                ", provider=" + provider +
+                '}';
+    }
 }

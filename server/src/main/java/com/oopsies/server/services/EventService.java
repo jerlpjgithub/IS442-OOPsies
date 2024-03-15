@@ -1,20 +1,40 @@
-// package com.oopsies.server.services;
+ package com.oopsies.server.services;
 
-// import com.oopsies.server.entity.Event;
-// import com.oopsies.server.repository.EventRepository;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.stereotype.Service;
+ import com.oopsies.server.dto.BookingDTO;
+ import com.oopsies.server.dto.EventDTO;
+ import com.oopsies.server.entity.Booking;
+ import com.oopsies.server.entity.Event;
+ import com.oopsies.server.repository.EventRepository;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
 
-// @Service
-// public class EventService {
+ import java.util.List;
+ import java.util.Optional;
 
-//     @Autowired
-//     private EventRepository eventRepository;
+ @Service
+ public class EventService {
 
-//     public EventService() { }
+     @Autowired
+     private EventRepository eventRepository;
 
-//     public Event getEventById(int eventId) {
-//         return eventRepository.findEventByEventID(eventId);
-//     }
-// }
+     public EventService() { }
+
+     public Optional<EventDTO> getEventById(long eventId) {
+         Optional<Event> event = eventRepository.findEventById(eventId);
+         return event.map(this::convertToDTO);
+     }
+
+     private EventDTO convertToDTO(Event event) {
+         EventDTO dto = new EventDTO();
+         dto.setId(event.getId());
+         dto.setEventName(event.getEventName());
+         dto.setDateTime(event.getDateTime());
+         dto.setVenue(event.getVenue());
+         dto.setEventCancelled(event.getEventCancelled());
+         dto.setCapacity(event.getCapacity());
+         dto.setCancellationFee(event.getCancellationFee());
+         dto.setTicketPrice(event.getTicketPrice());
+         return dto;
+     }
+ }
 

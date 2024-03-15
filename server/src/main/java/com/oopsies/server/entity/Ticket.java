@@ -43,4 +43,12 @@ public class Ticket {
         this.image = image;
     }
 
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "ticketId=" + ticketId +
+                ", bookingId=" + bookingId +
+                ", image=" + image +
+                '}';
+    }
 }

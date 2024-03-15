@@ -1,81 +1,80 @@
-// package com.oopsies.server.services;
+package com.oopsies.server.services;
 
-// import com.oopsies.server.entity.*;
-// import com.oopsies.server.exception.UserInsufficientFundsException;
-// import com.oopsies.server.repository.PaymentRepository;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.stereotype.Service;
+import com.oopsies.server.dto.EventDTO;
+import com.oopsies.server.dto.PaymentDTO;
+import com.oopsies.server.entity.*;
+import com.oopsies.server.exception.UserInsufficientFundsException;
+import com.oopsies.server.repository.PaymentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
 
-// import java.util.List;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
-// @Service
-// public class PaymentService {
+@Service
+public class PaymentService {
 
-//     @Autowired
-//     private PaymentRepository paymentRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
-//     @Autowired
-//     private TicketService ticketService;
+    @Autowired
+    private TicketService ticketService;
 
-//     @Autowired
-//     private EventService eventService;
+    @Autowired
+    private EventService eventService;
 
-//     public PaymentService() { }
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
-//     public Payment getPaymentById(int paymentId) {
-//         return paymentRepository.findPaymentByPaymentId(paymentId);
-//     }
+    public PaymentService() { }
 
-//     public List<Payment> getPaymentsByUserId(User user) {
-//         return paymentRepository.findPaymentsByUserId(user);
-//     }
-    
-//     // ------- METHODS DONT WORK YET SINCE bookingDetails doesnt have .getEventID() =-------
+    public Payment getPaymentById(int paymentId) {
+        return paymentRepository.findPaymentByPaymentId(paymentId);
+    }
 
-//   //  public void processPayment(User user, Booking bookingDetails) throws UserInsufficientFundsException {
-//   //       double totalPrice = getTotalPrice(bookingDetails);
-//   //       if (!hasUserValidBalance(user, totalPrice)) {
-//   //           throw new UserInsufficientFundsException();
-//   //       }
-//   //       user.decrementAccountBalance(totalPrice);
-//   //   }
+    public List<PaymentDTO> getPaymentsByUserId(Long userId) {
+        List<Payment> payments = paymentRepository.findByUserId(userId);
+        return payments.stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
 
-//   //   public void processRefund(User user, Booking bookingDetails) {
-//   //       double cancellationFee = getCancellationFee(bookingDetails);
-//   //       double totalPrice = getTotalRefundPrice(bookingDetails);
-//   //       user.incrementAccountBalance(totalPrice);
+    public void processPayment(User user, EventDTO event, int numTickets) throws UserInsufficientFundsException {
+        double totalPrice = getTotalPrice(event, numTickets);
+        if (!hasUserValidBalance(user, totalPrice)) {
+            throw new UserInsufficientFundsException();
+        }
+        user.decrementAccountBalance(totalPrice);
+        userDetailsService.saveUser(user);
+        createNewPayment(user, totalPrice);
+    }
 
-//   //   }
+    private double getTotalPrice(EventDTO event, int numTickets) {
+        double ticketPrice = event.getTicketPrice();
+        return ticketPrice * numTickets;
+    }
 
-//     // private double getCancellationFee(Booking bookingDetails) {
-//     //     Event event = eventService.getEventById(bookingDetails.getEventID());
-//     //     return event.getCancellationFee();
-//     // }
+    private boolean hasUserValidBalance(User user, double price) {
+        return user.getAccountBalance() >= price;
+    }
 
-//     // private double getTotalPrice(Booking bookingDetails) {
-//     //     int numTickets = getNumberOfTickets(bookingDetails);
-//     //     Event event = eventService.getEventById(bookingDetails.getEventID());
-//     //     double ticketPrice = event.getTicketPrice();
+   private void createNewPayment(User user, double paymentAmount) {
+       Payment newPayment = new Payment(
+               user,
+               paymentAmount,
+               new Date()
+       );
+       paymentRepository.save(newPayment);
+   }
 
-//     //     return ticketPrice * numTickets;
-//     // }
-
-//     // private double getTotalRefundPrice(Booking bookingDetails) {
-//     //     int numTickets = getNumberOfTickets(bookingDetails);
-//     //     Event event = eventService.getEventById(bookingDetails.getEventID());
-//     //     double ticketPrice = event.getTicketPrice();
-//     //     double cancellationFee = event.getCancellationFee();
-
-//     //     return (ticketPrice - cancellationFee) * numTickets;
-//     // }
-
-//     private int getNumberOfTickets(Booking bookingDetails) {
-//         List<Ticket> tickets = ticketService.getAllTicketsForBooking(bookingDetails.getBookingID());
-//         return tickets.size();
-//     }
-
-//     private boolean hasUserValidBalance(User user, double price) {
-//         return user.getAccountBalance() >= price;
-//     }
-// }
+    private PaymentDTO convertToDTO(Payment payment) {
+        PaymentDTO dto = new PaymentDTO();
+        dto.setAmount(payment.getAmount());
+        dto.setPaymentDate(payment.getPaymentDate());
+        dto.setPaymentID(payment.getPaymentId());
+        return dto;
+    }
+}
 

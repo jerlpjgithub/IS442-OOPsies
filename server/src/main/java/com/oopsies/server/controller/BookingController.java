@@ -1,5 +1,6 @@
 package com.oopsies.server.controller;
 
+import java.sql.SQLException;
 import java.util.*;
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.entity.Booking;
@@ -7,6 +8,7 @@ import com.oopsies.server.payload.response.MessageResponse;
 // import com.oopsies.server.entity.Payment;
 import com.oopsies.server.services.BookingService;
 // import com.oopsies.server.services.PaymentService;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +33,8 @@ public class BookingController {
           Booking _booking = bookingService.createBooking(user_id, booking, numTickets);
           return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Successfully created booking"));
         }
-        catch (IllegalArgumentException exc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(exc.getMessage()));
-        }
         catch (Exception exc) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("404 NOT FOUND"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(exc.getMessage()));
         }
     }
 
@@ -50,27 +49,4 @@ public class BookingController {
       // }
       
     }
-
-//     @Autowired
-//     private PaymentService paymentService;
-
-//     @PostMapping("/bookings")
-//     public Booking CreateBookingInstance(){
-//         Booking booking = new Booking();
-//     }
-
-//     @RequestMapping(value = "/bookings/payment", method = RequestMethod.POST)
-//     // assuming that user ID is passed via request headers
-//     public ResponseEntity<?> createPayment(@RequestParam("userId") String userId) {
-//         // TODO get user object
-//         // TODO get booking object
-//         // TODO process payment
-// //        paymentService.processPayment();
-//     }
-
-//     @PostMapping("/send-email")
-//     public void SendEmail(){
-//         Emailsender email = new Emailsender();
-//     }
-
 }
