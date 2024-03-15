@@ -29,9 +29,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem("isAuthenticated") === "true"
   );
 
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  /* TODO: Temporarily commenting this out until we can check the status based on role */
+  // useEffect(() => {
+  //   checkAuthStatus();
+  // }, []);
 
   const checkAuthStatus = async () => {
     try {

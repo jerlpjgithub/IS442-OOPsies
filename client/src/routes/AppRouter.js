@@ -1,31 +1,27 @@
 import { Routes, Route } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
-
-// public pages
-import LoginPage from '../pages/LoginPage';
-import RegisterPage from '../pages/RegisterPage';
-
-// private pages
-import HomePage from '../pages/HomePage';
-
-// admin pages
-
-// Routes
+import { CUSTOMER_ROUTES, EVENT_MANAGER_ROUTES, TICKETING_OFFICER_ROUTES } from './RouterMapper';
 import { PrivateRoute } from "./PrivateRoute";
-import { PublicRoute } from './PublicRoute';
 
+/* To add new routes, it should be done through RouterMapper.js instead */
 export const AppRouter = () => {
-    return (
-        <Routes>
-            // Public Routes
-            <Route element={<PublicRoute strict={true} />}>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-            </Route>
-            // Private Routes
-            <Route element={<PrivateRoute />}>
-                <Route path="/home" element={<HomePage />} />
-            </Route>
-        </Routes>
-    );
-}
+  const renderRoutes = (routes, privateRouting, prefix = '') => {
+    return routes
+      .filter(route => route.isPrivate === privateRouting)
+      .map((route, index) => (
+        <Route key={index} path={`${prefix}${route.path}`} element={route.element} />
+      ));
+  };
+
+  return (
+    <Routes>
+      {renderRoutes(CUSTOMER_ROUTES, false)}
+      {renderRoutes(EVENT_MANAGER_ROUTES, false, '/event-manager')}
+      {renderRoutes(TICKETING_OFFICER_ROUTES, false, '/ticketing-officer')}
+      <Route element={<PrivateRoute />}>
+        {renderRoutes(CUSTOMER_ROUTES, true)}
+        {renderRoutes(EVENT_MANAGER_ROUTES, true, '/event-manager')}
+        {renderRoutes(TICKETING_OFFICER_ROUTES, true, '/ticketing-officer')}
+      </Route>
+    </Routes>
+  );
+};
