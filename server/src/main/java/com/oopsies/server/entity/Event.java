@@ -11,7 +11,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+//    @Id
     private String eventName;
     private long managerID;
 //    @Id
