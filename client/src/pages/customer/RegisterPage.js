@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth } from "../context/AuthContext.js";
+import { useAuth } from "../../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -13,7 +13,7 @@ import {
   notification,
 } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
-import login_background from "../assets/login-background.jpg";
+import login_background from "../../assets/login-background.jpg";
 
 const RegisterPage = () => {
   const { register } = useAuth();
