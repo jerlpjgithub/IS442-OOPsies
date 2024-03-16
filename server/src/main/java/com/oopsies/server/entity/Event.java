@@ -11,12 +11,14 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-//    @Id
+    @Column(nullable = false)
     private String eventName;
-    private long managerID;
-//    @Id
+    @ManyToOne
+    @JoinColumn(name="manager_id")
+    private User manager;
+    @Column(nullable = false)
     private Date dateTime;
-//    @Id
+    @Column(nullable = false)
     private String venue;
     @Column(columnDefinition = "boolean default false")
     private boolean eventCancelled;
@@ -29,9 +31,9 @@ public class Event {
 
     public Event() { }
 
-    public Event(String eventName, long managerID, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
+    public Event(String eventName, User manager, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
         this.eventName = eventName;
-        this.managerID = managerID;
+        this.manager = manager;
         this.dateTime = dateTime;
         this.venue = venue;
         this.eventCancelled = eventCancelled;
@@ -40,8 +42,9 @@ public class Event {
         this.ticketPrice = ticketPrice;
     }
 
-    public void updateDetails(String eventName, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
+    public void updateDetails(String eventName, User manager, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
         this.eventName = eventName;
+        this.manager = manager;
         this.dateTime = dateTime;
         this.venue = venue;
         this.eventCancelled = eventCancelled;
@@ -68,12 +71,12 @@ public class Event {
         this.eventName = eventName;
     }
 
-    public void setManagerID(long managerID){
-        this.managerID = managerID;
+    public void setManagerID(User manager){
+        this.manager = manager;
     }
 
-    public long getManagerID(){
-        return this.managerID;
+    public User getManagerID(){
+        return this.manager;
     }
     
     public Date getDateTime() {
@@ -133,7 +136,7 @@ public class Event {
         return "Event{" +
                 "id=" + id +
                 ", eventName='" + eventName + '\'' +
-                ", managerID=" + managerID +
+                ", manager=" + manager +
                 ", dateTime=" + dateTime +
                 ", venue='" + venue + '\'' +
                 ", eventCancelled=" + eventCancelled +

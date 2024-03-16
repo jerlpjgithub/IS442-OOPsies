@@ -8,14 +8,14 @@ public class BookingDTO {
     private Date bookingDate;
     private Date cancelDate;
     private int numTickets;
-    private Event event;
+    private EventDTO event;
 
 
     // Constructor, getters, and setters
     public BookingDTO() {
     }
 
-    public BookingDTO(long bookingID, Date bookingDate, Date cancelDate, int numTickets, Event event) {
+    public BookingDTO(long bookingID, Date bookingDate, Date cancelDate, int numTickets, EventDTO event) {
       this.bookingID = bookingID;
       this.bookingDate = bookingDate;
       this.cancelDate = cancelDate;
@@ -74,11 +74,11 @@ public class BookingDTO {
         this.numTickets = numTickets;
     }
 
-    public Event getEvent() {
+    public EventDTO getEvent() {
         return event;
     }
 
-    public void setEvent(Event event) {
+    public void setEvent(EventDTO event) {
         this.event = event;
     }
 }

@@ -1,15 +1,14 @@
  package com.oopsies.server.services;
 
- import com.oopsies.server.dto.BookingDTO;
  import com.oopsies.server.dto.EventDTO;
- import com.oopsies.server.entity.Booking;
- import com.oopsies.server.entity.Event;
+ import com.oopsies.server.entity.*;
+ import com.oopsies.server.payload.request.EventRequest;
  import com.oopsies.server.repository.EventRepository;
+ import com.oopsies.server.repository.UserRepository;
  import com.oopsies.server.util.DateUtil;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.stereotype.Service;
 
- import java.util.Date;
  import java.util.List;
  import java.util.Optional;
 
@@ -18,6 +17,12 @@
 
      @Autowired
      private EventRepository eventRepository;
+
+     @Autowired
+     private UserRepository userRepository;
+
+     @Autowired
+     private UserDetailsServiceImpl userDetailsService;
 
      public EventService() { }
 
@@ -33,18 +38,48 @@
                  .toList();
      }
 
-     public EventDTO createEvent(Event event) {
+     public EventDTO createEvent(EventRequest eventRequest) {
+         long managerId = eventRequest.getUserId();
+         Optional<User> someUser = userRepository.findById(managerId);
+         if (someUser.isEmpty()) {
+             throw new IllegalArgumentException("ID " + managerId + " cannot be found!");
+         }
+
+         User user = someUser.get();
+         boolean isManager = userDetailsService.isManager(user);
+
+         if (!isManager) {
+             throw new IllegalArgumentException("Unauthorised content");
+         }
+
+         Event event = eventRequest.getEvent();
          validateInputs(event);
          // eventName, dateTime and Venue unique
          if (isEventExists(event)) {
-             throw new IllegalArgumentException("Event already exists!");
+             throw new IllegalArgumentException("There's already an event happening in that location at the same time!");
          }
 
+         event.setManagerID(user);
          eventRepository.save(event);
          return convertToDTO(event);
      }
 
-     public EventDTO updateEvent(Event event, long eventId) {
+     public EventDTO updateEvent(EventRequest eventRequest, long eventId) {
+         long managerId = eventRequest.getUserId();
+
+         Optional<User> someUser = userRepository.findById(managerId);
+         if (someUser.isEmpty()) {
+             throw new IllegalArgumentException("ID " + managerId + " cannot be found!");
+         }
+
+         User user = someUser.get();
+         boolean isManager = userDetailsService.isManager(user);
+
+         if (!isManager) {
+             throw new IllegalArgumentException("Unauthorised content");
+         }
+
+         Event event = eventRequest.getEvent();
          Optional<Event> someExistingEvent = eventRepository.findEventById(eventId);
          if (someExistingEvent.isEmpty()) {
              throw new IllegalArgumentException("Event ID " + eventId + " doesn't exist!");
@@ -84,22 +119,26 @@
          }
      }
 
-     public Optional<Event> getEvent(Event event) {
-         return eventRepository.findEventByEventNameAndDateTimeAndVenue(event.getEventName(), event.getDateTime(), event.getVenue());
+     public Optional<Event> checkUniqueEvent(Event event) {
+         return eventRepository.findEventByDateTimeAndVenue(event.getDateTime(), event.getVenue());
      }
 
      private boolean isEventExists(Event event) {
-         return getEvent(event).isPresent();
+         return checkUniqueEvent(event).isPresent();
      }
 
      public void updateEventCapacity(EventDTO eventDTO, int count) {
-         Event event = eventRepository.findEventById(eventDTO.getId()).get();
+         Optional<Event> someEvent = eventRepository.findEventById(eventDTO.getId());
+         assert someEvent.isPresent();
+         Event event = someEvent.get();
          event.setCapacity(event.getCapacity() - count);
          eventRepository.save(event);
      }
 
      public Event getEventFromDTO(EventDTO eventDTO) {
-         return eventRepository.findEventById(eventDTO.getId()).get();
+         Optional<Event> someEvent = eventRepository.findEventById(eventDTO.getId());
+         assert someEvent.isPresent();
+         return someEvent.get();
      }
 
      private EventDTO convertToDTO(Event event) {

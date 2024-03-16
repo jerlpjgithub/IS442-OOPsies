@@ -1,8 +1,11 @@
 package com.oopsies.server.controller;
 
+import java.sql.SQLDataException;
+import java.sql.SQLException;
 import java.util.*;
 import com.oopsies.server.dto.EventDTO;
 import com.oopsies.server.entity.Event;
+import com.oopsies.server.payload.request.EventRequest;
 import com.oopsies.server.payload.response.MessageResponse;
 import com.oopsies.server.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,7 @@ public class EventController {
     }
 
     @PostMapping(path = "/create")
-    public ResponseEntity<?> createEvent(@RequestBody Event eventRequest){
+    public ResponseEntity<?> createEvent(@RequestBody EventRequest eventRequest){
         try {
             EventDTO eventDTO = eventService.createEvent(eventRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
@@ -43,7 +46,7 @@ public class EventController {
     }
 
     @PutMapping(path = "/update/{event_id}")
-    public ResponseEntity<?> createEvent(@PathVariable("event_id") long event_id, @RequestBody Event eventRequest){
+    public ResponseEntity<?> createEvent(@PathVariable("event_id") long event_id, @RequestBody EventRequest eventRequest){
         try {
             EventDTO eventDTO = eventService.updateEvent(eventRequest, event_id);
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(

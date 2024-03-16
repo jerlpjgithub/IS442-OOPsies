@@ -2,9 +2,7 @@ package com.oopsies.server.services;
 
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.EventDTO;
-import com.oopsies.server.entity.Booking;
-import com.oopsies.server.entity.User;
-import com.oopsies.server.entity.Event;
+import com.oopsies.server.entity.*;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.repository.BookingRepository;
 import com.oopsies.server.repository.UserRepository;
@@ -42,8 +40,8 @@ public class BookingService {
 
   public BookingDTO createBooking(long user_id, long eventId, int numTickets) throws UserInsufficientFundsException {
     // totalGuests are the booker + their friends
-    Optional<User> user = userDetailsService.getUserById(user_id);
-    if (user.isEmpty()) {
+    Optional<User> someUser = userDetailsService.getUserById(user_id);
+    if (someUser.isEmpty()) {
       throw new IllegalArgumentException("User ID " + user_id + " cannot be found!");
     }
 
@@ -53,27 +51,30 @@ public class BookingService {
       throw new IllegalArgumentException("Event not found");
     }
 
+    User user = someUser.get();
+
+    boolean isOfficer = userDetailsService.isOfficer(user);
+
     EventDTO event = someEvent.get();
 
-    DateUtil dateUtil = new DateUtil();
-    Date eventDate = event.getDateTime();
-    if (dateUtil.isLessThanTwentyFourHours(eventDate) || dateUtil.isMoreThanSixMonths(eventDate)) {
-      throw new IllegalArgumentException("Customers can book tickets up to 6 months in advance and no later than 24 hours before the event start time");
+    if (!isOfficer) {
+      DateUtil dateUtil = new DateUtil();
+      Date eventDate = event.getDateTime();
+      if (dateUtil.isLessThanTwentyFourHours(eventDate) || dateUtil.isMoreThanSixMonths(eventDate)) {
+        throw new IllegalArgumentException("Customers can book tickets up to 6 months in advance and no later than 24 hours before the event start time");
+      }
+      if (numTickets > 5) {
+        throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
+      }
     }
-
-
-    if (numTickets > 5) {
-      throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
-    }
-
     if (event.getCapacity() < numTickets) {
       throw new IllegalArgumentException("Event capacity is less than number of guests");
     }
 
-    paymentService.processPayment(user.get(), event, numTickets);
+    paymentService.processPayment(user, event, numTickets);
     // Reduce event capacity by numGuests + the og booker
     Booking booking = new Booking();
-    booking.setUser(user.get());
+    booking.setUser(user);
     booking.setBookingDate(new Date());
     booking.setEventID(eventService.getEventFromDTO(event));
     booking.setCancelDate(null);
@@ -85,18 +86,6 @@ public class BookingService {
     }
     return convertToDTO(booking);
   }
-
-  // public List<Booking> findBookingsByUserId(long userId) {
-  // return bookingRepository.findByUserId(userId);
-  // }
-
-  // public Booking getBookingByBookingId(int bookingId) {
-  // return bookingRepository.findBookingByBookingID(bookingId);
-  // }
-
-  // public List<Booking> getBookingsByEventId(int eventId) {
-  // return bookingRepository.findBookingsByEventID(eventId);
-  // }
 
   public List<BookingDTO> findBookingsByUserId(long userId) {
     List<Booking> bookings = bookingRepository.findByUserId(userId);
@@ -114,7 +103,9 @@ public class BookingService {
     // get numTickets
     int numTickets = ticketService.getAllTicketsForBooking(booking).size();
     dto.setNumTickets(numTickets);
-    dto.setEvent(booking.getEventID());
+    Optional<EventDTO> event = eventService.getEventById(booking.getEventID().getId());
+    assert event.isPresent();
+    dto.setEvent(event.get());
 
     return dto;
   }

@@ -1,5 +1,7 @@
 package com.oopsies.server.services;
 
+import com.oopsies.server.entity.EnumRole;
+import com.oopsies.server.entity.Role;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,5 +35,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public void saveUser(User user) {
         userRepository.save(user);
+    }
+
+    public boolean isManager(User user) {
+        for (Role r : user.getRoles()) {
+            if (r.getName().equals(EnumRole.ROLE_MANAGER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isOfficer(User user) {
+        for (Role r : user.getRoles()) {
+            if (r.getName().equals(EnumRole.ROLE_OFFICER)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
