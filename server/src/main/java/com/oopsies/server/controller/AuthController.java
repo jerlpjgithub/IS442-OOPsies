@@ -86,9 +86,9 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                .body(new UserInfoResponse(userDetails.getId(),
-                        userDetails.getEmail(),
-                        roles));
+                .body(new MessageResponse<>(
+                        200, "User signed in!", new UserInfoResponse(userDetails.getId(), userDetails.getEmail(), roles)
+                ));
     }
 
     @GetMapping("/status")
@@ -104,11 +104,14 @@ public class AuthController {
                     .map(item -> item.getAuthority())
                     .collect(Collectors.toList());
 
-            return ResponseEntity.ok(new UserInfoResponse(userDetails.getId(),
-                    userDetails.getEmail(), roles));
+            return ResponseEntity.ok(new MessageResponse<>(
+                    200, "successful", new UserInfoResponse(userDetails.getId(), userDetails.getEmail(), roles)
+            ));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MessageResponse("User is not authenticated"));
+                    .body(new MessageResponse<>(
+                            403, "User is not authenticated", null
+                    ));
         }
     }
 
@@ -117,7 +120,9 @@ public class AuthController {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already taken!"));
+                    .body(new MessageResponse<>(
+                            400, "Error: Email is already taken!", null
+                    ));
         }
 
         // Create user account
@@ -163,13 +168,15 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new MessageResponse<>(
+                200, "User registered successfully!", null
+        ));
     }
 
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principle.toString() != "anonymousUser") {
+        if (principle.toString().equals("anonymousUser")) {
             Long userId = ((UserDetailsImpl) principle).getId();
             refreshTokenService.deleteByUserId(userId);
         }
@@ -180,14 +187,16 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                .body(new MessageResponse("You've been signed out!"));
+                .body(new MessageResponse<>(
+                        200, "You've been signed out!", null
+                ));
     }
 
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
 
-        if ((refreshToken != null) && (refreshToken.length() > 0)) {
+        if ((refreshToken != null) && (!refreshToken.isEmpty())) {
             return refreshTokenService.findByToken(refreshToken)
                     .map(refreshTokenService::verifyExpiration)
                     .map(RefreshToken::getUser)
@@ -196,11 +205,15 @@ public class AuthController {
 
                         return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                                .body(new MessageResponse("Token is successfully refreshed!"));
+                                .body(new MessageResponse<>(
+                                        200, "Token is successfully refreshed!", null
+                                ));
                     })
                     .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!"));
         }
 
-        return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is empty!"));
+        return ResponseEntity.badRequest().body(new MessageResponse<>(
+                200, "Refresh Token is empty!", null
+        ));
     }
 }

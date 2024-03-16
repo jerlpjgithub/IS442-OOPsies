@@ -1,20 +1,26 @@
 package com.oopsies.server.dto;
+import com.oopsies.server.entity.Event;
+
 import java.util.Date;
 
 public class BookingDTO {
-    private long bookingID;
+    private Long bookingID;
     private Date bookingDate;
     private Date cancelDate;
+    private int numTickets;
+    private Event event;
+
 
     // Constructor, getters, and setters
-
     public BookingDTO() {
     }
 
-    public BookingDTO(long bookingID, Date bookingDate, Date cancelDate) {
+    public BookingDTO(long bookingID, Date bookingDate, Date cancelDate, int numTickets, Event event) {
       this.bookingID = bookingID;
       this.bookingDate = bookingDate;
       this.cancelDate = cancelDate;
+      this.numTickets = numTickets;
+      this.event = event;
     }
 
     public long getBookingID() {
@@ -54,5 +60,25 @@ public class BookingDTO {
     public BookingDTO cancelDate(Date cancelDate) {
       setCancelDate(cancelDate);
       return this;
+    }
+
+    public void setBookingID(Long bookingID) {
+        this.bookingID = bookingID;
+    }
+
+    public int getNumTickets() {
+        return numTickets;
+    }
+
+    public void setNumTickets(int numTickets) {
+        this.numTickets = numTickets;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }

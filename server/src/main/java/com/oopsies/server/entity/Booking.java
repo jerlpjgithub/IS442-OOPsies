@@ -10,16 +10,20 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long bookingID;
+    private Long id;
 
-    @Column(name = "eventID")
-    private Long eventID;
+    @ManyToOne
+//    @JoinColumns({
+//            @JoinColumn(name = "events_eventName"),
+//            @JoinColumn(name = "events_dateTime"),
+//            @JoinColumn(name = "events_venue")
+//    })
+    @JoinColumn(name="events_id")
+    private Event eventID;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "bookingDate")
+    @Column(name = "bookingDate", nullable = false)
     private Date bookingDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "cancelDate")
     private Date cancelDate;
 
@@ -33,11 +37,11 @@ public class Booking {
 
     // Getters and Setters
     public long getBookingID() {
-        return bookingID;
+        return id;
     }
 
-    public void setBookingID(long bookingID) {
-        this.bookingID = bookingID;
+    public void setBookingID(long id) {
+        this.id = id;
     }
 
     public User getUser(){
@@ -48,13 +52,13 @@ public class Booking {
         this.user = user;
     }
 
-    public Long getEventID() {
+    public Event getEventID() {
         return eventID;
     }
 
-    // public void setEventID(int eventID) {
-    //     this.eventID = eventID;
-    // }
+     public void setEventID(Event eventID) {
+         this.eventID = eventID;
+     }
 
     public Date getBookingDate() {
         return bookingDate;
@@ -75,7 +79,7 @@ public class Booking {
     @Override
     public String toString() {
         return "Booking{" +
-                "bookingID=" + bookingID +
+                "id=" + id +
                 ", eventID=" + eventID +
                 ", bookingDate=" + bookingDate +
                 ", cancelDate=" + cancelDate +

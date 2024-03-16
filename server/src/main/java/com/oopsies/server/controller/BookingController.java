@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.*;
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.entity.Booking;
+import com.oopsies.server.exception.UserInsufficientFundsException;
+import com.oopsies.server.payload.request.BookingRequest;
 import com.oopsies.server.payload.response.MessageResponse;
 // import com.oopsies.server.entity.Payment;
 import com.oopsies.server.services.BookingService;
@@ -26,15 +28,24 @@ public class BookingController {
     }
 
     @PostMapping(path = "/{user_id}/create-booking")
-    public ResponseEntity<?> createBooking(@PathVariable(value="user_id") long user_id,
-      @RequestBody Booking booking, @RequestParam int numTickets
-      ){
+    public ResponseEntity<?> createBooking(@PathVariable(value="user_id") long user_id, @RequestBody BookingRequest bookingRequest){
         try {
-          Booking _booking = bookingService.createBooking(user_id, booking, numTickets);
-          return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Successfully created booking"));
+            long eventId = bookingRequest.getEventId();
+            int numTickets = bookingRequest.getNumTickets();
+            BookingDTO bookingDTO = bookingService.createBooking(user_id, eventId, numTickets);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
+                    201, "Booking was created successfully!", bookingDTO
+            ));
+        }
+        catch (IllegalArgumentException | UserInsufficientFundsException exc) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse<>(
+                    400, exc.getMessage(), null
+            ));
         }
         catch (Exception exc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(exc.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
+                    500, exc.getMessage(), null
+            ));
         }
     }
 
@@ -42,7 +53,9 @@ public class BookingController {
     public ResponseEntity<?> getBookingsByUserId(@PathVariable("user_id") long user_id){
       // try{
         List<BookingDTO> _bookings = bookingService.findBookingsByUserId(user_id);
-        return ResponseEntity.status(HttpStatus.OK).body(_bookings);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<List<BookingDTO>>(
+                200, "successful", _bookings
+        ));
       // }
       // catch(Exception exc){
       //   return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("404 NOT FOUND"));

@@ -6,6 +6,7 @@ import java.util.List;
 
 @Entity
 @Table (name = "events")
+//@IdClass(EventId.class)
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -13,20 +14,22 @@ public class Event {
 
     private String eventName;
     private long managerID;
+//    @Id
     private Date dateTime;
+//    @Id
     private String venue;
+    @Column(columnDefinition = "boolean default false")
     private boolean eventCancelled;
+    @Column(nullable = false)
     private int capacity;
+    @Column(columnDefinition = "double default 0.0")
     private double cancellationFee;
+    @Column(nullable = false)
     private double ticketPrice;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Ticket> tickets;
 
     public Event() { }
 
-    public Event(Long id, String eventName, long managerID, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice, List<Ticket> tickets) {
-        this.id = id;
+    public Event(String eventName, long managerID, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
         this.eventName = eventName;
         this.managerID = managerID;
         this.dateTime = dateTime;
@@ -35,7 +38,6 @@ public class Event {
         this.capacity = capacity;
         this.cancellationFee = cancellationFee;
         this.ticketPrice = ticketPrice;
-        this.tickets = tickets;
     }
 
     public void updateDetails(String eventName, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
@@ -126,14 +128,6 @@ public class Event {
         this.ticketPrice = ticketPrice;
     }
 
-    public List<Ticket> getTickets() {
-        return this.tickets;
-    }
-
-    public void setTicketOptions(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
     @Override
     public String toString() {
         return "Event{" +
@@ -146,7 +140,6 @@ public class Event {
                 ", capacity=" + capacity +
                 ", cancellationFee=" + cancellationFee +
                 ", ticketPrice=" + ticketPrice +
-                ", tickets=" + tickets +
                 '}';
     }
 }

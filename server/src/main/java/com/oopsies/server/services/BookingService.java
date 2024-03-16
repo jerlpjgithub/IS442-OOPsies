@@ -12,6 +12,7 @@ import com.oopsies.server.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,39 +39,42 @@ public class BookingService {
     this.bookingRepository = bookingRepository;
   }
 
-  public Booking createBooking(long user_id, Booking booking, int numTickets) throws UserInsufficientFundsException {
-    if (numTickets > 5) {
-      throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
-    }
+  public BookingDTO createBooking(long user_id, long eventId, int numTickets) throws UserInsufficientFundsException {
     // totalGuests are the booker + their friends
     Optional<User> user = userDetailsService.getUserById(user_id);
     if (user.isEmpty()) {
       throw new IllegalArgumentException("User ID " + user_id + " cannot be found!");
     }
 
-    Long eventId = booking.getEventID();
-    if (eventId == null) {
-      throw new IllegalArgumentException("Event ID cannot be null");
-    }
     // Find the event
     Optional<EventDTO> someEvent = eventService.getEventById(eventId);
     if (someEvent.isEmpty()) {
-        throw new IllegalArgumentException("Event not found");
+      throw new IllegalArgumentException("Event not found");
     }
+
+    if (numTickets > 5) {
+      throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
+    }
+
     EventDTO event = someEvent.get();
     if (event.getCapacity() < numTickets) {
       throw new IllegalArgumentException("Event capacity is less than number of guests");
     }
 
-    long paymentId = paymentService.processPayment(user.get(), event, numTickets);
+    paymentService.processPayment(user.get(), event, numTickets);
     // Reduce event capacity by numGuests + the og booker
+    Booking booking = new Booking();
     booking.setUser(user.get());
+    booking.setBookingDate(new Date());
+    booking.setEventID(eventService.getEventFromDTO(event));
+    booking.setCancelDate(null);
     Booking newBooking = bookingRepository.save(booking);
     eventService.updateEventCapacity(event, numTickets);
+
     for (int i = 0; i < numTickets; i++) {
-      ticketService.createNewTicket(newBooking.getBookingID());
+      ticketService.createNewTicket(newBooking);
     }
-    return newBooking;
+    return convertToDTO(booking);
   }
 
   // public List<Booking> findBookingsByUserId(long userId) {
@@ -97,6 +101,12 @@ public class BookingService {
     dto.setBookingID(booking.getBookingID());
     dto.setBookingDate(booking.getBookingDate());
     dto.setCancelDate(booking.getCancelDate());
+
+    // get numTickets
+    int numTickets = ticketService.getAllTicketsForBooking(booking).size();
+    dto.setNumTickets(numTickets);
+    dto.setEvent(booking.getEventID());
+
     return dto;
   }
 }

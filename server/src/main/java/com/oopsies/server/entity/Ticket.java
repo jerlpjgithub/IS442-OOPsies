@@ -10,8 +10,9 @@ public class Ticket {
     private long ticketId;
 
     // Map this to event
-    @Column(nullable = false)
-    private long bookingId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "booking_id")
+    private Booking booking;
 
     @OneToOne
     @JoinColumn(name = "image_id")
@@ -27,12 +28,12 @@ public class Ticket {
         this.ticketId = id;
     }
 
-    public long getBookingId() {
-        return this.bookingId;
+    public Booking getBooking() {
+        return this.booking;
     }
 
-    public void setBookingId(long bookingId) {
-        this.bookingId = bookingId;
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
     public Image getImage() {
@@ -47,7 +48,7 @@ public class Ticket {
     public String toString() {
         return "Ticket{" +
                 "ticketId=" + ticketId +
-                ", bookingId=" + bookingId +
+                ", bookingId=" + booking +
                 ", image=" + image +
                 '}';
     }

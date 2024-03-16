@@ -1,20 +1,22 @@
 package com.oopsies.server.dto;
 
+import com.oopsies.server.entity.Booking;
+
 public class TicketDTO {
-    long bookingId;
+    Booking booking;
 
     public TicketDTO() { }
 
-    public long getBookingId() {
-        return bookingId;
+    public Booking getBookingId() {
+        return booking;
     }
 
-    public void setBookingId(long bookingId) {
-        this.bookingId = bookingId;
+    public void setBookingId(Booking booking) {
+        this.booking = booking;
     }
 
-    public TicketDTO bookingId(long bookingId) {
-        setBookingId(bookingId);
+    public TicketDTO booking(Booking booking) {
+        setBookingId(booking);
         return this;
     }
 }

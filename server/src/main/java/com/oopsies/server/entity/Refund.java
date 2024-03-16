@@ -13,7 +13,7 @@ public class Refund {
   private Long refundId;
 
   @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "booking_id", referencedColumnName = "bookingID")
+  @JoinColumn(name = "booking_id")
   private Booking booking;
 
   // Have to think how to map with payment. 
