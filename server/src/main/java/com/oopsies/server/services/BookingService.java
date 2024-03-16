@@ -9,6 +9,7 @@ import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.repository.BookingRepository;
 import com.oopsies.server.repository.UserRepository;
 import com.oopsies.server.repository.EventRepository;
+import com.oopsies.server.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,11 +53,19 @@ public class BookingService {
       throw new IllegalArgumentException("Event not found");
     }
 
+    EventDTO event = someEvent.get();
+
+    DateUtil dateUtil = new DateUtil();
+    Date eventDate = event.getDateTime();
+    if (dateUtil.isLessThanTwentyFourHours(eventDate) || dateUtil.isMoreThanSixMonths(eventDate)) {
+      throw new IllegalArgumentException("Customers can book tickets up to 6 months in advance and no later than 24 hours before the event start time");
+    }
+
+
     if (numTickets > 5) {
       throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
     }
 
-    EventDTO event = someEvent.get();
     if (event.getCapacity() < numTickets) {
       throw new IllegalArgumentException("Event capacity is less than number of guests");
     }
