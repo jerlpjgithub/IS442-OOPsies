@@ -1,27 +1,52 @@
-import { Routes, Route } from 'react-router-dom';
-import { CUSTOMER_ROUTES, EVENT_MANAGER_ROUTES, TICKETING_OFFICER_ROUTES } from './RouterMapper';
+import { Routes, Route } from "react-router-dom";
+import {
+  PUBLIC_ROUTES,
+  PRIVATE_ROUTES,
+  EVENT_MANAGER_ROUTES,
+  TICKETING_OFFICER_ROUTES,
+  ERROR_ROUTES
+} from "./RouterMapper";
+import { PublicRoute } from "./PublicRoute";
 import { PrivateRoute } from "./PrivateRoute";
+import { ManagerRoute } from "./ManagerRoute";
+import { OfficerRoute } from "./OfficerRoute";
 
 /* To add new routes, it should be done through RouterMapper.js instead */
 export const AppRouter = () => {
-  const renderRoutes = (routes, privateRouting, prefix = '') => {
-    return routes
-      .filter(route => route.isPrivate === privateRouting)
-      .map((route, index) => (
-        <Route key={index} path={`${prefix}${route.path}`} element={route.element} />
-      ));
+  const renderRoutes = (routes, prefix = "") => {
+    return routes.map((route, index) => (
+      <Route
+        key={index}
+        path={`${prefix}${route.path}`}
+        element={route.element}
+      />
+    ));
   };
 
   return (
     <Routes>
-      {renderRoutes(CUSTOMER_ROUTES, false)}
-      {renderRoutes(EVENT_MANAGER_ROUTES, false, '/event-manager')}
-      {renderRoutes(TICKETING_OFFICER_ROUTES, false, '/ticketing-officer')}
-      <Route element={<PrivateRoute />}>
-        {renderRoutes(CUSTOMER_ROUTES, true)}
-        {renderRoutes(EVENT_MANAGER_ROUTES, true, '/event-manager')}
-        {renderRoutes(TICKETING_OFFICER_ROUTES, true, '/ticketing-officer')}
+      {/* Public Routes Processed here */}
+      <Route element={<PublicRoute strict={true} />}>
+        {renderRoutes(PUBLIC_ROUTES)};
       </Route>
+
+      {/* Private Routes Processed here (Authentication required) */}
+      <Route path="/" element={<PrivateRoute />}>
+        {renderRoutes(PRIVATE_ROUTES)};
+      </Route>
+
+      {/* Manager Routes processed here (Authentication & role required) */}
+      <Route path="/" element={<ManagerRoute />}>
+        {renderRoutes(EVENT_MANAGER_ROUTES, "/event-manager")};
+      </Route>
+
+      {/* Ticketing Officer processed here (Authentication & role required) */}
+      <Route path="/" element={<OfficerRoute />}>
+        {renderRoutes(TICKETING_OFFICER_ROUTES, "/ticketing-officer")}
+      </Route>
+
+      {/* Routes that are not found */}
+      {renderRoutes(ERROR_ROUTES)}
     </Routes>
   );
 };
