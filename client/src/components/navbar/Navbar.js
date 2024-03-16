@@ -6,24 +6,25 @@ import { MenuOutlined } from '@ant-design/icons';
 import Logo from './components/Logo';
 import './Navbar.css';
 import Profile from './components/Profile'; // Import your Profile component
+import { Link } from 'react-router-dom';
 const { useBreakpoint } = Grid;
 const { Header } = Layout;
 
 const getItems = (role) => {
     // Default role is customer?
     const commonItems = [
-        { key: '1', label: 'Upcoming Events' },
-        { key: '2', label: 'Your Tickets' },
+        { key: '1', label: 'Upcoming Events', route: "/home" },
+        { key: '2', label: 'Your Tickets', route: '/tickets' },
     ];
 
     if (role === 'ROLE_OFFICER') {
         return [
-            { key: '1', label: 'Your Events' },
+            { key: '1', label: 'Your Events', route: '/home' },
         ];
     } else if (role === 'ROLE_MANAGER') {
         return [
-            { key: '1', label: 'Your Events' },
-            { key: '2', label: 'Add Event' },
+            { key: '1', label: 'Your Events', route: "/home" },
+            { key: '2', label: 'Add Event', route: "/add" },
         ];
     }
 
@@ -44,11 +45,16 @@ const App = () => {
             mode="vertical"
             defaultSelectedKeys={['1']}
         >
-            {items.map(item => (
-                <Menu.Item key={item.key}>
-                    {item.label}
-                </Menu.Item>
-            ))}
+            {items.map(item => {
+                console.log(item.route);
+                return (
+                    <Menu.Item key={item.key}>
+                        <Link to={item.route}>
+                            {item.label}
+                        </Link>
+                    </Menu.Item>
+                );
+            })}
         </Menu>
     );
 

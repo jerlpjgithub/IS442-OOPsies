@@ -7,6 +7,7 @@ import RegisterPage from '../pages/RegisterPage';
 
 // private pages
 import HomePage from '../pages/HomePage';
+import EventPage from '../pages/EventPage';
 
 // admin pages
 
@@ -21,6 +22,8 @@ export const AppRouter = () => {
             <Route element={<PublicRoute strict={true} />}>
                 <Route index path='/login' element={<LoginPage />} />
                 <Route path='/register' element={<RegisterPage />} />
+                <Route path='/home' element={<HomePage />} />
+                <Route path ='/home/event' element={<EventPage/>} />
             </Route>
             // Private Routes
             <Route exact path={"/"} element={<PrivateRoute />}>

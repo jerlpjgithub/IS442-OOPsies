@@ -1,7 +1,8 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import {
     Layout,
-    Content,
+    Image,
     Form,
     Input,
     Button,
@@ -11,10 +12,25 @@ import {
     Typography,
     Divider,
     notification,
+    Breadcrumb,
+    theme,
 } from "antd";
+const { Content } = Layout;
 
 const EventPage = () => {
+    const {
+        token: { colorBgContainer, borderRadiusLG },
+    } = theme.useToken();
+    const [event, setEvent] = useState({ image: 'https://media.licdn.com/dms/image/D5603AQFKx8V3hq-wjA/profile-displayphoto-shrink_800_800/0/1677954667456?e=1715817600&v=beta&t=hb5AzhD6vw4itXDE78sjKygXGLLv3qJQM8ZuJvJtBYE', description: 'Kukujiao' });
+
+    useEffect(() => {
+        // Fetch your event data here and update the event state
+        // This is just a placeholder, replace it with your actual code
+        fetchEventData().then(data => setEvent(data));
+      }, []);
+
     return (
+
         <Layout>
             <Content
                 style={{
@@ -26,9 +42,14 @@ const EventPage = () => {
                         margin: '16px 0',
                     }}
                 >
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>List</Breadcrumb.Item>
-                    <Breadcrumb.Item>App</Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        <Link to="/home">
+                            Home
+                        </Link>
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        <Link to="#">Event</Link>
+                    </Breadcrumb.Item>
                 </Breadcrumb>
                 <div
                     style={{
@@ -38,7 +59,13 @@ const EventPage = () => {
                         borderRadius: borderRadiusLG,
                     }}
                 >
-                    Content
+                    <Image
+                        width={200}
+                        src={event.image}
+                    />
+                    <Typography.Paragraph>
+                        {event.description}
+                    </Typography.Paragraph>
                 </div>
             </Content>
         </Layout>
