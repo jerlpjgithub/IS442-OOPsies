@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("/event")
 public class EventController {
 
     @Autowired
@@ -21,7 +22,7 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @PostMapping(path = "/create-event")
+    @PostMapping(path = "/create")
     public ResponseEntity<?> createEvent(@RequestBody Event eventRequest){
         try {
             EventDTO eventDTO = eventService.createEvent(eventRequest);
@@ -41,7 +42,7 @@ public class EventController {
         }
     }
 
-    @PostMapping(path = "/update-event/{event_id}")
+    @PutMapping(path = "/update/{event_id}")
     public ResponseEntity<?> createEvent(@PathVariable("event_id") long event_id, @RequestBody Event eventRequest){
         try {
             EventDTO eventDTO = eventService.updateEvent(eventRequest, event_id);
@@ -61,7 +62,7 @@ public class EventController {
         }
     }
 
-    @GetMapping(path = "/get-event/{event_id}")
+    @GetMapping(path = "/get/{event_id}")
     public ResponseEntity<?> getEventsByUserId(@PathVariable("event_id") long event_id){
         // try{
         Optional<EventDTO> _events = eventService.getEventById(event_id);
@@ -70,7 +71,7 @@ public class EventController {
         ));
     }
 
-    @GetMapping(path = "/get-event/all")
+    @GetMapping(path = "/get/all")
     public ResponseEntity<?> getAllEvents(){
         List<EventDTO> _events = eventService.getAllEvents();
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
