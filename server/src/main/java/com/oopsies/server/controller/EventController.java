@@ -41,6 +41,26 @@ public class EventController {
         }
     }
 
+    @PostMapping(path = "/update-event/{event_id}")
+    public ResponseEntity<?> createEvent(@PathVariable("event_id") long event_id, @RequestBody Event eventRequest){
+        try {
+            EventDTO eventDTO = eventService.updateEvent(eventRequest, event_id);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
+                    200, "Event was updated successfully!", eventDTO
+            ));
+        }
+        catch (IllegalArgumentException exc) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse<>(
+                    400, exc.getMessage(), null
+            ));
+        }
+        catch (Exception exc) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
+                    500, exc.getMessage(), null
+            ));
+        }
+    }
+
     @GetMapping(path = "/get-event/{event_id}")
     public ResponseEntity<?> getEventsByUserId(@PathVariable("event_id") long event_id){
         // try{

@@ -5,6 +5,7 @@
  import com.oopsies.server.entity.Booking;
  import com.oopsies.server.entity.Event;
  import com.oopsies.server.repository.EventRepository;
+ import com.oopsies.server.util.DateUtil;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.stereotype.Service;
 
@@ -33,17 +34,7 @@
      }
 
      public EventDTO createEvent(Event event) {
-         // ticket price > 0
-         if (event.getTicketPrice() < 0) {
-             throw new IllegalArgumentException("Ticket price must be more than 0!");
-         }
-         if (event.getCapacity() < 0) {
-             throw new IllegalArgumentException("Capacity must be more than 0!");
-         }
-         // TODO check if need to set minimum duration between creation and event occurrence
-         if (isBeforeToday(event.getDateTime(), new Date())) {
-             throw new IllegalArgumentException("Date should occur after today!");
-         }
+         validateInputs(event);
          // eventName, dateTime and Venue unique
          if (isEventExists(event)) {
              throw new IllegalArgumentException("Event already exists!");
@@ -53,17 +44,44 @@
          return convertToDTO(event);
      }
 
-     private boolean isBeforeToday(Date eventDate, Date currentDate) {
-         if (eventDate.getYear() <= currentDate.getYear()) {
-             return true;
+     public EventDTO updateEvent(Event event, long eventId) {
+         Optional<Event> someExistingEvent = eventRepository.findEventById(eventId);
+         if (someExistingEvent.isEmpty()) {
+             throw new IllegalArgumentException("Event ID " + eventId + " doesn't exist!");
          }
-         if (eventDate.getMonth() <= currentDate.getMonth()) {
-             return true;
+         validateInputs(event);
+
+         Event existingEvent = someExistingEvent.get();
+         updateEvent(event, existingEvent);
+
+         eventRepository.save(existingEvent);
+         return convertToDTO(existingEvent);
+     }
+
+     private void updateEvent(Event event, Event existingEvent) {
+         existingEvent.setEventName(event.getEventName());
+         existingEvent.setManagerID(event.getManagerID());
+         existingEvent.setDateTime(event.getDateTime());
+         existingEvent.setVenue(event.getVenue());
+         existingEvent.setEventCancelled(event.getEventCancelled());
+         existingEvent.setCapacity(event.getCapacity());
+         existingEvent.setCancellationFee(event.getCancellationFee());
+         existingEvent.setTicketPrice(event.getTicketPrice());
+     }
+
+     private void validateInputs(Event event) {
+         // ticket price > 0
+         if (event.getTicketPrice() < 0) {
+             throw new IllegalArgumentException("Ticket price must be more than 0!");
          }
-         if (eventDate.getDate() <= currentDate.getDate()) {
-             return true;
+         // event capacity > 0
+         if (event.getCapacity() < 0) {
+             throw new IllegalArgumentException("Capacity must be more than 0!");
          }
-         return false;
+         // TODO check if need to set minimum duration between creation and event occurrence
+         if (new DateUtil().isBeforeToday(event.getDateTime())) {
+             throw new IllegalArgumentException("Date should occur after today!");
+         }
      }
 
      public Optional<Event> getEvent(Event event) {
