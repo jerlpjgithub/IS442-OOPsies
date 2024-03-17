@@ -2,6 +2,7 @@ package com.oopsies.server.controller;
 
 import java.util.*;
 import com.oopsies.server.dto.BookingDTO;
+import com.oopsies.server.entity.Booking;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.payload.request.BookingRequest;
 import com.oopsies.server.payload.response.MessageResponse;
@@ -53,4 +54,20 @@ public class BookingController {
                 200, "successful", _bookings
         ));
     }
+
+    @PostMapping(path = "/refund/{booking_id}")
+    public ResponseEntity<?> InititateRefundByBookingId(@PathVariable("booking_id") long booking_id){
+        try{
+            bookingService.processBookingRefund(booking_id);
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+            200, "refund processed successfully", null
+        ));
+        }
+        catch(Exception exc){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
+                    500, exc.getMessage(), null
+            ));
+        }
+    }
+
 }

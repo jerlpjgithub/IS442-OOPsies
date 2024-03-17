@@ -34,6 +34,9 @@ public class BookingService {
   @Autowired
   private TicketService ticketService;
 
+  @Autowired
+  private RefundService refundService;
+
   public BookingService(BookingRepository bookingRepository) {
     this.bookingRepository = bookingRepository;
   }
@@ -92,6 +95,10 @@ public class BookingService {
     return bookings.stream()
         .map(this::convertToDTO)
         .collect(Collectors.toList());
+  }
+
+  public void processBookingRefund(long booking_id) throws Exception{
+    refundService.processRefund(booking_id);
   }
 
   private BookingDTO convertToDTO(Booking booking) {

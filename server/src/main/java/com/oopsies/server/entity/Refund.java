@@ -16,12 +16,6 @@ public class Refund {
   @JoinColumn(name = "booking_id")
   private Booking booking;
 
-  // Have to think how to map with payment. 
-  // // OnetoOne with payment to get payment state related to booking 
-  // @OneToOne
-  // @Size(max = 50)
-  // private int amount;
-
   @Temporal(TemporalType.DATE)
   @Column(name = "refundDate")
   private Date refundDate;
@@ -34,14 +28,6 @@ public class Refund {
     this.refundId = refundId;
     this.booking = booking;
     this.refundDate = refundDate;
-  }
-
-  private boolean processPayment(){
-    /* 
-     * Updates Customer class accountBalance with this.amount. 
-     */
-
-    return false;
   }
 
   /* Getters and Setters */
