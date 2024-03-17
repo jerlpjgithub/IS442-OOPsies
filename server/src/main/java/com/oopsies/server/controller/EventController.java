@@ -81,4 +81,26 @@ public class EventController {
                 200, "successful", _events
         ));
     }
+
+    @GetMapping(path = "/get/all/{event_manager_id}")
+    public ResponseEntity<?> getEventsByManagerId(@PathVariable("event_manager_id") long manager_id){
+
+        try{
+            List<EventDTO> _events = eventService.getEventsByManagerId(manager_id);
+
+            if(_events.size() == 0){
+                return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+                    200, "successful, no events created by this manager", _events
+            )); 
+            }
+                return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+                    200, "successful", _events
+            ));
+        }
+        catch(Exception exc){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
+                    500, exc.getMessage(), null
+            ));
+        }
+    }
 }

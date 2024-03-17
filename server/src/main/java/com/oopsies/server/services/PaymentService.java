@@ -34,21 +34,20 @@ public class PaymentService {
         return paymentRepository.findPaymentByPaymentId(paymentId);
     }
 
-    public List<PaymentDTO> getPaymentsByUserId(Long userId) {
-        List<Payment> payments = paymentRepository.findByUserId(userId);
-        return payments.stream()
-                .map(this::convertToDTO)
-                .toList();
+    public PaymentDTO getPaymentByBookingId(long bookingId) {
+        Payment payment = paymentRepository.findByBookingId(bookingId);
+        return convertToDTO(payment);
     }
 
-    public long processPayment(User user, EventDTO event, int numTickets) throws UserInsufficientFundsException {
+    public long processPayment(User user, Booking booking,EventDTO event, int numTickets) throws UserInsufficientFundsException {
         double totalPrice = getTotalPrice(event, numTickets);
         if (!hasUserValidBalance(user, totalPrice)) {
             throw new UserInsufficientFundsException();
         }
         user.decrementAccountBalance(totalPrice);
         userDetailsService.saveUser(user);
-        return createNewPayment(user, totalPrice);
+
+        return createNewPayment(booking, totalPrice);
     }
 
     private double getTotalPrice(EventDTO event, int numTickets) {
@@ -60,9 +59,9 @@ public class PaymentService {
         return user.getAccountBalance() >= price;
     }
 
-   private long createNewPayment(User user, double paymentAmount) {
+   private long createNewPayment(Booking booking, double paymentAmount) {
        Payment newPayment = new Payment(
-               user,
+               booking,
                paymentAmount,
                new Date()
        );

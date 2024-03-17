@@ -74,7 +74,6 @@ public class BookingService {
       throw new IllegalArgumentException("Event capacity is less than number of guests");
     }
 
-    paymentService.processPayment(user, event, numTickets);
     // Reduce event capacity by numGuests + the og booker
     Booking booking = new Booking();
     booking.setUser(user);
@@ -87,6 +86,9 @@ public class BookingService {
     for (int i = 0; i < numTickets; i++) {
       ticketService.createNewTicket(newBooking);
     }
+
+    paymentService.processPayment(user, booking, event, numTickets);
+
     return convertToDTO(booking);
   }
 
