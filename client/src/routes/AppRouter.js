@@ -10,15 +10,25 @@ import { PublicRoute } from "./PublicRoute";
 import { PrivateRoute } from "./PrivateRoute";
 import { ManagerRoute } from "./ManagerRoute";
 import { OfficerRoute } from "./OfficerRoute";
+import Navbar from '../components/navbar/Navbar';
+import Footer from '../components/footer/Footer';
 
 /* To add new routes, it should be done through RouterMapper.js instead */
 export const AppRouter = () => {
-  const renderRoutes = (routes, prefix = "") => {
+  const renderRoutes = (routes, prefix = "", isPublic = false) => {
     return routes.map((route, index) => (
       <Route
         key={index}
         path={`${prefix}${route.path}`}
-        element={route.element}
+        element={
+          isPublic ? 
+          route.element :
+          <>
+            <Navbar />
+            {route.element}
+            <Footer />
+          </>
+        }
       />
     ));
   };
@@ -27,7 +37,7 @@ export const AppRouter = () => {
     <Routes>
       {/* Public Routes Processed here */}
       <Route element={<PublicRoute strict={true} />}>
-        {renderRoutes(PUBLIC_ROUTES)};
+        {renderRoutes(PUBLIC_ROUTES, "", true)};
       </Route>
 
       {/* Private Routes Processed here (Authentication required) */}

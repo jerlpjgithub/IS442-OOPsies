@@ -9,7 +9,7 @@ const { Option } = Select;
 const HomePage = () => {
     const [events, setEvents] = useState([
         {
-            title: 'Event 1',
+            title: 'Jerome Lim Small PP',
             description: 'This is the description for event 1.',
             image: 'https://media.licdn.com/dms/image/C5103AQHCHy2M0HoXsg/profile-displayphoto-shrink_800_800/0/1541057709013?e=1715817600&v=beta&t=d_N4Ov_IOjfKa1DYDpirAnI5F4JYczriY10CE7v-xoU'
         },

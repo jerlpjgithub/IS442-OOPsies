@@ -7,6 +7,7 @@ import Logo from './components/Logo';
 import './Navbar.css';
 import Profile from './components/Profile'; // Import your Profile component
 import { Link } from 'react-router-dom';
+// import { useAuth } from '../../context/AuthContext';
 const { useBreakpoint } = Grid;
 const { Header } = Layout;
 
@@ -35,6 +36,8 @@ const App = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+    // const { authUser } = useAuth();
+    // console.log(authUser.roles);
     const role = 'ROLE_MANAGER'; // Add in logic to retrieve user's role
     const items = getItems(role);
     const [searchWidth, setSearchWidth] = useState('50px');
