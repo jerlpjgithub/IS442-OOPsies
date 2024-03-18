@@ -7,19 +7,19 @@ public class EventDTO {
     private String eventName;
     private Date dateTime;
     private String venue;
-    private boolean eventCancelled;
+    private Date cancelDate;
     private int capacity;
     private double cancellationFee;
     private double ticketPrice;
 
     public EventDTO() { }
 
-    public EventDTO(Long id, String eventName, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
+    public EventDTO(Long id, String eventName, Date dateTime, String venue, Date cancelDate, int capacity, double cancellationFee, double ticketPrice) {
         this.id = id;
         this.eventName = eventName;
         this.dateTime = dateTime;
         this.venue = venue;
-        this.eventCancelled = eventCancelled;
+        this.cancelDate = cancelDate;
         this.capacity = capacity;
         this.cancellationFee = cancellationFee;
         this.ticketPrice = ticketPrice;
@@ -58,11 +58,11 @@ public class EventDTO {
     }
 
     public boolean isEventCancelled() {
-        return eventCancelled;
+        return cancelDate != null;
     }
 
-    public void setEventCancelled(boolean eventCancelled) {
-        this.eventCancelled = eventCancelled;
+    public void setEventCancelled(Date cancelDate) {
+        this.cancelDate = cancelDate;
     }
 
     public int getCapacity() {
@@ -94,38 +94,38 @@ public class EventDTO {
         return this;
     }
 
-    public EventDTO eventName(long eventName) {
-        setId(eventName);
+    public EventDTO eventName(String eventName) {
+        setEventName(eventName);
         return this;
     }
 
-    public EventDTO dateTime(long dateTime) {
-        setId(dateTime);
+    public EventDTO dateTime(Date dateTime) {
+        setDateTime(dateTime);
         return this;
     }
 
-    public EventDTO venue(long venue) {
-        setId(venue);
+    public EventDTO venue(String venue) {
+        setVenue(venue);
         return this;
     }
 
-    public EventDTO eventCancelled(long eventCancelled) {
-        setId(eventCancelled);
+    public EventDTO cancelDate(Date cancelDate) {
+        setEventCancelled(cancelDate);
         return this;
     }
 
-    public EventDTO capacity(long capacity) {
-        setId(capacity);
+    public EventDTO capacity(int capacity) {
+        setCapacity(capacity);
         return this;
     }
 
-    public EventDTO cancellationFee(long cancellationFee) {
-        setId(cancellationFee);
+    public EventDTO cancellationFee(double cancellationFee) {
+        setCancellationFee(cancellationFee);
         return this;
     }
 
-    public EventDTO ticketPrice(long ticketPrice) {
-        setId(ticketPrice);
+    public EventDTO ticketPrice(double ticketPrice) {
+        setTicketPrice(ticketPrice);
         return this;
     }
 }

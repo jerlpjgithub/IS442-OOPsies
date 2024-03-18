@@ -11,11 +11,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long paymentId;
 
-    // @ManyToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "user_id")
-    // private User user;
-
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "booking_id")
     private Booking booking;
 

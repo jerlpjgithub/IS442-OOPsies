@@ -20,8 +20,7 @@ public class Event {
     private Date dateTime;
     @Column(nullable = false)
     private String venue;
-    @Column(columnDefinition = "boolean default false")
-    private boolean eventCancelled;
+    private Date cancelDate;
     @Column(nullable = false)
     private int capacity;
     @Column(columnDefinition = "double default 0.0")
@@ -31,23 +30,23 @@ public class Event {
 
     public Event() { }
 
-    public Event(String eventName, User manager, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
+    public Event(String eventName, User manager, Date dateTime, String venue, Date cancelDate, int capacity, double cancellationFee, double ticketPrice) {
         this.eventName = eventName;
         this.manager = manager;
         this.dateTime = dateTime;
         this.venue = venue;
-        this.eventCancelled = eventCancelled;
+        this.cancelDate = cancelDate;
         this.capacity = capacity;
         this.cancellationFee = cancellationFee;
         this.ticketPrice = ticketPrice;
     }
 
-    public void updateDetails(String eventName, User manager, Date dateTime, String venue, boolean eventCancelled, int capacity, double cancellationFee, double ticketPrice) {
+    public void updateDetails(String eventName, User manager, Date dateTime, String venue, Date cancelDate, int capacity, double cancellationFee, double ticketPrice) {
         this.eventName = eventName;
         this.manager = manager;
         this.dateTime = dateTime;
         this.venue = venue;
-        this.eventCancelled = eventCancelled;
+        this.cancelDate = cancelDate;
         this.capacity = capacity;
         this.cancellationFee = cancellationFee;
         this.ticketPrice = ticketPrice;
@@ -96,15 +95,15 @@ public class Event {
     }
 
     public boolean isEventCancelled() {
-        return this.eventCancelled;
+        return this.cancelDate != null;
     }
 
-    public boolean getEventCancelled() {
-        return this.eventCancelled;
+    public Date getEventCancelDate() {
+        return this.cancelDate;
     }
 
-    public void setEventCancelled(boolean eventCancelled) {
-        this.eventCancelled = eventCancelled;
+    public void setEventCancelled(Date cancelDate) {
+        this.cancelDate = cancelDate;
     }
 
     public int getCapacity() {
@@ -139,7 +138,7 @@ public class Event {
                 ", manager=" + manager +
                 ", dateTime=" + dateTime +
                 ", venue='" + venue + '\'' +
-                ", eventCancelled=" + eventCancelled +
+                ", cancelDate=" + cancelDate +
                 ", capacity=" + capacity +
                 ", cancellationFee=" + cancellationFee +
                 ", ticketPrice=" + ticketPrice +

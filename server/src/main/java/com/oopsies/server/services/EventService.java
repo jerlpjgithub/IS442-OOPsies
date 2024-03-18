@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -93,13 +94,18 @@ public class EventService {
         }
 
         Event event = eventRequest.getEvent();
+
         Optional<Event> someExistingEvent = eventRepository.findEventById(eventId);
         if (someExistingEvent.isEmpty()) {
             throw new IllegalArgumentException("Event ID " + eventId + " doesn't exist!");
         }
-        validateInputs(event);
 
         Event existingEvent = someExistingEvent.get();
+        if (!Objects.equals(user.getId(), existingEvent.getManagerID().getId())) {
+            throw new IllegalArgumentException("Unauthorised content");
+        }
+        validateInputs(event);
+
         updateEvent(event, existingEvent);
 
         eventRepository.save(existingEvent);
@@ -108,10 +114,9 @@ public class EventService {
 
     private void updateEvent(Event event, Event existingEvent) {
         existingEvent.setEventName(event.getEventName());
-        existingEvent.setManagerID(event.getManagerID());
         existingEvent.setDateTime(event.getDateTime());
         existingEvent.setVenue(event.getVenue());
-        existingEvent.setEventCancelled(event.getEventCancelled());
+        existingEvent.setEventCancelled(event.getEventCancelDate());
         existingEvent.setCapacity(event.getCapacity());
         existingEvent.setCancellationFee(event.getCancellationFee());
         existingEvent.setTicketPrice(event.getTicketPrice());
@@ -160,7 +165,7 @@ public class EventService {
         dto.setEventName(event.getEventName());
         dto.setDateTime(event.getDateTime());
         dto.setVenue(event.getVenue());
-        dto.setEventCancelled(event.getEventCancelled());
+        dto.setEventCancelled(event.getEventCancelDate());
         dto.setCapacity(event.getCapacity());
         dto.setCancellationFee(event.getCancellationFee());
         dto.setTicketPrice(event.getTicketPrice());
