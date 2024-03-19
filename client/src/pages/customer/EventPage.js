@@ -10,6 +10,7 @@ import {
     Modal,
     InputNumber
 } from "antd";
+import { images } from '../imageloader';
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -108,7 +109,7 @@ const EventPage = () => {
                     <div>
                         <Image
                             width={200}
-                            src={event.image}
+                            src={images[Math.floor(Math.random() * images.length)]}
                         />
                         <Title>
                             {event.name}

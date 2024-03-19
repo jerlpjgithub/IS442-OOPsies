@@ -10,6 +10,8 @@ import {
     Modal,
     InputNumber
 } from "antd";
+import { images } from '../imageloader';
+
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -22,7 +24,7 @@ const EventPage = () => {
 
     // get event
     const { event_id } = useParams(); 
-    const [event, setEvent] = useState(null); 
+    const [ event, setEvent ] = useState(null); 
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -81,7 +83,7 @@ const EventPage = () => {
                     <div>
                         <Image
                             width={200}
-                            src={event.image}
+                            src={images[Math.floor(Math.random() * images.length)]}
                         />
                         <Title>
                             {event.name}

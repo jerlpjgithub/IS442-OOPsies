@@ -6,6 +6,7 @@ import ProfilePage from '../pages/customer/ProfilePage';
 import BookingPage from '../pages/customer/BookingPage';
 import Error404 from '../pages/error-pages/Error404';
 import EventPage from '../pages/customer/EventPage';
+import EventsPage from '../pages/customer/EventsPage';
 
 /* Event Manager */
 import { HomePage as EventManagerHomePage } from '../pages/event-manager/HomePage';
@@ -25,6 +26,8 @@ export const PRIVATE_ROUTES = [
   { path: "/booking/:id", element: <BookingPage />},
   /* Add in :event_id  */
   { path: "/event/:title", element: <EventPage />},
+  { path: "/events", element: <EventsPage />},
+
 ];
 
 /* Temporarily toggle isPrivate false until we are capable to check for authorisation based on jwt */

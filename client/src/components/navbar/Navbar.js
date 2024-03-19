@@ -12,7 +12,7 @@ const { Header } = Layout;
 
 const getItems = (role) => {
     const commonItems = [
-        { key: '1', label: 'Upcoming Events', route: "/home" },
+        { key: '1', label: 'Upcoming Events', route: "/events" },
         { key: '2', label: 'Your Tickets', route: '/tickets' },
     ];
 
