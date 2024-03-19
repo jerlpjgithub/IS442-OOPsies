@@ -25,7 +25,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
     // Implement your login logic here
     try {
       const response = await login(values["email"], values["password"]);
@@ -38,7 +37,7 @@ const LoginPage = () => {
         response.data.roles
       ) {
         // Login successful, redirect to home page
-        navigate("/");
+        navigate("/home");
       } else {
         // Login unsuccessful
         notification.error({
@@ -74,7 +73,7 @@ const LoginPage = () => {
         response.data.roles
       ) {
         // Login successful, redirect to home page
-        navigate("/");
+        navigate("/home");
       } else {
         // Login unsuccessful
         notification.error({

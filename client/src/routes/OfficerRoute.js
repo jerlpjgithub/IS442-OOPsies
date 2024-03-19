@@ -8,6 +8,6 @@ export const OfficerRoute = () => {
   return isAuthenticated && authUser["roles"].includes("ROLE_OFFICER") ? (
     <Outlet />
   ) : (
-    <Navigate to="/unauthorisedpage" />
+    <Navigate to="/pagenotfound" />
   );
 };

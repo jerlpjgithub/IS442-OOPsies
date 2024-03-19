@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
         { email, password }
       );
       if (response.data && response.status === 200) {
-        setAuthUser(response.data); // Assume response.data is the user object
+        setAuthUser(response.data); // responseData contains id, email, roles[]
         localStorage.setItem("authUser", JSON.stringify(response.data));
         setAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
