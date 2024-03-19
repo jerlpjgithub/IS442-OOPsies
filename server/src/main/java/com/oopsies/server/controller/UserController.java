@@ -100,15 +100,15 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}")
-    @PreAuthorize("hasAnyRole('ROLE_OFFICER', 'ROLE_MANAGER')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        try {
-            userServiceImpl.deleteUserById(userId);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
+    // @DeleteMapping("/{userId}")
+    // @PreAuthorize("hasAnyRole('ROLE_OFFICER', 'ROLE_MANAGER')")
+    // public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+    //     try {
+    //         userServiceImpl.deleteUserById(userId);
+    //         return ResponseEntity.noContent().build();
+    //     } catch (IllegalArgumentException e) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    //     }
+    // }
 
 }

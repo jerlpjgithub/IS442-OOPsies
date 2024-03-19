@@ -1,25 +1,73 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Row, Col, Typography, Card } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, Row, Col, Typography, Card, notification } from 'antd';
+import { getUserData, updateUser } from '../../utils/api';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 
 const ProfilePage = () => {
-  const user = JSON.parse(localStorage.getItem("authUser"));
+  const navigate = useNavigate();
+
+  const { id } = useParams();
   const [userInfo, setUserInfo] = useState({
-    id: user?.id,
-    email: user?.email,
-    name: 'John Doe',
-    balance: '100.00'
+    id: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    accountBalance: 0,
+    emailVerified: false,
+    roles: []
   });
 
   const [form] = Form.useForm();
-  // TO-DO: Need end points to retrieve user information, only allow if same user.
-  // TO-DO: 
-  const onFinish = (values) => {
-    console.log('Success:', values);
-    // Here, integrate your API to update the user information
-    setUserInfo({ ...userInfo, ...values });
-    // Show success notification or handle the state accordingly
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        if (id) {
+          const data = await getUserData(id);
+          if (data) {
+            setUserInfo({
+              id: data.id,
+              email: data.email,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              accountBalance: data.accountBalance,
+              emailVerified: data.emailVerified,
+              roles: data.roles.map(role => role.name).join(', ')
+            });
+            form.setFieldsValue({
+              email: data.email,
+              firstName: data.firstName,
+              lastName: data.lastName,
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        navigate('/errorpage');
+      }
+    };
+
+    fetchUserData();
+  }, [form, id, navigate]);
+
+  const onFinish = async (values) => {
+    // console.log(values);
+    try {
+      await updateUser(userInfo.id, values);
+      setUserInfo({ ...userInfo, ...values });
+      notification.success({
+        message: 'Update Successful',
+        description: 'Your profile has been updated successfully.',
+      });
+    } catch (error) {
+      console.error(error);
+      notification.error({
+        message: 'Update Failed',
+        description: 'An error occurred while updating your profile.',
+      });
+    }
   };
 
   return (
@@ -28,28 +76,26 @@ const ProfilePage = () => {
         <Card bordered={false}>
           <Title level={2}>Profile</Title>
           <p><strong>ID:</strong> {userInfo.id}</p>
-          <p><strong>Account Balance:</strong> ${userInfo.balance}</p>
+          <p><strong>Email:</strong> {userInfo.email}</p>
+          <p><strong>Account Balance:</strong> ${userInfo.accountBalance}</p>
+          <p><strong>Roles:</strong> {userInfo.roles}</p>
           <Form
             form={form}
             name="profile"
-            initialValues={{
-              email: userInfo.email,
-              name: userInfo.name,
-            }}
             onFinish={onFinish}
             layout="vertical"
           >
             <Form.Item
-              label="Email"
-              name="email"
-              rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
+              label="First Name"
+              name="firstName"
+              rules={[{ required: true, message: 'Please input your first name!' }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: true, message: 'Please input your name!' }]}
+              label="Last Name"
+              name="lastName"
+              rules={[{ required: true, message: 'Please input your last name!' }]}
             >
               <Input />
             </Form.Item>
