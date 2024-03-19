@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(async () => {
     try {
-      await axios.post("http://localhost:8080/api/auth/logout");
+      await axios.post("http://localhost:8080/api/auth/signout");
       setAuthUser(null);
       localStorage.removeItem("authUser");
       setAuthenticated(false);
