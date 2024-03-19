@@ -12,7 +12,7 @@ import org.springframework.web.util.WebUtils;
 
 import com.oopsies.server.entity.User;
 import com.oopsies.server.exception.JwtTokenExpiredException;
-import com.oopsies.server.services.UserDetailsImpl;
+import com.oopsies.server.services.UserDetails.UserDetailsImpl;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

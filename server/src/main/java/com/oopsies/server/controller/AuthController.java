@@ -42,8 +42,8 @@ import com.oopsies.server.repository.RoleRepository;
 import com.oopsies.server.repository.UserRepository;
 import com.oopsies.server.services.GoogleOAuth2Service;
 import com.oopsies.server.services.RefreshTokenService;
-import com.oopsies.server.services.UserDetailsImpl;
-import com.oopsies.server.services.UserDetailsServiceImpl;
+import com.oopsies.server.services.UserDetails.UserDetailsImpl;
+import com.oopsies.server.services.UserDetails.UserDetailsServiceImpl;
 import com.oopsies.server.util.JwtUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
