@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Breadcrumb, Row, Card, Col, Input, Select, Typography } from 'antd';
+import { Layout, Breadcrumb, Row, Card, Col, Input, Select, Typography, Carousel } from 'antd';
 import { Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 const { Content } = Layout;
@@ -7,6 +7,22 @@ const { Meta } = Card;
 const { Title } = Typography;
 
 const HomePage = () => {
+
+    // Currently using placeholder data
+    // Once mockdata are up, uncomment the bottom
+
+    // const [events, setEvents] = useState([]);
+
+    // useEffect(() => {
+    //     const fetchEvents = async () => {
+    //         const response = await fetch('http://localhost:3000/event/get/all');
+    //         const data = await response.json();
+    //         setEvents(data);
+    //     };
+
+    //     fetchEvents();
+    // }, []); 
+
     const [events, setEvents] = useState([
         {
             title: 'Jerome Lim Small PP',
@@ -30,12 +46,6 @@ const HomePage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [eventsPerPage] = useState(6); // Set the number of events per page
     const [searchTerm, setSearchTerm] = useState('');
-    const [category, setCategory] = useState('');
-
-    const handleCategoryChange = (value) => {
-        setCategory(value);
-    };
-
 
     useEffect(() => {
         setEvents(events);
@@ -46,7 +56,9 @@ const HomePage = () => {
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
     const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
 
-    // Change page
+    // Currently, there are some issues with the pagination. If I go to second page then
+    // back to first, the second page items would still stay.
+    
     const paginate = (page) => {
         setCurrentPage(page);
     };
@@ -63,27 +75,26 @@ const HomePage = () => {
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ background: '#fff', minHeight: 280, padding: 24 }}>
-                <Title level={1} style={{ textAlign: 'center' }}>
-                    Welcome to OOPsies Ticketing!
-                </Title>
+                    <Title level={1} style={{ textAlign: 'center' }}>
+                        Welcome to OOPsies Ticketing!
+                    </Title>
                     <Input.Search
                         placeholder="Search for events"
                         onChange={handleSearch}
                         style={{ marginBottom: '20px' }}
                     />
-
+                    
                     <Row gutter={16}>
                         {currentEvents.map((event, index) => (
                             <Col xs={24} sm={12} md={8} lg={6} key={index}>
-                                <Link key={index} to={{pathname : `/event/${event.title}`,
-                                state : { event }}}>
-                                <Card
-                                    hoverable
-                                    style={{ width: '100%', marginBottom: '20px' }}
-                                    cover={<img alt={event.title} src={event.image} />}
-                                >
-                                    <Meta title={event.title} description={event.description} />
-                                </Card>
+                                <Link key={index} to={{ pathname: `/event/${index}` }}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: '100%', marginBottom: '20px' }}
+                                        cover={<img alt={event.title} src={event.image} />}
+                                    >
+                                        <Meta title={event.title} description={event.description} />
+                                    </Card>
                                 </Link>
                             </Col>
                         ))}

@@ -13,7 +13,7 @@ import {
 const { Content } = Layout;
 const { Title } = Typography;
 
-// TODO: Figure out what details we want from the event to show 
+// TODO: Add in the functionalities that a ticketing officer may require
 
 const EventPage = () => {
     const {
@@ -41,36 +41,9 @@ const EventPage = () => {
         setIsModalVisible(true);
     };
 
-    const handleBooking = async () => {
-        setIsModalVisible(false);
-
-        const user = localStorage.getItem('authUser');
-        const userId = user.id;
-        const response = await fetch(`http://localhost:3000/booking/create/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                event_id: event.id,
-                numTickets: numTickets
-            })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            alert('Booking was successful'); 
-        } else {
-            alert('Booking was unsuccessful'); 
-        }
-    };
-
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-
-    const [numTickets, setNumTickets] = useState(1);
 
     return (
         <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -121,9 +94,7 @@ const EventPage = () => {
                         <Button type="primary" onClick={showModal}>
                             Buy Tickets
                         </Button>
-                        <Modal title="Buy Tickets" visible={isModalVisible} onOk={handleBooking} onCancel={handleCancel}>
-                            Number of Tickets:  <InputNumber min={1} value={numTickets} onChange={setNumTickets} />
-                        </Modal>
+
                     </div>
                 </div>
             </Content>
