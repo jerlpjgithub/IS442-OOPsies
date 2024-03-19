@@ -31,22 +31,32 @@ const HomePage = () => {
         {
             title: 'Jerome Lim Small PP',
             description: 'This is the description for event 1.',
+            image: 'https://media.licdn.com/dms/image/C5103AQHCHy2M0HoXsg/profile-displayphoto-shrink_800_800/0/1541057709013?e=1715817600&v=beta&t=d_N4Ov_IOjfKa1DYDpirAnI5F4JYczriY10CE7v-xoU'
         },
         {
             title: 'Event 2',
             description: 'This is the description for event 2.',
+            image: 'https://media.licdn.com/dms/image/D5603AQFJU9Q4E453fQ/profile-displayphoto-shrink_800_800/0/1661907635137?e=1715817600&v=beta&t=SdmRwWOgFgiET0ezV1IIeCdZKPC_wrvd-vOqqnDKilw'
         },
         {
-            title: 'Event 2',
+            title: 'Event 3',
             description: 'This is the description for event 2.',
         },
         {
-            title: 'Event 2',
+            title: 'Event 4',
+            description: 'This is the description for event 2.',
+        },
+        {
+            title: 'Event 5',
+            description: 'This is the description for event 2.',
+        },
+        {
+            title: 'Event 6',
             description: 'This is the description for event 2.',
         }
     ]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [eventsPerPage] = useState(6); // Set the number of events per page
+    const [eventsPerPage] = useState(5); // Set the number of events per page
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Menu } from 'antd';
 import { Grid } from 'antd';
 import { Dropdown, Button } from 'antd';
@@ -6,7 +6,7 @@ import { MenuOutlined } from '@ant-design/icons';
 import Logo from './components/Logo';
 import './Navbar.css';
 import Profile from './components/Profile';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 const { useBreakpoint } = Grid;
 const { Header } = Layout;
 
@@ -31,16 +31,19 @@ const getItems = (role) => {
 };
 
 const App = () => {
-
     const user = JSON.parse(localStorage.getItem("authUser"));
     const role = user.roles;
     const items = getItems(role);
     const screens = useBreakpoint();
+    const [selectedKey, setSelectedKey] = useState([]);
+    const location = useLocation();
+
     const dropdownMenu = (
         <Menu
             theme="dark"
             mode="vertical"
             defaultSelectedKeys={[]}
+            selectedKeys={selectedKey}
         >
             {items.map(item => {
                 return (
@@ -53,6 +56,16 @@ const App = () => {
             })}
         </Menu>
     );
+
+    useEffect(() => {
+        const currentPath = location.pathname;
+        const matchingItem = items.find(item => item.route === currentPath);
+        if (matchingItem) {
+            setSelectedKey([matchingItem.key]);
+        } else {
+            setSelectedKey([]);
+        }
+    }, [location, items]);
 
     return (
         <Layout>
@@ -79,6 +92,7 @@ const App = () => {
                         theme="dark"
                         mode="horizontal"
                         defaultSelectedKeys={[]}
+                        selectedKeys={selectedKey}
                         style={{ flex: 1 }}
                     >
                         {items.map(item => {

@@ -112,7 +112,7 @@ const HomePage = () => {
                             Find and participate in your favourite events.
                         </Typography.Paragraph>
                     </div>
-
+                    <div style={{ overflow: 'auto', width: '100%' }}>
                     <Carousel {...settings} autoplay>
                         {chunk(currentEvents, 4).map((events, index) => (
                             <div key={index}>
@@ -136,6 +136,7 @@ const HomePage = () => {
                             </div>
                         ))}
                     </Carousel>
+                    </div>
                 </div>
             </Content>
         </Layout>
