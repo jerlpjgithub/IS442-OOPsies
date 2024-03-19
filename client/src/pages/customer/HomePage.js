@@ -4,14 +4,15 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 import { images } from '../imageloader';
-import Logo from '../../assets/oopsies-logo.png';
+import Logo from '../../assets/oopsies-logo.svg';
 
 const { Content } = Layout;
 const { Meta } = Card;
 const { Title } = Typography;
 const settings = {
-    nextArrow: <Button shape="circle" icon={<RightOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
-    prevArrow: <Button shape="circle" icon={<LeftOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
+    nextArrow: <Button shape="default" icon={<RightOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
+    prevArrow: <Button shape="default" icon={<LeftOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
+    autoplaySpeed: 2000,
 };
 
 function chunk(array, size) {
@@ -97,14 +98,13 @@ const HomePage = () => {
 
 
     return (
-        <Layout>
+        <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
             <Content style={{ padding: '0 48px' }}>
                 <Breadcrumb style={{ margin: '16px 0' }}>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ background: '#fff', minHeight: 280, padding: 24 }}>
                     <div style={{padding:30, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Image src={Logo}></Image>
                         <Title level={1} style={{ fontSize:'70px', textAlign: 'center' }}>
                             Welcome to OOPsies Ticketing!
                         </Title>
@@ -118,11 +118,11 @@ const HomePage = () => {
                             <div key={index}>
                                 <Row gutter={16}>
                                     {events.map((event, index) => (
-                                        <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                                        <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ padding: '20px'}}>
                                             <Link to={{ pathname: `/event/${index}` }}>
                                                 <Card
                                                     hoverable
-                                                    style={{ width: '100%', marginBottom: '20px' }}
+                                                    style={{ width: '100%', marginBottom: '20px'}}
                                                     cover={<img alt={event.title} src={images[Math.floor(Math.random() * images.length)]}
                                                         style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                                                     />}

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Layout, Menu, theme, Input } from 'antd';
+import { Layout, Menu } from 'antd';
 import { Grid } from 'antd';
 import { Dropdown, Button } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import Logo from './components/Logo';
 import './Navbar.css';
-import Profile from './components/Profile'; 
+import Profile from './components/Profile';
 import { Link } from 'react-router-dom';
 const { useBreakpoint } = Grid;
 const { Header } = Layout;
@@ -31,9 +31,7 @@ const getItems = (role) => {
 };
 
 const App = () => {
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
+
     const user = JSON.parse(localStorage.getItem("authUser"));
     const role = user.roles;
     const items = getItems(role);
@@ -62,10 +60,12 @@ const App = () => {
                 style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between', 
+                    justifyContent: 'space-between',
                 }}
             >
-                <Logo className='logo' />
+                <Link to="/home">
+                    <Logo className='logo' />
+                </Link>
                 {screens.xs ? (
                     <Dropdown overlay={dropdownMenu}>
                         <Button
@@ -81,14 +81,18 @@ const App = () => {
                         defaultSelectedKeys={[]}
                         style={{ flex: 1 }}
                     >
-                        {items.map(item => (
-                            <Menu.Item key={item.key}>
-                                {item.label}
-                            </Menu.Item>
-                        ))}
+                        {items.map(item => {
+                            return (
+                                <Menu.Item key={item.key}>
+                                    <Link to={item.route}>
+                                        {item.label}
+                                    </Link>
+                                </Menu.Item>
+                            );
+                        })}
                     </Menu>
                 )}
-                <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: 10 }}>
                     <Profile />
                 </div>
             </Header>

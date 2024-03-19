@@ -8,6 +8,7 @@ const { Content } = Layout;
 const { Meta } = Card;
 const { Title } = Typography;
 
+// TO-DO: Add more information about events
 
 const HomePage = () => {
 
@@ -70,8 +71,12 @@ const HomePage = () => {
 
 
     return (
-        <Layout>
-            <Content style={{ padding: '0 48px' }}>
+        <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Content style={{
+                padding: '0 48px',
+                flexGrow: 1,
+                overflow: 'auto',
+            }}>
                 <Breadcrumb style={{ margin: '16px 0' }}>
                     <Breadcrumb.Item><Link to="/home">
                         Home
@@ -97,9 +102,15 @@ const HomePage = () => {
                                 ]}
                             >
                                 <List.Item.Meta
-                                    avatar={<img alt={event.title} src={images[Math.floor(Math.random() * images.length)]} style={{ width: '50px' }} />}
+                                    avatar={<img alt={event.title} src={images[Math.floor(Math.random() * images.length)]}  style={{ width: '200px', height: '100px', objectFit: 'cover' }}  />}
                                     title={<Link to={`/event/${event.id}`}>{event.title}</Link>}
-                                    description={event.description}
+                                    description={
+                                        <>
+                                            <p>{event.description}</p>
+                                            {/* Add more info about the event! */}
+                                            <p>Date: {new Date(event.date).toLocaleDateString()}</p>
+                                        </>
+                                    }
                                 />
                             </List.Item>
                         )}
