@@ -1,5 +1,5 @@
-import { React, useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
+import { React, useEffect, useState} from "react";
+import { Link, useLocation, useParams } from 'react-router-dom';
 import {
     Layout,
     Image,
@@ -21,13 +21,9 @@ const EventPage = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
-    // const [event, setEvent] = useState({ image: 'https://media.licdn.com/dms/image/D5603AQFKx8V3hq-wjA/profile-displayphoto-shrink_800_800/0/1677954667456?e=1715817600&v=beta&t=hb5AzhD6vw4itXDE78sjKygXGLLv3qJQM8ZuJvJtBYE', description: 'Kukujiao' });
-    const event = { image: 'https://media.licdn.com/dms/image/D5603AQFKx8V3hq-wjA/profile-displayphoto-shrink_800_800/0/1677954667456?e=1715817600&v=beta&t=hb5AzhD6vw4itXDE78sjKygXGLLv3qJQM8ZuJvJtBYE', description: 'Kukujiao' }
-    // useEffect(() => {
-    //     // Fetch your event data here and update the event state
-    //     // This is just a placeholder, replace it with your actual code
-    //     fetchEventData().then(data => setEvent(data));
-    //   }, []);
+    
+    const location = useLocation();
+    const event = location.state ? location.state.event : null ;
 
     return (
 

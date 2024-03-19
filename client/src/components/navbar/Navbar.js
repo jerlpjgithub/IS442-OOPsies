@@ -49,7 +49,6 @@ const App = () => {
             defaultSelectedKeys={['1']}
         >
             {items.map(item => {
-                console.log(item.route);
                 return (
                     <Menu.Item key={item.key}>
                         <Link to={item.route}>

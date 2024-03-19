@@ -4,8 +4,7 @@ import RegisterPage from '../pages/customer/RegisterPage';
 import HomePage from '../pages/customer/HomePage';
 import ProfilePage from '../pages/customer/ProfilePage';
 import BookingPage from '../pages/customer/BookingPage';
-import ErrorPage from '../pages/ErrorPage';
-import EventPage from '../pages/EventPage';
+import Error404 from '../pages/error-pages/Error404';
 
 /* Event Manager */
 import { HomePage as EventManagerHomePage } from '../pages/event-manager/HomePage';
@@ -23,8 +22,11 @@ export const PRIVATE_ROUTES = [
   { path: "/home", element: <HomePage />},
   { path: "/profile", element: <ProfilePage />},
   { path: "/booking/:id", element: <BookingPage />},
+<<<<<<< Updated upstream
+=======
   /* Add in :event_id  */
-  { path: "/home/event/", element: <EventPage />},
+  { path: "/event/:title", element: <EventPage />},
+>>>>>>> Stashed changes
 ];
 
 /* Temporarily toggle isPrivate false until we are capable to check for authorisation based on jwt */
@@ -40,5 +42,6 @@ export const TICKETING_OFFICER_ROUTES = [
 
 /* Adding an ERROR_ROUTE to catch all pages that are not valid */
 export const ERROR_ROUTES = [
-  { path: "*", element: <ErrorPage />, isPrivate: false},
+  { path: "*", element: <Error404 />},
+  { path: "/pagenotfound", element: <Error404 />}
 ]

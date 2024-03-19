@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Breadcrumb, Row, Card, Col, Input, Select } from 'antd';
+import { Layout, Breadcrumb, Row, Card, Col, Input, Select, Typography } from 'antd';
 import { Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 const { Content } = Layout;
 const { Meta } = Card;
-const { Option } = Select;
+const { Title } = Typography;
 
 const HomePage = () => {
     const [events, setEvents] = useState([
@@ -63,27 +63,20 @@ const HomePage = () => {
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ background: '#fff', minHeight: 280, padding: 24 }}>
+                <Title level={1} style={{ textAlign: 'center' }}>
+                    Welcome to OOPsies Ticketing!
+                </Title>
                     <Input.Search
                         placeholder="Search for events"
                         onChange={handleSearch}
                         style={{ marginBottom: '20px' }}
                     />
-                    
-                    {/* Might not want this if we don't have a category for Events */}
-                    
-                    {/* <Select
-                        placeholder="Select a category"
-                        onChange={handleCategoryChange}
-                        style={{ width: '100%', marginBottom: '20px' }}
-                    >
-                        <Option value="category1">Category 1</Option>
-                        <Option value="category2">Category 2</Option>
-                        <Option value="category3">Category 3</Option>
-                    </Select> */}
+
                     <Row gutter={16}>
-                        {currentEvents.map((event) => (
-                            <Col xs={24} sm={12} md={8} lg={6} key={event.title}>
-                                {/* <Link to={`/event/${event.id}`}> */}
+                        {currentEvents.map((event, index) => (
+                            <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                                <Link key={index} to={{pathname : `/event/${event.title}`,
+                                state : { event }}}>
                                 <Card
                                     hoverable
                                     style={{ width: '100%', marginBottom: '20px' }}
@@ -91,7 +84,7 @@ const HomePage = () => {
                                 >
                                     <Meta title={event.title} description={event.description} />
                                 </Card>
-                                {/* </Link> */}
+                                </Link>
                             </Col>
                         ))}
                     </Row>

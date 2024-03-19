@@ -19,7 +19,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import com.oopsies.server.config.jwt.AuthEntryPointJwt;
 import com.oopsies.server.config.jwt.AuthTokenFilter;
-import com.oopsies.server.services.UserDetailsServiceImpl;
+import com.oopsies.server.services.UserDetails.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity
