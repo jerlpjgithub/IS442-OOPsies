@@ -5,6 +5,7 @@ import HomePage from '../pages/customer/HomePage';
 import ProfilePage from '../pages/customer/ProfilePage';
 import BookingPage from '../pages/customer/BookingPage';
 import Error404 from '../pages/error-pages/Error404';
+import EventPage from '../pages/customer/EventPage';
 
 /* Event Manager */
 import { HomePage as EventManagerHomePage } from '../pages/event-manager/HomePage';
