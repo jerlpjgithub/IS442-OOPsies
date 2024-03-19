@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Breadcrumb, Row, Card, Col, Input, Select, Typography, Carousel } from 'antd';
+import { Layout, Breadcrumb, Row, Card, Col, Input, Select, Typography, Carousel, Button, Image } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Pagination } from 'antd';
 import { Link } from 'react-router-dom';
+import { images } from '../imageloader';
+import Logo from '../../assets/oopsies-logo.png';
+
 const { Content } = Layout;
 const { Meta } = Card;
 const { Title } = Typography;
+const settings = {
+    nextArrow: <Button shape="circle" icon={<RightOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
+    prevArrow: <Button shape="circle" icon={<LeftOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
+};
+
+function chunk(array, size) {
+    const chunked = [];
+    let index = 0;
+
+    while (index < array.length) {
+        chunked.push(array.slice(index, size + index));
+        index += size;
+    }
+
+    return chunked;
+}
 
 const HomePage = () => {
 
@@ -35,11 +55,19 @@ const HomePage = () => {
             image: 'https://media.licdn.com/dms/image/D5603AQFJU9Q4E453fQ/profile-displayphoto-shrink_800_800/0/1661907635137?e=1715817600&v=beta&t=SdmRwWOgFgiET0ezV1IIeCdZKPC_wrvd-vOqqnDKilw'
         },
         {
-            title: 'Event 2',
+            title: 'Event 3',
             description: 'This is the description for event 2.',
         },
         {
-            title: 'Event 2',
+            title: 'Event 4',
+            description: 'This is the description for event 2.',
+        },
+        {
+            title: 'Event 5',
+            description: 'This is the description for event 2.',
+        },
+        {
+            title: 'Event 6',
             description: 'This is the description for event 2.',
         }
     ]);
@@ -58,7 +86,7 @@ const HomePage = () => {
 
     // Currently, there are some issues with the pagination. If I go to second page then
     // back to first, the second page items would still stay.
-    
+
     const paginate = (page) => {
         setCurrentPage(page);
     };
@@ -75,37 +103,39 @@ const HomePage = () => {
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ background: '#fff', minHeight: 280, padding: 24 }}>
-                    <Title level={1} style={{ textAlign: 'center' }}>
-                        Welcome to OOPsies Ticketing!
-                    </Title>
-                    <Input.Search
-                        placeholder="Search for events"
-                        onChange={handleSearch}
-                        style={{ marginBottom: '20px' }}
-                    />
-                    
-                    <Row gutter={16}>
-                        {currentEvents.map((event, index) => (
-                            <Col xs={24} sm={12} md={8} lg={6} key={index}>
-                                <Link key={index} to={{ pathname: `/event/${index}` }}>
-                                    <Card
-                                        hoverable
-                                        style={{ width: '100%', marginBottom: '20px' }}
-                                        cover={<img alt={event.title} src={event.image} />}
-                                    >
-                                        <Meta title={event.title} description={event.description} />
-                                    </Card>
-                                </Link>
-                            </Col>
+                    <div style={{padding:30, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Image src={Logo}></Image>
+                        <Title level={1} style={{ fontSize:'70px', textAlign: 'center' }}>
+                            Welcome to OOPsies Ticketing!
+                        </Title>
+                        <Typography.Paragraph style={{ fontSize: '20px', textAlign: 'center' }}>
+                            Find and participate in your favourite events.
+                        </Typography.Paragraph>
+                    </div>
+
+                    <Carousel {...settings} autoplay>
+                        {chunk(currentEvents, 4).map((events, index) => (
+                            <div key={index}>
+                                <Row gutter={16}>
+                                    {events.map((event, index) => (
+                                        <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                                            <Link to={{ pathname: `/event/${index}` }}>
+                                                <Card
+                                                    hoverable
+                                                    style={{ width: '100%', marginBottom: '20px' }}
+                                                    cover={<img alt={event.title} src={images[Math.floor(Math.random() * images.length)]}
+                                                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                                                    />}
+                                                >
+                                                    <Meta title={event.title} description={event.description} />
+                                                </Card>
+                                            </Link>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            </div>
                         ))}
-                    </Row>
-                    <Pagination
-                        current={currentPage}
-                        total={events.length}
-                        pageSize={eventsPerPage}
-                        onChange={paginate}
-                        style={{ marginTop: '20px', textAlign: 'center' }}
-                    />
+                    </Carousel>
                 </div>
             </Content>
         </Layout>

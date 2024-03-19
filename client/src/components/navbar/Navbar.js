@@ -12,18 +12,18 @@ const { Header } = Layout;
 
 const getItems = (role) => {
     const commonItems = [
-        { key: '1', label: 'Upcoming Events', route: "/events" },
-        { key: '2', label: 'Your Tickets', route: '/tickets' },
+        { key: '1', label: 'Upcoming Events', route: `/events` },
+        { key: '2', label: 'Your Tickets', route: `/tickets` },
     ];
 
     if (role == 'ROLE_OFFICER') {
         return [
-            { key: '1', label: 'Your Events', route: '/home' },
+            { key: '1', label: 'Your Events', route: `/home` },
         ];
     } else if (role == 'ROLE_MANAGER') {
         return [
-            { key: '1', label: 'Your Events', route: "/home" },
-            { key: '2', label: 'Add Event', route: "/add" },
+            { key: '1', label: 'Your Events', route: `/home` },
+            { key: '2', label: 'Add Event', route: `/add` },
         ];
     }
 
