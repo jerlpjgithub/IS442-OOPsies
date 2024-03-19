@@ -22,11 +22,8 @@ export const PRIVATE_ROUTES = [
   { path: "/home", element: <HomePage />},
   { path: "/profile", element: <ProfilePage />},
   { path: "/booking/:id", element: <BookingPage />},
-<<<<<<< Updated upstream
-=======
   /* Add in :event_id  */
   { path: "/event/:title", element: <EventPage />},
->>>>>>> Stashed changes
 ];
 
 /* Temporarily toggle isPrivate false until we are capable to check for authorisation based on jwt */
