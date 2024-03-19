@@ -7,12 +7,15 @@ import { useNavigate } from "react-router-dom";
 const Profile = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const authUser = JSON.parse(localStorage.getItem("authUser"));
 
   const handleMenuClick = async (e) => {
     if (e.key === "1") {
       await logout();
+      navigate('/login');
+    } else if (e.key === "0") {
+      navigate(`/profile/${authUser.id}`);
     }
-    navigate('/login');
   };
 
   const profileMenu = (
