@@ -8,6 +8,6 @@ export const ManagerRoute = () => {
   return isAuthenticated && authUser["roles"].includes("ROLE_MANAGER") ? (
     <Outlet />
   ) : (
-    <Navigate to="/unauthorisedpage" />
+    <Navigate to="/pagenotfound" />
   );
 };

@@ -4,7 +4,7 @@ import RegisterPage from '../pages/customer/RegisterPage';
 import HomePage from '../pages/customer/HomePage';
 import ProfilePage from '../pages/customer/ProfilePage';
 import BookingPage from '../pages/customer/BookingPage';
-import ErrorPage from '../pages/ErrorPage';
+import Error404 from '../pages/error-pages/Error404';
 
 /* Event Manager */
 import { HomePage as EventManagerHomePage } from '../pages/event-manager/HomePage';
@@ -37,5 +37,6 @@ export const TICKETING_OFFICER_ROUTES = [
 
 /* Adding an ERROR_ROUTE to catch all pages that are not valid */
 export const ERROR_ROUTES = [
-  { path: "*", element: <ErrorPage />, isPrivate: false},
+  { path: "*", element: <Error404 />},
+  { path: "/pagenotfound", element: <Error404 />}
 ]

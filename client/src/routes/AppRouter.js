@@ -56,7 +56,7 @@ export const AppRouter = () => {
       </Route>
 
       {/* Routes that are not found */}
-      {renderRoutes(ERROR_ROUTES)}
+      {renderRoutes(ERROR_ROUTES, "", true)}
     </Routes>
   );
 };
