@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -47,31 +48,42 @@ public class UserController {
 
     @GetMapping()
     @PreAuthorize("hasRole('ROLE_OFFICER') or hasRole('ROLE_MANAGER')")
-    public ResponseEntity<Page<UserResponseDTO>> getAllUsers(@RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<?> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String query) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userServiceImpl.findAllUsers(pageable);
-        Page<UserResponseDTO> dtoPage = users.map(this::convertToDto);
-        return ResponseEntity.ok(dtoPage);
-    }
 
-    @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('ROLE_OFFICER', 'ROLE_MANAGER')")
-    public ResponseEntity<UserResponseDTO> searchUser(@RequestParam String query) {
-        try {
-            logger.info("Searching for user with query: {}", query);
-            User user;
+        // Check if a search query is provided
+        if (query != null && !query.trim().isEmpty()) {
             try {
-                Long id = Long.parseLong(query);
-                user = userServiceImpl.searchUserById(id);
-            } catch (NumberFormatException e) {
-                user = userServiceImpl.searchUser(query);
+                logger.info("Searching for user with query: {}", query);
+                User user = null;
+                try {
+                    // Try to parse the query as a long in case it's an ID
+                    Long id = Long.parseLong(query);
+                    user = userServiceImpl.searchUserById(id);
+                } catch (NumberFormatException e) {
+                    // If not a number, search by the query string
+                    user = userServiceImpl.searchUser(query);
+                }
+
+                if (user == null) {
+                    logger.info("User not found with query: {}", query);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+
+                Page<UserResponseDTO> singleUserPage = new PageImpl<>(List.of(convertToDto(user)), pageable, 1);
+                return ResponseEntity.ok(Map.of("content", singleUserPage.getContent()));
+            } catch (Exception e) {
+                logger.error("An error occurred while searching for user with query: {}", query, e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-            logger.info("User found: {}", user);
-            return ResponseEntity.ok(convertToDto(user));
-        } catch (IllegalArgumentException e) {
-            logger.error("User not found with query: {}", query, e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            // If no query, fetch all users
+            Page<User> users = userServiceImpl.findAllUsers(pageable);
+            Page<UserResponseDTO> dtoPage = users.map(this::convertToDto);
+            return ResponseEntity.ok(dtoPage);
         }
     }
 
