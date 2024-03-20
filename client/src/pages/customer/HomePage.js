@@ -15,6 +15,8 @@ const settings = {
     autoplaySpeed: 2000,
 };
 
+// TODO: line 127
+
 function chunk(array, size) {
     const chunked = [];
     let index = 0;
@@ -122,6 +124,7 @@ const HomePage = () => {
                                     <Row gutter={16}>
                                         {events.map((event, index) => (
                                             <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ padding: '20px' }}>
+                                            {/* Change the index to event_id! */}
                                                 <Link to={{ pathname: `/event/${index}` }}>
                                                     <Card
                                                         hoverable
