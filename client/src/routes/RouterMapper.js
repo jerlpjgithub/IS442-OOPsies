@@ -12,7 +12,7 @@ import EventsPage from '../pages/customer/EventsPage';
 import { HomePage as EventManagerHomePage } from '../pages/event-manager/HomePage';
 
 /* Ticketing Officer */
-import { HomePage as TicketingOfficerHomePage } from '../pages/ticketing-officer/HomePage';
+import { HomePage as TicketingOfficerHomePage } from '../pages/ticketing-officer/HomePage'
 
 /* By adding routes here, it will be simply localhost:3000/login */
 export const PUBLIC_ROUTES = [
@@ -39,6 +39,7 @@ export const EVENT_MANAGER_ROUTES = [
 /* Eg. By adding routes here, it will be simply localhost:3000/ticketing-officer/home */
 export const TICKETING_OFFICER_ROUTES = [
   { path: "/home", element: <TicketingOfficerHomePage />},
+
 ];
 
 /* Adding an ERROR_ROUTE to catch all pages that are not valid */

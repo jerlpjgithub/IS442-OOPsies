@@ -11,6 +11,8 @@ import {
     InputNumber
 } from "antd";
 import { images } from '../imageloader';
+import axios from 'axios';
+
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -22,18 +24,31 @@ const EventPage = () => {
     } = theme.useToken();
 
     // get event
-    const { event_id } = useParams(); 
-    const [event, setEvent] = useState(null); 
+    // const { event_id } = useParams();
+    // const [event, setEvent] = useState(null);
+    
+    const [event, setEvent] = useState([
+        {
+            event_id: 1,
+            title: 'Jerome Lim Small PP',
+            description: 'This is the description for event 1.',
+            eventCancelled: false,
+            capacity: 100,
+        }]);
 
-    useEffect(() => {
-        const fetchEvent = async () => {
-            const response = await fetch(`http://localhost:3000/event/get/${event_id}`); 
-            const data = await response.json();
-            setEvent(data);
-        };
 
-        fetchEvent();
-    }, [event_id]);
+    // useEffect(() => {
+    //     const fetchEvent = async () => {
+    //         try {
+    //             const response = await axios.get(`http://localhost:3000/event/get/${event_id}`);
+    //             setEvent(response.data);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
+
+    //     fetchEvent();
+    // }, [event_id]);
 
     // to handle bookings
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -47,23 +62,17 @@ const EventPage = () => {
 
         const user = localStorage.getItem('authUser');
         const userId = user.id;
-        const response = await fetch(`http://localhost:3000/booking/create/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+
+        try {
+            const response = await axios.post(`http://localhost:3000/booking/create/${userId}`, {
                 event_id: event.id,
                 numTickets: numTickets
-            })
-        });
+            });
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            alert('Booking was successful'); 
-        } else {
-            alert('Booking was unsuccessful'); 
+            alert('Booking was successful');
+        } catch (error) {
+            console.error(error);
+            alert('Booking was unsuccessful');
         }
     };
 
@@ -78,8 +87,8 @@ const EventPage = () => {
             <Content
                 style={{
                     padding: '0 48px',
-                    flexGrow: 1, 
-                    overflow: 'auto', 
+                    flexGrow: 1,
+                    overflow: 'auto',
                 }}
             >
                 <Breadcrumb
@@ -115,7 +124,16 @@ const EventPage = () => {
                             {event.name}
                         </Title>
                         <Typography.Paragraph>
-                            {event.description}
+                            <p>
+                                {event.description}
+                            </p>
+                            <p>
+                                Location: {event.location}
+                                Date: {event.dateTime}
+                                Tickets left: {event.capacity}
+                                Ticket Price: {event.ticketPrice}
+
+                            </p>
                         </Typography.Paragraph>
                     </div>
                     <div style={{ alignSelf: 'flex-end', margin: '20px' }}>

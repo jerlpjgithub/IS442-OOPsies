@@ -36,11 +36,14 @@ const HomePage = () => {
 
     // useEffect(() => {
     //     const fetchEvents = async () => {
-    //         const response = await fetch('http://localhost:3000/event/get/all');
-    //         const data = await response.json();
-    //         setEvents(data);
+    //         try {
+    //             const response = await axios.get(`http://localhost:3000/event/get/all`);
+    //             setEvents(response.data);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
     //     };
-
+    
     //     fetchEvents();
     // }, []); 
 
@@ -104,8 +107,8 @@ const HomePage = () => {
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ background: '#fff', minHeight: 280, padding: 24 }}>
-                    <div style={{padding:30, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Title level={1} style={{ fontSize:'70px', textAlign: 'center' }}>
+                    <div style={{ padding: 30, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Title level={1} style={{ fontSize: '70px', textAlign: 'center' }}>
                             Welcome to OOPsies Ticketing!
                         </Title>
                         <Typography.Paragraph style={{ fontSize: '20px', textAlign: 'center' }}>
@@ -113,29 +116,29 @@ const HomePage = () => {
                         </Typography.Paragraph>
                     </div>
                     <div style={{ overflow: 'auto', width: '100%' }}>
-                    <Carousel {...settings} autoplay>
-                        {chunk(currentEvents, 4).map((events, index) => (
-                            <div key={index}>
-                                <Row gutter={16}>
-                                    {events.map((event, index) => (
-                                        <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ padding: '20px'}}>
-                                            <Link to={{ pathname: `/event/${index}` }}>
-                                                <Card
-                                                    hoverable
-                                                    style={{ width: '100%', marginBottom: '20px'}}
-                                                    cover={<img alt={event.title} src={images[Math.floor(Math.random() * images.length)]}
-                                                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                                                    />}
-                                                >
-                                                    <Meta title={event.title} description={event.description} />
-                                                </Card>
-                                            </Link>
-                                        </Col>
-                                    ))}
-                                </Row>
-                            </div>
-                        ))}
-                    </Carousel>
+                        <Carousel {...settings} autoplay>
+                            {chunk(currentEvents, 4).map((events, index) => (
+                                <div key={index}>
+                                    <Row gutter={16}>
+                                        {events.map((event, index) => (
+                                            <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ padding: '20px' }}>
+                                                <Link to={{ pathname: `/event/${index}` }}>
+                                                    <Card
+                                                        hoverable
+                                                        style={{ width: '100%', marginBottom: '20px' }}
+                                                        cover={<img alt={event.title} src={images[Math.floor(Math.random() * images.length)]}
+                                                            style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                                                        />}
+                                                    >
+                                                        <Meta title={event.title} description={event.description} />
+                                                    </Card>
+                                                </Link>
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                </div>
+                            ))}
+                        </Carousel>
                     </div>
                 </div>
             </Content>

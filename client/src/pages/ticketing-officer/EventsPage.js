@@ -19,8 +19,10 @@ const HomePage = () => {
 
     // useEffect(() => {
     //     const fetchEvents = async () => {
+    //         const user = localStorage.getItem('authUser');
+    //         const userId = user.id;
     //         try {
-    //             const response = await axios.get(`http://localhost:3000/event/get/all`);
+    //             const response = await axios.get(`http://localhost:3000/event/get/all/${userId}`);
     //             setEvents(response.data);
     //         } catch (error) {
     //             console.error(error);
@@ -74,7 +76,6 @@ const HomePage = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     // Doing validation to ensure cancelled or events that are over do not get rendered
-
     const filteredEvents = events.filter(event => !event.eventCancelled || new Date(event.date) > new Date());
 
     const paginate = (page) => {
@@ -84,7 +85,6 @@ const HomePage = () => {
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
     };
-
 
     return (
         <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>

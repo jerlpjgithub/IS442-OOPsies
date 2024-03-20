@@ -26,15 +26,18 @@ const EventPage = () => {
     const { event_id } = useParams(); 
     const [ event, setEvent ] = useState(null); 
 
-    useEffect(() => {
-        const fetchEvent = async () => {
-            const response = await fetch(`http://localhost:3000/event/get/${event_id}`); 
-            const data = await response.json();
-            setEvent(data);
-        };
+    // useEffect(() => {
+    //     const fetchEvent = async () => {
+    //         try {
+    //             const response = await axios.get(`http://localhost:3000/event/get/${event_id}`);
+    //             setEvent(response.data);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
 
-        fetchEvent();
-    }, [event_id]);
+    //     fetchEvent();
+    // }, [event_id]);
 
     // to handle bookings
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -94,7 +97,7 @@ const EventPage = () => {
                     </div>
                     <div style={{ alignSelf: 'flex-end', margin: '20px' }}>
                         <Button type="primary" onClick={showModal}>
-                            Buy Tickets
+                            Process on-site Ticket Sales
                         </Button>
 
                     </div>
