@@ -8,6 +8,7 @@ import Error404 from '../pages/error-pages/Error404';
 
 /* Event Manager */
 import { HomePage as EventManagerHomePage } from '../pages/event-manager/HomePage';
+import { AddEventPage } from '../pages/event-manager/AddEventPage';
 
 /* Ticketing Officer */
 import { HomePage as TicketingOfficerHomePage } from '../pages/ticketing-officer/HomePage';
@@ -28,6 +29,7 @@ export const PRIVATE_ROUTES = [
 /* Eg. By adding routes here, it will be simply localhost:3000/event-manager/home */
 export const EVENT_MANAGER_ROUTES = [
   { path: "/home", element: <EventManagerHomePage />},
+  { path: "/addevent", element: <AddEventPage />},
 ];
 
 /* Eg. By adding routes here, it will be simply localhost:3000/ticketing-officer/home */
