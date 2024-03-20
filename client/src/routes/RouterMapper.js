@@ -20,7 +20,7 @@ export const PUBLIC_ROUTES = [
 
 export const PRIVATE_ROUTES = [
   { path: "/home", element: <HomePage />},
-  { path: "/profile", element: <ProfilePage />},
+  { path: "/profile/:id", element: <ProfilePage />},
   { path: "/booking/:id", element: <BookingPage />},
 ];
 
