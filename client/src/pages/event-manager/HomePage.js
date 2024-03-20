@@ -1,7 +1,8 @@
-import React from 'react'
+import React from 'react';
+
 
 export const HomePage = () => {
   return (
-    <div>This is the event manager's HomePage</div>
-  )
-}
+    <h1>Event manager's home page</h1>
+  );
+};

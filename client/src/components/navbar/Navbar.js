@@ -25,7 +25,7 @@ const getItems = (role) => {
     } else if (role === 'ROLE_MANAGER') {
         return [
             { key: '1', label: 'Your Events', route: "/home" },
-            { key: '2', label: 'Add Event', route: "/add" },
+            { key: '2', label: 'Add Event', route: "/event-manager/home" },
         ];
     }
 
