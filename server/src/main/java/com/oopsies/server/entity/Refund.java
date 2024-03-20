@@ -24,8 +24,7 @@ public class Refund {
   public Refund() {
   }
 
-  public Refund(Long refundId, Booking booking, Date refundDate) {
-    this.refundId = refundId;
+  public Refund(Booking booking, Date refundDate) {
     this.booking = booking;
     this.refundDate = refundDate;
   }

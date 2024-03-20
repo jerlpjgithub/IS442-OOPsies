@@ -5,8 +5,6 @@ import com.oopsies.server.dto.EventDTO;
 import com.oopsies.server.entity.*;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.repository.BookingRepository;
-import com.oopsies.server.repository.UserRepository;
-import com.oopsies.server.repository.EventRepository;
 import com.oopsies.server.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,7 +76,7 @@ public class BookingService {
     Booking booking = new Booking();
     booking.setUser(user);
     booking.setBookingDate(new Date());
-    booking.setEventID(eventService.getEventFromDTO(event));
+    booking.setEvent(eventService.getEventFromDTO(event));
     booking.setCancelDate(null);
     Booking newBooking = bookingRepository.save(booking);
     eventService.updateEventCapacity(event, numTickets);
@@ -112,7 +110,7 @@ public class BookingService {
     // get numTickets
     int numTickets = ticketService.getAllTicketsForBooking(booking).size();
     dto.setNumTickets(numTickets);
-    Optional<EventDTO> event = eventService.getEventById(booking.getEventID().getId());
+    Optional<EventDTO> event = eventService.getEventById(booking.getEvent().getId());
     assert event.isPresent();
     dto.setEvent(event.get());
 

@@ -25,6 +25,9 @@ public class EventService {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    private RefundService refundService;
+
     public EventService() { }
 
     public Optional<EventDTO> getEventById(long eventId) {
@@ -157,6 +160,10 @@ public class EventService {
         Optional<Event> someEvent = eventRepository.findEventById(eventDTO.getId());
         assert someEvent.isPresent();
         return someEvent.get();
+    }
+
+    public void cancelEvent(long event_id){
+        refundService.cancelEvent(event_id);
     }
 
     private EventDTO convertToDTO(Event event) {

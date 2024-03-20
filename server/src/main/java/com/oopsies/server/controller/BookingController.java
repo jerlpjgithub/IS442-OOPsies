@@ -2,7 +2,6 @@ package com.oopsies.server.controller;
 
 import java.util.*;
 import com.oopsies.server.dto.BookingDTO;
-import com.oopsies.server.entity.Booking;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.payload.request.BookingRequest;
 import com.oopsies.server.payload.response.MessageResponse;

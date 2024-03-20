@@ -1,13 +1,12 @@
 package com.oopsies.server.controller;
 
-import java.sql.SQLDataException;
-import java.sql.SQLException;
 import java.util.*;
+
 import com.oopsies.server.dto.EventDTO;
-import com.oopsies.server.entity.Event;
 import com.oopsies.server.payload.request.EventRequest;
 import com.oopsies.server.payload.response.MessageResponse;
 import com.oopsies.server.services.EventService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,6 +98,22 @@ public class EventController {
         }
         catch(Exception exc){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
+                    500, exc.getMessage(), null
+            ));
+        }
+    }
+
+
+    @PostMapping(path = "/cancel/{event_id}")
+    public ResponseEntity<?> InititateRefundByBookingId(@PathVariable("event_id") long event_id){
+        try{
+            eventService.cancelEvent(event_id);
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+            200, "Event cancelled successfully", null
+        ));
+        }
+        catch(Exception exc){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
                     500, exc.getMessage(), null
             ));
         }

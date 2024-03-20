@@ -12,8 +12,7 @@ import com.oopsies.server.repository.EventRepository;
 import com.oopsies.server.repository.PaymentRepository;
 import com.oopsies.server.repository.UserRepository;
 
-import java.util.Optional;
-import java.util.Date;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
@@ -40,31 +39,57 @@ public class RefundService {
     this.ticketRepository = ticketRepository;
     this.eventRepository = eventRepository;
   }
-  // public Refund createRefund(Refund refund){
-  //   return refundRepository.save(refund);
-  // }
+
+  public void cancelEvent(long event_id){
+    List<Booking> listOfBookings = bookingRepository.findByEventId(event_id);
+
+    for(Booking booking: listOfBookings){
+      if(booking.getCancelDate() == null){
+        booking.setCancelDate(new Date());
+        bookingRepository.save(booking);
+
+        Optional<Event> event = eventRepository.findById(event_id);
+
+        Refund processedRefund = new Refund(booking, new Date());
+        long user_id = booking.getUser().getId();
+
+        Payment payment = paymentRepository.findByBookingId(booking.getBookingID());
+        double refundedAmount =  payment.getAmount();
+        
+        // Retrieves each current user that booked, and refund amount back to them. 
+        Optional<User> user = userRepository.findById(user_id);
+        double accountBalance = user.get().getAccountBalance();
+        double updatedAccountBalance = accountBalance + refundedAmount;
+        user.get().setAccountBalance(updatedAccountBalance);
+      
+        userRepository.save(user.get());
+        
+        event.get().setEventCancelled(new Date());
+        eventRepository.save(event.get());
+
+        refundRepository.save(processedRefund);
+      }      
+    }
+  }
 
   public void processRefund(Long booking_id) throws Exception{
-
-    // Check if refund has already been requested
-    Refund refund = refundRepository.findRefundByBookingId(booking_id);
-    if(refund != null){
+    // Check if refund has already been requested (cancelled_date for Booking has a value)
+    Booking booking = bookingRepository.findBookingById(booking_id);
+    if(booking.getCancelDate() != null){
       throw new Exception("refund for this booking has already been processed");
     }
+    
+    booking.setCancelDate(new Date());
+    Optional<Event> event = eventRepository.findById(booking.getEvent().getId());
 
-
-    Booking booking = bookingRepository.findBookingById(booking_id);
-    Optional<Event> event = eventRepository.findById(booking.getEventID().getId());
-
+    // Check if refund is whithin 48 hours of event start
     boolean within48hrs = within48HoursOfEventStart(event.get());
     if(within48hrs){
       throw new Exception("cannot refund within 48 hours of event start");
     }
 
-    Refund processedRefund = new Refund(booking_id, booking, new Date());
+    Refund processedRefund = new Refund(booking, new Date());
     long user_id = booking.getUser().getId();
-
-    // To change once relation is correct 
 
     Payment payment = paymentRepository.findByBookingId(booking_id);
     double refundedAmount =  payment.getAmount();
@@ -72,9 +97,9 @@ public class RefundService {
     // Retrieves current user that booked, and refund amount back to them. 
     Optional<User> user = userRepository.findById(user_id);
     double accountBalance = user.get().getAccountBalance();
-    double updatedAccountBalance = accountBalance + refundedAmount;
+    double penaltyFee = event.get().getCancellationFee();
+    double updatedAccountBalance = accountBalance + refundedAmount - penaltyFee;
     user.get().setAccountBalance(updatedAccountBalance);
-  
     userRepository.save(user.get());
 
     // Retrieve tickets booked and reallocates them to event ticket capacity

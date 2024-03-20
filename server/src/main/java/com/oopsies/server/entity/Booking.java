@@ -12,14 +12,14 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
 //    @JoinColumns({
 //            @JoinColumn(name = "events_eventName"),
 //            @JoinColumn(name = "events_dateTime"),
 //            @JoinColumn(name = "events_venue")
 //    })
-    @JoinColumn(name="events_id")
-    private Event eventID;
+    @JoinColumn(name="event_id")
+    private Event event;
 
     @Column(name = "bookingDate", nullable = false)
     private Date bookingDate;
@@ -52,12 +52,12 @@ public class Booking {
         this.user = user;
     }
 
-    public Event getEventID() {
-        return eventID;
+    public Event getEvent() {
+        return event;
     }
 
-     public void setEventID(Event eventID) {
-         this.eventID = eventID;
+     public void setEvent(Event event) {
+         this.event = event;
      }
 
     public Date getBookingDate() {
@@ -80,7 +80,7 @@ public class Booking {
     public String toString() {
         return "Booking{" +
                 "id=" + id +
-                ", eventID=" + eventID +
+                ", eventID=" + event +
                 ", bookingDate=" + bookingDate +
                 ", cancelDate=" + cancelDate +
                 ", user=" + user +
