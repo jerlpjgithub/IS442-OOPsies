@@ -22,7 +22,7 @@ export const PUBLIC_ROUTES = [
 
 export const PRIVATE_ROUTES = [
   { path: "/home", element: <HomePage />},
-  { path: "/profile", element: <ProfilePage />},
+  { path: "/profile/:id", element: <ProfilePage />},
   { path: "/booking/:id", element: <BookingPage />},
   /* Add in :event_id  */
   { path: "/event/:title", element: <EventPage />},
@@ -44,6 +44,8 @@ export const TICKETING_OFFICER_ROUTES = [
 
 /* Adding an ERROR_ROUTE to catch all pages that are not valid */
 export const ERROR_ROUTES = [
+  { path: "*", element: <Error404 />},
+  { path: "/pagenotfound", element: <Error404 />}
   { path: "*", element: <Error404 />},
   { path: "/pagenotfound", element: <Error404 />}
 ]
