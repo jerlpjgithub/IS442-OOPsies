@@ -2,7 +2,7 @@ import React from 'react'
 
 const BookingPage = () => {
   return (
-    <div>BookingPage</div>
+    <div>Booking History Page</div>
   )
 }
 
