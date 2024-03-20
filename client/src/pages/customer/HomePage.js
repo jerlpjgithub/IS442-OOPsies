@@ -45,20 +45,20 @@ const HomePage = () => {
     //             console.error(error);
     //         }
     //     };
-    
+
     //     fetchEvents();
     // }, []); 
 
     const [events, setEvents] = useState([
         {
             title: 'Jerome Lim Small PP',
-            description: 'This is the description for event 1.',
-            image: 'https://media.licdn.com/dms/image/C5103AQHCHy2M0HoXsg/profile-displayphoto-shrink_800_800/0/1541057709013?e=1715817600&v=beta&t=d_N4Ov_IOjfKa1DYDpirAnI5F4JYczriY10CE7v-xoU'
+            description:
+                "Join us for an intimate and informative session with Jerome Lim, a renowned expert in the field of small PowerPoint (PP) presentations. In this event, Jerome will share his insights and best practices for creating impactful and concise PP slides for small audiences. Whether you're a beginner looking to enhance your presentation skills or a seasoned presenter seeking new ideas, this event promises to be both enlightening and inspiring. Don't miss this opportunity to learn from Jerome and take your small PP presentations to the next level!",
+            date: Date()
         },
         {
             title: 'Event 2',
             description: 'This is the description for event 2.',
-            image: 'https://media.licdn.com/dms/image/D5603AQFJU9Q4E453fQ/profile-displayphoto-shrink_800_800/0/1661907635137?e=1715817600&v=beta&t=SdmRwWOgFgiET0ezV1IIeCdZKPC_wrvd-vOqqnDKilw'
         },
         {
             title: 'Event 3',
@@ -124,7 +124,7 @@ const HomePage = () => {
                                     <Row gutter={16}>
                                         {events.map((event, index) => (
                                             <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ padding: '20px' }}>
-                                            {/* Change the index to event_id! */}
+                                                {/* Change the index to event_id! */}
                                                 <Link to={{ pathname: `/event/${index}` }}>
                                                     <Card
                                                         hoverable
@@ -133,7 +133,17 @@ const HomePage = () => {
                                                             style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                                                         />}
                                                     >
-                                                        <Meta title={event.title} description={event.description} />
+                                                        <Meta
+                                                            title={event.title}
+                                                            description={<div style={{
+                                                                whiteSpace: 'nowrap',
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis'
+                                                            }}>
+                                                                <p>{event.date}</p>
+                                                                {event.description}
+                                                            </div>}
+                                                        />
                                                     </Card>
                                                 </Link>
                                             </Col>
