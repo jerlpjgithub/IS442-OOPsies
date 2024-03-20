@@ -8,7 +8,8 @@ import {
     Breadcrumb,
     theme,
     Modal,
-    InputNumber
+    InputNumber,
+    Divider
 } from "antd";
 import { images } from '../imageloader';
 import axios from 'axios';
@@ -16,9 +17,14 @@ import axios from 'axios';
 const { Content } = Layout;
 const { Title } = Typography;
 
+
+
 // TODO: Figure out what details we want from the event to show 
 
 const EventPage = () => {
+    const user = localStorage.getItem('authUser');
+    const userId = user.id;
+
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -26,15 +32,20 @@ const EventPage = () => {
     // get event
     // const { event_id } = useParams();
     // const [event, setEvent] = useState(null);
-    
-    const [event, setEvent] = useState([
+
+    const [event, setEvent] = useState(
         {
             event_id: 1,
-            title: 'Jerome Lim Small PP',
-            description: 'This is the description for event 1.',
+            name: 'Jerome Lim Small PP',
+            description:
+                "Join us for an intimate and informative session with Jerome Lim, a renowned expert in the field of small PowerPoint (PP) presentations. In this event, Jerome will share his insights and best practices for creating impactful and concise PP slides for small audiences. Whether you're a beginner looking to enhance your presentation skills or a seasoned presenter seeking new ideas, this event promises to be both enlightening and inspiring. Don't miss this opportunity to learn from Jerome and take your small PP presentations to the next level!",
             eventCancelled: false,
             capacity: 100,
-        }]);
+            location: "Jerome's house",
+            dateTime: Date(),
+            ticketPrice: 10
+
+        });
 
 
     // useEffect(() => {
@@ -52,6 +63,21 @@ const EventPage = () => {
 
     // to handle bookings
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [userDetails, setUserDetails] = useState(false);
+    
+    useEffect(() => {
+        const fetchStatus = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
+                console.log(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+    
+        fetchStatus();
+    }, []);
+
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -59,9 +85,6 @@ const EventPage = () => {
 
     const handleBooking = async () => {
         setIsModalVisible(false);
-
-        const user = localStorage.getItem('authUser');
-        const userId = user.id;
 
         try {
             const response = await axios.post(`http://localhost:3000/booking/create/${userId}`, {
@@ -82,13 +105,15 @@ const EventPage = () => {
 
     const [numTickets, setNumTickets] = useState(1);
 
+    const calculateTotalPrice = (numTickets, ticketPrice) => {
+        return numTickets * ticketPrice;
+    };
+
     return (
-        <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Layout>
             <Content
                 style={{
-                    padding: '0 48px',
-                    flexGrow: 1,
-                    overflow: 'auto',
+                    padding: '0 48px'
                 }}
             >
                 <Breadcrumb
@@ -115,33 +140,57 @@ const EventPage = () => {
                         background: colorBgContainer,
                     }}
                 >
-                    <div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: colorBgContainer }}>
                         <Image
-                            width={200}
+                            style={{ borderRadius: 10 }}
+                            width={800}
+                            height={300}
                             src={images[Math.floor(Math.random() * images.length)]}
                         />
-                        <Title>
+                        <Title style={{ fontSize: '60px' }}>
                             {event.name}
                         </Title>
-                        <Typography.Paragraph>
-                            <p>
-                                {event.description}
-                            </p>
-                            <p>
-                                Location: {event.location}
-                                Date: {event.dateTime}
-                                Tickets left: {event.capacity}
-                                Ticket Price: {event.ticketPrice}
-
-                            </p>
-                        </Typography.Paragraph>
+                        <div style={{ width: '1000px' }}>
+                            <Typography.Paragraph>
+                                <p>
+                                    {event.description}
+                                </p>
+                                <hr />
+                                <p>
+                                    Location: {event.location}
+                                    <p>
+                                        Date: {event.dateTime}
+                                    </p>
+                                    Tickets left: {event.capacity}
+                                    <p>
+                                        Ticket Price: {event.ticketPrice}
+                                    </p>
+                                </p>
+                            </Typography.Paragraph>
+                        </div>
                     </div>
                     <div style={{ alignSelf: 'flex-end', margin: '20px' }}>
                         <Button type="primary" onClick={showModal}>
                             Buy Tickets
                         </Button>
                         <Modal title="Buy Tickets" visible={isModalVisible} onOk={handleBooking} onCancel={handleCancel}>
-                            Number of Tickets:  <InputNumber min={1} value={numTickets} onChange={setNumTickets} />
+                            Number of Tickets:  <InputNumber min={1} max={5} value={numTickets} onChange={setNumTickets} />
+                            <Divider />
+                            <Typography.Title level={3}>
+                                Your Payment Details:
+                            </Typography.Title>
+                            <p style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span>Your account balance:</span>
+                                <span></span>
+                            </p>
+                            <p style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span>Total Price:</span>
+                                <span>${calculateTotalPrice(numTickets, event.ticketPrice)}</span>
+                            </p>
+                            <p style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span>Remaining Balance after purchase:</span>
+                                <span></span>
+                            </p>
                         </Modal>
                     </div>
                 </div>
