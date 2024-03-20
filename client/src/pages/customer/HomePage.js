@@ -37,7 +37,7 @@ const HomePage = () => {
     // useEffect(() => {
     //     const fetchEvents = async () => {
     //         try {
-    //             const response = await axios.get(`http://localhost:3000/event/get/all`);
+    //             const response = await axios.get(`http://localhost:8080/event/get/all`);
     //             setEvents(response.data);
     //         } catch (error) {
     //             console.error(error);

@@ -10,7 +10,7 @@ const { Title } = Typography;
 
 // TO-DO: Add more information about events
 
-const HomePage = () => {
+export const EventsPage = () => {
 
     // Currently using placeholder data
     // Once mockdata are up, uncomment the bottom
@@ -22,7 +22,7 @@ const HomePage = () => {
     //         const user = localStorage.getItem('authUser');
     //         const userId = user.id;
     //         try {
-    //             const response = await axios.get(`http://localhost:3000/event/get/all/${userId}`);
+    //             const response = await axios.get(`http://localhost:8080/event/get/all/${userId}`);
     //             setEvents(response.data);
     //         } catch (error) {
     //             console.error(error);
@@ -147,4 +147,4 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
+

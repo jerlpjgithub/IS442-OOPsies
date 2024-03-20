@@ -29,7 +29,7 @@ const EventPage = () => {
     // useEffect(() => {
     //     const fetchEvent = async () => {
     //         try {
-    //             const response = await axios.get(`http://localhost:3000/event/get/${event_id}`);
+    //             const response = await axios.get(`http://localhost:8080/event/get/${event_id}`);
     //             setEvent(response.data);
     //         } catch (error) {
     //             console.error(error);
@@ -99,7 +99,6 @@ const EventPage = () => {
                         <Button type="primary" onClick={showModal}>
                             Process on-site Ticket Sales
                         </Button>
-
                     </div>
                 </div>
             </Content>
