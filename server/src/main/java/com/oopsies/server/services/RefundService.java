@@ -14,22 +14,32 @@ import com.oopsies.server.repository.UserRepository;
 
 import java.util.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RefundService {
 
+  @Autowired
   private RefundRepository refundRepository;
 
+  @Autowired
   private BookingRepository bookingRepository;
 
+  @Autowired
   private UserRepository userRepository;
 
+  @Autowired
   private PaymentRepository paymentRepository;
 
+  @Autowired
   private TicketRepository ticketRepository;
 
+  @Autowired
   private EventRepository eventRepository;
+
+  @Autowired
+  private UserDetailsServiceImpl userDetailsService;
 
   public RefundService(RefundRepository refundRepository, BookingRepository bookingRepository, UserRepository userRepository, PaymentRepository paymentRepository, TicketRepository ticketRepository, EventRepository eventRepository) { 
     this.refundRepository = refundRepository;
@@ -41,6 +51,16 @@ public class RefundService {
   }
 
   public void cancelEvent(long event_id){
+    // get event object based on event_id, check if user requesting (logged in) is indeed event manager
+    Optional<Event> someEvent = eventRepository.findById(event_id);
+    if (someEvent.isEmpty()) {
+      throw new IllegalArgumentException("Invalid event requested");
+    }
+    Event event = someEvent.get();
+    if (!userDetailsService.isAuthorisedUser(event.getManagerID())) {
+      throw new IllegalArgumentException("Unauthorised content!");
+    }
+
     List<Booking> listOfBookings = bookingRepository.findByEventId(event_id);
 
     for(Booking booking: listOfBookings){
@@ -48,24 +68,22 @@ public class RefundService {
         booking.setCancelDate(new Date());
         bookingRepository.save(booking);
 
-        Optional<Event> event = eventRepository.findById(event_id);
-
         Refund processedRefund = new Refund(booking, new Date());
-        long user_id = booking.getUser().getId();
+
+        // Retrieves each current user that booked, and refund amount back to them.
+        User user = booking.getUser();
 
         Payment payment = paymentRepository.findByBookingId(booking.getBookingID());
-        double refundedAmount =  payment.getAmount();
+        double refundedAmount = payment.getAmount();
         
-        // Retrieves each current user that booked, and refund amount back to them. 
-        Optional<User> user = userRepository.findById(user_id);
-        double accountBalance = user.get().getAccountBalance();
+        double accountBalance = user.getAccountBalance();
         double updatedAccountBalance = accountBalance + refundedAmount;
-        user.get().setAccountBalance(updatedAccountBalance);
-      
-        userRepository.save(user.get());
+
+        user.setAccountBalance(updatedAccountBalance);
+        userRepository.save(user);
         
-        event.get().setEventCancelled(new Date());
-        eventRepository.save(event.get());
+        event.setEventCancelled(new Date());
+        eventRepository.save(event);
 
         refundRepository.save(processedRefund);
       }      
@@ -73,8 +91,12 @@ public class RefundService {
   }
 
   public void processRefund(Long booking_id) throws Exception{
+    // TODO refactor for single purpose, booking checks should be done in booking service
     // Check if refund has already been requested (cancelled_date for Booking has a value)
     Booking booking = bookingRepository.findBookingById(booking_id);
+    if (!userDetailsService.isAuthorisedUser(booking.getUser())) {
+      throw new IllegalArgumentException("Unauthorised to cancel booking");
+    }
     if(booking.getCancelDate() != null){
       throw new Exception("refund for this booking has already been processed");
     }
@@ -83,6 +105,7 @@ public class RefundService {
     Optional<Event> event = eventRepository.findById(booking.getEvent().getId());
 
     // Check if refund is whithin 48 hours of event start
+    assert event.isPresent();
     boolean within48hrs = within48HoursOfEventStart(event.get());
     if(within48hrs){
       throw new Exception("cannot refund within 48 hours of event start");
@@ -96,6 +119,7 @@ public class RefundService {
     
     // Retrieves current user that booked, and refund amount back to them. 
     Optional<User> user = userRepository.findById(user_id);
+    assert user.isPresent();
     double accountBalance = user.get().getAccountBalance();
     double penaltyFee = event.get().getCancellationFee();
     double updatedAccountBalance = accountBalance + refundedAmount - penaltyFee;
@@ -119,11 +143,6 @@ public class RefundService {
     long hoursDifference = timeDifference / (1000 * 60 * 60);
 
 
-    if (hoursDifference < 48) {
-          return true;
-        } 
-    return false;
+    return hoursDifference < 48;
   }
-
-
 }

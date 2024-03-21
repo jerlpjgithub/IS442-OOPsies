@@ -3,7 +3,11 @@ package com.oopsies.server.services;
 import com.oopsies.server.entity.EnumRole;
 import com.oopsies.server.entity.Role;
 import com.oopsies.server.exception.UserInsufficientFundsException;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,20 +41,27 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public boolean isManager(User user) {
-        for (Role r : user.getRoles()) {
-            if (r.getName().equals(EnumRole.ROLE_MANAGER)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isManager() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities()
+                .stream()
+                .anyMatch(authority -> authority.getAuthority()
+                        .equals("ROLE_MANAGER"));
     }
 
-    public boolean isOfficer(User user) {
-        for (Role r : user.getRoles()) {
-            if (r.getName().equals(EnumRole.ROLE_OFFICER)) {
-                return true;
-            }
+    public boolean isOfficer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities()
+                .stream()
+                .anyMatch(authority -> authority.getAuthority()
+                        .equals("ROLE_OFFICER"));
+    }
+
+    public boolean isAuthorisedUser(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ((UserDetailsImpl) authentication.getPrincipal()).getId().equals(user.getId());
         }
         return false;
     }

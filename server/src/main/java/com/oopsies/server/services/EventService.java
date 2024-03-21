@@ -59,19 +59,21 @@ public class EventService {
         long managerId = eventRequest.getUserId();
         Optional<User> someUser = userRepository.findById(managerId);
         if (someUser.isEmpty()) {
-            throw new IllegalArgumentException("ID " + managerId + " cannot be found!");
+            throw new IllegalArgumentException("Manager cannot be found!");
         }
 
         User user = someUser.get();
-        boolean isManager = userDetailsService.isManager(user);
+        boolean isManager = userDetailsService.isManager();
+        boolean isAuthorised = userDetailsService.isAuthorisedUser(user);
 
-        if (!isManager) {
+        if (!isManager || !isAuthorised) {
             throw new IllegalArgumentException("Unauthorised content");
         }
 
         Event event = eventRequest.getEvent();
         validateInputs(event);
-        // eventName, dateTime and Venue unique
+
+        // dateTime and Venue unique
         if (isEventExists(event)) {
             throw new IllegalArgumentException("There's already an event happening in that location at the same time!");
         }
@@ -90,9 +92,10 @@ public class EventService {
         }
 
         User user = someUser.get();
-        boolean isManager = userDetailsService.isManager(user);
+        boolean isManager = userDetailsService.isManager();
+        boolean isAuthorised = userDetailsService.isAuthorisedUser(user);
 
-        if (!isManager) {
+        if (!isManager || !isAuthorised) {
             throw new IllegalArgumentException("Unauthorised content");
         }
 
@@ -104,7 +107,7 @@ public class EventService {
         }
 
         Event existingEvent = someExistingEvent.get();
-        if (!Objects.equals(user.getId(), existingEvent.getManagerID().getId())) {
+        if (!userDetailsService.isAuthorisedUser(existingEvent.getManagerID())) {
             throw new IllegalArgumentException("Unauthorised content");
         }
         validateInputs(event);
@@ -134,7 +137,7 @@ public class EventService {
         if (event.getCapacity() < 0) {
             throw new IllegalArgumentException("Capacity must be more than 0!");
         }
-        // TODO check if need to set minimum duration between creation and event occurrence
+        // event cannot be created on the day itself, or before the specified event date
         if (new DateUtil().isBeforeToday(event.getDateTime())) {
             throw new IllegalArgumentException("Date should occur after today!");
         }

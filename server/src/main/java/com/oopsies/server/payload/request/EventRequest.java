@@ -4,11 +4,11 @@ import com.oopsies.server.entity.Event;
 
 public class EventRequest {
     private Event event;
-    private long userId;
+    private long managerId;
 
     public EventRequest(Event event, long managerId) {
         this.event = event;
-        this.userId = managerId;
+        this.managerId = managerId;
     }
 
     public Event getEvent() {
@@ -16,6 +16,6 @@ public class EventRequest {
     }
 
     public long getUserId() {
-        return userId;
+        return managerId;
     }
 }

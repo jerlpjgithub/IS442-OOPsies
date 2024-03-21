@@ -9,6 +9,7 @@ import com.oopsies.server.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -24,6 +25,7 @@ public class BookingController {
     }
 
     @PostMapping(path = "/create/{user_id}")
+    @PreAuthorize("hasAnyRole('ROLE_OFFICER') or #user_id == authentication.principal.id")
     public ResponseEntity<?> createBooking(@PathVariable(value="user_id") long user_id, @RequestBody BookingRequest bookingRequest){
         try {
             long eventId = bookingRequest.getEventId();
@@ -46,16 +48,16 @@ public class BookingController {
     }
 
     @GetMapping(path = "/get/{user_id}")
+    @PreAuthorize("hasAnyRole('ROLE_OFFICER') or #user_id == authentication.principal.id")
     public ResponseEntity<?> getBookingsByUserId(@PathVariable("user_id") long user_id){
-      // try{
         List<BookingDTO> _bookings = bookingService.findBookingsByUserId(user_id);
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<List<BookingDTO>>(
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
                 200, "successful", _bookings
         ));
     }
 
     @PostMapping(path = "/refund/{booking_id}")
-    public ResponseEntity<?> InititateRefundByBookingId(@PathVariable("booking_id") long booking_id){
+    public ResponseEntity<?> initiateRefundByBookingId(@PathVariable("booking_id") long booking_id){
         try{
             bookingService.processBookingRefund(booking_id);
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(

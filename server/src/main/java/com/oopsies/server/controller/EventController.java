@@ -10,6 +10,7 @@ import com.oopsies.server.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,6 +26,7 @@ public class EventController {
     }
 
     @PostMapping(path = "/create")
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER')")
     public ResponseEntity<?> createEvent(@RequestBody EventRequest eventRequest){
         try {
             EventDTO eventDTO = eventService.createEvent(eventRequest);
@@ -45,7 +47,8 @@ public class EventController {
     }
 
     @PutMapping(path = "/update/{event_id}")
-    public ResponseEntity<?> createEvent(@PathVariable("event_id") long event_id, @RequestBody EventRequest eventRequest){
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER')")
+    public ResponseEntity<?> updateEvent(@PathVariable("event_id") long event_id, @RequestBody EventRequest eventRequest){
         try {
             EventDTO eventDTO = eventService.updateEvent(eventRequest, event_id);
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
@@ -65,8 +68,7 @@ public class EventController {
     }
 
     @GetMapping(path = "/get/{event_id}")
-    public ResponseEntity<?> getEventsByUserId(@PathVariable("event_id") long event_id){
-        // try{
+    public ResponseEntity<?> getEventsByEventId(@PathVariable("event_id") long event_id){
         Optional<EventDTO> _events = eventService.getEventById(event_id);
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
                 200, "successful", _events
@@ -82,12 +84,12 @@ public class EventController {
     }
 
     @GetMapping(path = "/get/all/{event_manager_id}")
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER') and #manager_id == authentication.principal.id")
     public ResponseEntity<?> getEventsByManagerId(@PathVariable("event_manager_id") long manager_id){
-
         try{
             List<EventDTO> _events = eventService.getEventsByManagerId(manager_id);
 
-            if(_events.size() == 0){
+            if(_events.isEmpty()){
                 return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
                     200, "successful, no events created by this manager", _events
             )); 
@@ -96,6 +98,7 @@ public class EventController {
                     200, "successful", _events
             ));
         }
+
         catch(Exception exc){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
                     500, exc.getMessage(), null
@@ -105,7 +108,8 @@ public class EventController {
 
 
     @PostMapping(path = "/cancel/{event_id}")
-    public ResponseEntity<?> InititateRefundByBookingId(@PathVariable("event_id") long event_id){
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER')")
+    public ResponseEntity<?> InitiateRefundByBookingId(@PathVariable("event_id") long event_id){
         try{
             eventService.cancelEvent(event_id);
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(

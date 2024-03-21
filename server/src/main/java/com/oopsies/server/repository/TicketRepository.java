@@ -9,5 +9,6 @@ import java.util.List;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findTicketsByBooking(Booking booking);
 
+    Ticket findTicketByTicketId(long ticketId);
 }
 

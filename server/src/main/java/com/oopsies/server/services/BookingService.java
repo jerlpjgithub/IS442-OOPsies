@@ -2,6 +2,7 @@ package com.oopsies.server.services;
 
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.EventDTO;
+import com.oopsies.server.dto.TicketDTO;
 import com.oopsies.server.entity.*;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.repository.BookingRepository;
@@ -53,8 +54,12 @@ public class BookingService {
     }
 
     User user = someUser.get();
+    boolean isManager = userDetailsService.isManager();
+    if (isManager) {
+      throw new IllegalArgumentException("Managers cannot purchase tickets for event you are managing!");
+    }
 
-    boolean isOfficer = userDetailsService.isOfficer(user);
+    boolean isOfficer = userDetailsService.isOfficer();
 
     EventDTO event = someEvent.get();
 
@@ -70,6 +75,9 @@ public class BookingService {
     }
     if (event.getCapacity() < numTickets) {
       throw new IllegalArgumentException("Event capacity is less than number of guests");
+    }
+    if (getCurrentGuestCount(user_id, eventId) + numTickets > 5) {
+      throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
     }
 
     // Reduce event capacity by numGuests + the og booker
@@ -88,6 +96,16 @@ public class BookingService {
     paymentService.processPayment(user, booking, event, numTickets);
 
     return convertToDTO(booking);
+  }
+
+  private int getCurrentGuestCount(long userId, long eventId) {
+    List<Booking> currentBookings = bookingRepository.findByUserIdAndEventId(userId, eventId);
+    int guestCount = 0;
+    for (Booking b : currentBookings) {
+      List<TicketDTO> tickets = ticketService.getAllTicketsForBooking(b);
+      guestCount += tickets.size();
+    }
+    return guestCount;
   }
 
   public List<BookingDTO> findBookingsByUserId(long userId) {
