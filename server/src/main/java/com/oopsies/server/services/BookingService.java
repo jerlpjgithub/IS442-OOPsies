@@ -1,19 +1,21 @@
 package com.oopsies.server.services;
 
-import com.oopsies.server.dto.BookingDTO;
-import com.oopsies.server.dto.EventDTO;
-import com.oopsies.server.dto.TicketDTO;
-import com.oopsies.server.entity.*;
-import com.oopsies.server.exception.UserInsufficientFundsException;
-import com.oopsies.server.repository.BookingRepository;
-import com.oopsies.server.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.oopsies.server.dto.BookingDTO;
+import com.oopsies.server.dto.EventDTO;
+import com.oopsies.server.dto.TicketDTO;
+import com.oopsies.server.entity.Booking;
+import com.oopsies.server.entity.User;
+import com.oopsies.server.exception.UserInsufficientFundsException;
+import com.oopsies.server.repository.BookingRepository;
+import com.oopsies.server.util.DateUtil;
 
 @Service
 public class BookingService {

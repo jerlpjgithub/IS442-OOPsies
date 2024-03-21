@@ -1,17 +1,18 @@
 package com.oopsies.server.services;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.oopsies.server.dto.EventDTO;
-import com.oopsies.server.entity.*;
+import com.oopsies.server.entity.Event;
+import com.oopsies.server.entity.User;
 import com.oopsies.server.payload.request.EventRequest;
 import com.oopsies.server.repository.EventRepository;
 import com.oopsies.server.repository.UserRepository;
 import com.oopsies.server.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class EventService {

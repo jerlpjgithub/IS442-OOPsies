@@ -13,3 +13,22 @@ export async function loginUser(data) {
     }
 }
 
+// Get User Information
+export async function getUserData(id) {
+    try {
+        const response = await axios.get(`${BASE_USER_URL}/user/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function updateUser(id, body) {
+    try {
+        const response = await axios.put(`${BASE_USER_URL}/user/${id}`, body);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+

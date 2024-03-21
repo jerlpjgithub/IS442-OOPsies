@@ -1,4 +1,4 @@
-package com.oopsies.server.security;
+package com.oopsies.server.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.oopsies.server.security.jwt.AuthEntryPointJwt;
-import com.oopsies.server.security.jwt.AuthTokenFilter;
+import com.oopsies.server.config.jwt.AuthEntryPointJwt;
+import com.oopsies.server.config.jwt.AuthTokenFilter;
 import com.oopsies.server.services.UserDetailsServiceImpl;
 
 @Configuration
@@ -75,7 +75,8 @@ public class WebSecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("auth/**", "image/**", "/oauth/**").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("auth/**", "image/**").permitAll()
+                        .requestMatchers("/auth/google/callback").permitAll()
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

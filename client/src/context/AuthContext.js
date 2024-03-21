@@ -21,8 +21,13 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [authUser, setAuthUser] = useState(null);
-  const [isAuthenticated, setAuthenticated] = useState(false);
+  const [authUser, setAuthUser] = useState(() => {
+    const user = localStorage.getItem("authUser");
+    return user ? JSON.parse(user) : null;
+  });
+  const [isAuthenticated, setAuthenticated] = useState(
+    localStorage.getItem("isAuthenticated") === "true"
+  );
 
   useEffect(() => {
     checkAuthStatus();
@@ -38,14 +43,34 @@ export const AuthProvider = ({ children }) => {
       );
       if (response.status === 200 && response.data) {
         setAuthenticated(true);
-        setAuthUser(response.data.email);
+        localStorage.setItem("isAuthenticated", "true");
+        setAuthUser(response.data.data); // Assume response.data is the user object
+        localStorage.setItem("authUser", JSON.stringify(response.data.data));
       } else {
         setAuthUser(null);
+        localStorage.removeItem("authUser");
         setAuthenticated(false);
+        localStorage.removeItem("isAuthenticated");
       }
-    } catch {
-      // Attempt to refresh the token without logging errors to console
+    } catch (error) {
+      console.error("Checking auth status failed:", error);
       refreshAccessToken().catch(() => {});
+    }
+  };
+
+  const googleLogin = async (credentialResponse) => {
+    try {
+      const response = await axios.post(process.env.REACT_APP_GOOGLE_REDIRECT_URI, credentialResponse);
+      if (response.data && response.status === 200) {
+        setAuthUser(response.data);
+        localStorage.setItem("authUser", JSON.stringify(response.data));
+        setAuthenticated(true);
+        localStorage.setItem("isAuthenticated", "true");
+      }
+      return response;
+    } catch (error) {
+      console.log("login failed", error);
+      throw error;
     }
   };
 
@@ -56,8 +81,10 @@ export const AuthProvider = ({ children }) => {
         { email, password }
       );
       if (response.data && response.status === 200) {
-        setAuthUser(response.data); // Adjust according to your response structure
+        setAuthUser(response.data.data); // responseData contains id, email, roles[]
+        localStorage.setItem("authUser", JSON.stringify(response.data.data));
         setAuthenticated(true);
+        localStorage.setItem("isAuthenticated", "true");
       }
       return response;
     } catch (error) {
@@ -74,16 +101,18 @@ export const AuthProvider = ({ children }) => {
       );
       return response;
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Registration failed:", error);
       throw error;
     }
   };
 
   const logout = useCallback(async () => {
     try {
-      await axios.post("http://localhost:8080/api/auth/logout");
+      await axios.post("http://localhost:8080/api/auth/signout");
       setAuthUser(null);
+      localStorage.removeItem("authUser");
       setAuthenticated(false);
+      localStorage.removeItem("isAuthenticated");
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -94,7 +123,9 @@ export const AuthProvider = ({ children }) => {
       await axios.post("http://localhost:8080/api/auth/refreshtoken");
     } catch {
       setAuthenticated(false);
+      localStorage.removeItem("isAuthenticated");
       setAuthUser(null);
+      localStorage.removeItem("authUser");
       // Silently handle the refresh token failure
     }
   };
@@ -123,7 +154,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ authUser, isAuthenticated, login, logout, register }}
+      value={{ authUser, isAuthenticated, login, logout, register, googleLogin }}
     >
       {children}
     </AuthContext.Provider>

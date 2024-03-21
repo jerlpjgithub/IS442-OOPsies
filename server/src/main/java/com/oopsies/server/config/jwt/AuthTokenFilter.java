@@ -1,4 +1,4 @@
-package com.oopsies.server.security.jwt;
+package com.oopsies.server.config.jwt;
 
 import java.io.IOException;
 
@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.oopsies.server.exception.JwtTokenExpiredException;
 import com.oopsies.server.services.UserDetailsServiceImpl;
+import com.oopsies.server.util.JwtUtils;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

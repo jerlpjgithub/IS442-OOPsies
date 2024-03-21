@@ -1,6 +1,11 @@
 package com.oopsies.server.controller;
 
-import java.util.*;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,21 +27,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oopsies.server.dto.GoogleLoginDTO;
 import com.oopsies.server.entity.EnumRole;
+import com.oopsies.server.entity.GoogleUser;
 import com.oopsies.server.entity.RefreshToken;
 import com.oopsies.server.entity.Role;
 import com.oopsies.server.entity.User;
 import com.oopsies.server.exception.TokenRefreshException;
 import com.oopsies.server.payload.request.LoginRequest;
 import com.oopsies.server.payload.request.SignupRequest;
-import com.oopsies.server.payload.response.UserInfoResponse;
 import com.oopsies.server.payload.response.MessageResponse;
-
+import com.oopsies.server.payload.response.UserInfoResponse;
 import com.oopsies.server.repository.RoleRepository;
 import com.oopsies.server.repository.UserRepository;
-import com.oopsies.server.security.jwt.JwtUtils;
+import com.oopsies.server.services.GoogleOAuth2Service;
 import com.oopsies.server.services.RefreshTokenService;
 import com.oopsies.server.services.UserDetailsImpl;
+import com.oopsies.server.services.UserDetailsServiceImpl;
+import com.oopsies.server.util.JwtUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -45,43 +54,102 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+        @Autowired
+        AuthenticationManager authenticationManager;
 
-    @Autowired
-    UserRepository userRepository;
+        @Autowired
+        UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
+        @Autowired
+        RoleRepository roleRepository;
 
-    @Autowired
-    PasswordEncoder encoder;
+        @Autowired
+        UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    JwtUtils jwtUtils;
+        @Autowired
+        PasswordEncoder encoder;
 
-    @Autowired
-    RefreshTokenService refreshTokenService;
+        @Autowired
+        JwtUtils jwtUtils;
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        @Autowired
+        RefreshTokenService refreshTokenService;
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        @Autowired
+        GoogleOAuth2Service googleOAuth2Service;
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        @PostMapping("/google/callback")
+        public ResponseEntity<?> googleAuthenticateUser(@RequestBody GoogleLoginDTO googleLoginRequest) {
+                try {
+                        GoogleUser googleUser = googleOAuth2Service.getUserInfo(googleLoginRequest.getCredential());
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+                        User user = userRepository.findByEmail(googleUser.getEmail()).orElseGet(() -> {
+                                String randomPassword = UUID.randomUUID().toString().replace("-", "");
+                                User newUser = new User(googleUser.getEmail(), encoder.encode(randomPassword),
+                                                googleUser.getName(), "");
 
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+                                // Default Role User is set
+                                Set<Role> roles = new HashSet<>();
+                                Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
+                                                .orElseThrow(() -> new RuntimeException(
+                                                                "Error: User role is not found."));
+                                roles.add(userRole);
 
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+                                newUser.setRoles(roles);
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+                                return userRepository.save(newUser);
+                        });
 
-        ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
+                        // Load UserDetails using your custom UserDetailsService
+                        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService
+                                        .loadUserByUsername(user.getEmail());
+
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+                                        userDetails.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+
+                        List<String> roles = userDetails.getAuthorities().stream()
+                                        .map(GrantedAuthority::getAuthority)
+                                        .collect(Collectors.toList());
+
+                        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+                        ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
+
+                        return ResponseEntity.ok()
+                                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                                .body(new UserInfoResponse(userDetails.getId(),
+                                                userDetails.getEmail(),
+                                                roles));
+                } catch (GeneralSecurityException | IOException e) {
+                        return ResponseEntity
+                                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body("An error occurred while processing Google login: " + e.getMessage());
+                }
+        }
+
+        @PostMapping("/signin")
+        public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
+                Authentication authentication = authenticationManager.authenticate(
+                                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+                                                loginRequest.getPassword()));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+                ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+
+                List<String> roles = userDetails.getAuthorities().stream()
+                                .map(item -> item.getAuthority())
+                                .collect(Collectors.toList());
+
+                RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+                ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
@@ -91,18 +159,19 @@ public class AuthController {
                 ));
     }
 
-    @GetMapping("/status")
-    public ResponseEntity<?> checkAuthenticationStatus() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = authentication != null && !(authentication instanceof AnonymousAuthenticationToken)
-                && authentication.isAuthenticated();
+        @GetMapping("/status")
+        public ResponseEntity<?> checkAuthenticationStatus() {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                boolean isAuthenticated = authentication != null
+                                && !(authentication instanceof AnonymousAuthenticationToken)
+                                && authentication.isAuthenticated();
 
-        if (isAuthenticated) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+                if (isAuthenticated) {
+                        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            List<String> roles = userDetails.getAuthorities().stream()
-                    .map(item -> item.getAuthority())
-                    .collect(Collectors.toList());
+                        List<String> roles = userDetails.getAuthorities().stream()
+                                        .map(item -> item.getAuthority())
+                                        .collect(Collectors.toList());
 
             return ResponseEntity.ok(new MessageResponse<>(
                     200, "successful", new UserInfoResponse(userDetails.getId(), userDetails.getEmail(), roles)
@@ -133,40 +202,15 @@ public class AuthController {
             signupRequest.getLastName(),
                 1000.0);
 
-        Set<String> strRoles = signupRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+                // Default Role User is set
+                Set<Role> roles = new HashSet<>();
+                Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Error: User role is not found."));
+                roles.add(userRole);
 
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "manager":
-                        Role managerRole = roleRepository.findByName(EnumRole.ROLE_MANAGER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(managerRole);
-
-                        break;
-                    case "officer":
-                        Role officerRole = roleRepository.findByName(EnumRole.ROLE_OFFICER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(officerRole);
-
-                        break;
-
-                    default:
-                        Role userRole = roleRepository.findByName(EnumRole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
-
-        user.setRoles(roles);
-        userRepository.save(user);
+                user.setRoles(roles);
+                userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse<>(
                 200, "User registered successfully!", null
@@ -181,8 +225,8 @@ public class AuthController {
             refreshTokenService.deleteByUserId(userId);
         }
 
-        ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
-        ResponseCookie jwtRefreshCookie = jwtUtils.getCleanJwtRefreshCookie();
+                ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
+                ResponseCookie jwtRefreshCookie = jwtUtils.getCleanJwtRefreshCookie();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
@@ -192,9 +236,9 @@ public class AuthController {
                 ));
     }
 
-    @PostMapping("/refreshtoken")
-    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
-        String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
+        @PostMapping("/refreshtoken")
+        public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+                String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
 
         if ((refreshToken != null) && (!refreshToken.isEmpty())) {
             return refreshTokenService.findByToken(refreshToken)

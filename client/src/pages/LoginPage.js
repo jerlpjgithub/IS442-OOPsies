@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import axios from 'axios';
 
 import {
   Layout,
@@ -19,11 +20,11 @@ import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import login_background from "../assets/login-background.jpg";
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
+
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
     // Implement your login logic here
     try {
       const response = await login(values["email"], values["password"]);
@@ -36,7 +37,7 @@ const LoginPage = () => {
         response.data.roles
       ) {
         // Login successful, redirect to home page
-        navigate("/");
+        navigate("/home");
       } else {
         // Login unsuccessful
         notification.error({
@@ -53,11 +54,47 @@ const LoginPage = () => {
       });
     }
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
-
   };
+
   const { Content } = Layout;
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const response = await googleLogin(credentialResponse);
+      console.log(response);
+
+      if (
+        response &&
+        response.data.id &&
+        response.data.email &&
+        response.data.roles
+      ) {
+        // Login successful, redirect to home page
+        navigate("/home");
+      } else {
+        // Login unsuccessful
+        notification.error({
+          message: "Login Failed",
+          description: "Please check your email and password.",
+          placement: "bottom",
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "Login Failed",
+        description: "Please check your email and password.",
+        placement: "bottom",
+      });
+    }
+  }
+
+  const handleGoogleLoginFailure = () => {
+    console.log('Login Failed');
+  };
+
   return (
     <Row style={{ height: "100vh" }} align="middle" justify="center">
       <Col
@@ -121,12 +158,8 @@ const LoginPage = () => {
                 <Col>
                   <GoogleLogin
                     className="google-login-button"
-                    onSuccess={(credentialResponse) => {
-                      console.log(credentialResponse);
-                    }}
-                    onError={() => {
-                      console.log("Login Failed");
-                    }}
+                    onSuccess={handleGoogleLogin}
+                    onError={handleGoogleLoginFailure}
                   />
                 </Col>
               </Row>

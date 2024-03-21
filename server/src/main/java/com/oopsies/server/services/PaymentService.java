@@ -1,17 +1,17 @@
 package com.oopsies.server.services;
 
-import com.oopsies.server.dto.EventDTO;
-import com.oopsies.server.dto.PaymentDTO;
-import com.oopsies.server.entity.*;
-import com.oopsies.server.exception.UserInsufficientFundsException;
-import com.oopsies.server.repository.PaymentRepository;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import com.oopsies.server.dto.EventDTO;
+import com.oopsies.server.dto.PaymentDTO;
+import com.oopsies.server.entity.Booking;
+import com.oopsies.server.entity.Payment;
+import com.oopsies.server.entity.User;
+import com.oopsies.server.exception.UserInsufficientFundsException;
+import com.oopsies.server.repository.PaymentRepository;
 
 @Service
 public class PaymentService {

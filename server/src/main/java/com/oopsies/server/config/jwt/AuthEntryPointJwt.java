@@ -1,4 +1,4 @@
-package com.oopsies.server.security.jwt;
+package com.oopsies.server.config.jwt;
 
 import java.io.IOException;
 
