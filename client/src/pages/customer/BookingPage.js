@@ -15,12 +15,13 @@ const BookingPage = () => {
   return (
     <>
       <div>Booking History Page</div>
-
-      <BookingCard />
-      <BookingCard />
-      <BookingCard />
-      <BookingCard />
-      <BookingCard />
+      <div style={{ width: "850px"}}>
+        <BookingCard />
+        <BookingCard />
+        <BookingCard />
+        <BookingCard />
+        <BookingCard />
+      </div>
     </>
   )
 }
