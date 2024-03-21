@@ -99,7 +99,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    @PreAuthorize("hasAnyRole('ROLE_OFFICER', 'ROLE_MANAGER') or #userId == authentication.principal.id")
+    @PreAuthorize("hasRole('ROLE_MANAGER') or #userId == authentication.principal.id")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long userId,
             @RequestBody Map<String, Object> updates,
             Authentication authentication) {
@@ -110,12 +110,11 @@ public class UserController {
             }
 
             // Check roles
-            boolean isOfficerOrManager = authentication.getAuthorities().stream()
-                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_OFFICER") ||
-                            grantedAuthority.getAuthority().equals("ROLE_MANAGER"));
+            boolean isManager = authentication.getAuthorities().stream()
+                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_MANAGER"));
 
             // Extract roles if present and convert to Set<Role>
-            if (updates.containsKey("roles") && isOfficerOrManager) {
+            if (updates.containsKey("roles") && isManager) {
                 List<String> roleNames = (List<String>) updates.get("roles");
                 Set<Role> roles = new HashSet<>();
                 for (String roleName : roleNames) {
