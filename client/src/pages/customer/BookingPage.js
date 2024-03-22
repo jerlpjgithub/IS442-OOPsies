@@ -56,10 +56,15 @@ const BookingPage = () => {
           )
         }
       </div>
-      <TicketModal
-        isModalOpen={selectedID !== null}
-        onClose={setSelectedID}
-      />
+      {
+        selectedID !== null && (
+        <TicketModal
+          isModalOpen={selectedID !== null}
+          bookingID={selectedID}
+          onClose={setSelectedID}
+        />
+        )
+      }
     </>
   )
 }

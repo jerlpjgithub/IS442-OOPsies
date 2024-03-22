@@ -43,3 +43,14 @@ export async function retrieveBookingByUserId(user_id) {
   }
 }
 
+/* Ticket Related */
+export async function retrieveTicketByBookingId(booking_id) {
+  try {
+    const response = await axios.get(`${BASE_USER_URL}/ticket/get/booking/${booking_id}`);
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
