@@ -3,63 +3,62 @@ package com.oopsies.server.entity;
 import jakarta.persistence.*;
 import java.util.Date;
 
+
 @Entity
 @Table(name = "Booking")
 public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int bookingID;
+    private Long id;
 
-    @Column(name = "eventID")
-    private int eventID;
+    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumns({
+//            @JoinColumn(name = "events_eventName"),
+//            @JoinColumn(name = "events_dateTime"),
+//            @JoinColumn(name = "events_venue")
+//    })
+    @JoinColumn(name="event_id")
+    private Event event;
 
-    @Column(name = "ticketID")
-    private int ticketID;
-
-    @Column(name = "numTickets")
-    private int numTickets;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "bookingDate")
+    @Column(name = "bookingDate", nullable = false)
     private Date bookingDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "cancelDate")
     private Date cancelDate;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
+    
+    // For 1-1 with refund
+    // @OneToOne(mappedBy = "booking")
+    // private Refund refund;
+
     // Getters and Setters
-    public int getBookingID() {
-        return bookingID;
+    public long getBookingID() {
+        return id;
     }
 
-    public void setBookingID(int bookingID) {
-        this.bookingID = bookingID;
+    public void setBookingID(long id) {
+        this.id = id;
     }
 
-    public int getEventID() {
-        return eventID;
+    public User getUser(){
+        return this.user;
     }
 
-    public void setEventID(int eventID) {
-        this.eventID = eventID;
+    public void setUser(User user){
+        this.user = user;
     }
 
-    public int getTicketID() {
-        return ticketID;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setTicketID(int ticketID) {
-        this.ticketID = ticketID;
-    }
-
-    public int getNumTickets() {
-        return numTickets;
-    }
-
-    public void setNumTickets(int numTickets) {
-        this.numTickets = numTickets;
-    }
+     public void setEvent(Event event) {
+         this.event = event;
+     }
 
     public Date getBookingDate() {
         return bookingDate;
@@ -75,5 +74,16 @@ public class Booking {
 
     public void setCancelDate(Date cancelDate) {
         this.cancelDate = cancelDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "id=" + id +
+                ", eventID=" + event +
+                ", bookingDate=" + bookingDate +
+                ", cancelDate=" + cancelDate +
+                ", user=" + user +
+                '}';
     }
 }

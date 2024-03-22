@@ -1,4 +1,4 @@
-package com.oopsies.server.services.UserService;
+package com.oopsies.server.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,4 +11,6 @@ public interface UserServiceInterface {
     Page<User> findAllUsers(Pageable pageable);
     // void deleteUserById(Long id);
     User getUserById(Long userId);
+    User searchUser(String query);
+    User searchUserById(Long id);
 }

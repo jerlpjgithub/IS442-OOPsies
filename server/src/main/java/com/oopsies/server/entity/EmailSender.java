@@ -60,10 +60,10 @@ public class EmailSender {
         });
     }
 
-    public void sendMail(Session session) throws MessagingException, IOException {
+    public void sendMail(Session session, String from, String to) throws MessagingException, IOException {
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("mail@gmail.com"));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("mail@gmail.com"));
+        message.setFrom(new InternetAddress(from));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         message.setSubject("Testing Subject");
 
         BodyPart messageBodyPart = new MimeBodyPart();
@@ -96,4 +96,26 @@ public class EmailSender {
         }
     }
 
+//     public static void main(String[] args) {
+//         String MyUsername = "laiu.asher@gmail.com";
+//         String MyPassword = "18081808";
+//         String MyHost = "smtp.gmail.com";
+//         int MyPost = 587;
+
+//         EmailSender emailSender = new EmailSender(MyHost, MyPost, MyUsername, MyPassword);
+
+//         Session session = emailSender.getSession();
+
+//         try {
+//             emailSender.sendMail("laiu.asher@gmail.com", "asher.laiu.2022@economics.smu.edu.sg");
+
+//         } catch(MessagingException | IOException e) {
+//             System.out.println("Error in sending email");
+//             e.printStackTrace();
+
+//         }
+
+
+
+//     }
 }

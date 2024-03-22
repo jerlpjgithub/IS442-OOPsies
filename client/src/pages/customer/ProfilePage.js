@@ -37,7 +37,7 @@ const ProfilePage = () => {
     try {
       const authUser = JSON.parse(localStorage.getItem("authUser"));
       const roles = authUser?.roles || [];
-      if (roles.includes("ROLE_MANAGER") || roles.includes("ROLE_OFFICER")) {
+      if (roles.includes("ROLE_MANAGER")) {
         setIsRoleEditable(true);
       }
     } catch (error) {

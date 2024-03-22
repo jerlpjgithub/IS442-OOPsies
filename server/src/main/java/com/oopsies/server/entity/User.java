@@ -65,6 +65,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
+
     /**
      * Default constructor required by Hibernate. Initializes a new user with email
      * verification status set to true.
@@ -76,11 +77,12 @@ public class User {
     /**
      * Constructor for email and password params for signup.
      */
-    public User(String email, String password, String firstName, String lastName) {
+    public User(String email, String password, String firstName, String lastName, double accountBalance) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.accountBalance = accountBalance;
     }
     /**
 
@@ -103,6 +105,13 @@ public class User {
         this.lastName = lastName;
         this.emailVerified = emailVerified;
         this.accountBalance = accountBalance;
+    }
+
+    public User(String email, String password, String firstName, String lastName) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     // --------------- Getters and Setters (start) ------------------
@@ -175,6 +184,14 @@ public class User {
         this.accountBalance = accountBalance;
     }
 
+    public void incrementAccountBalance(double amount) {
+        this.accountBalance += amount;
+    }
+
+    public void decrementAccountBalance(double amount) {
+        this.accountBalance -= amount;
+    }
+
     public Provider getProvider() {
         return this.provider;
     }
@@ -185,4 +202,18 @@ public class User {
 
     // --------------- Getters and Setters (end) ------------------
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", roles=" + roles +
+                ", emailVerified=" + emailVerified +
+                ", accountBalance=" + accountBalance +
+                ", provider=" + provider +
+                '}';
+    }
 }

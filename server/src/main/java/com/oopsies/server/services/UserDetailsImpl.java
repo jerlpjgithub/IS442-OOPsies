@@ -1,4 +1,4 @@
-package com.oopsies.server.services.UserDetails;
+package com.oopsies.server.services;
 
 import java.util.*;
 import java.util.stream.Collectors;
