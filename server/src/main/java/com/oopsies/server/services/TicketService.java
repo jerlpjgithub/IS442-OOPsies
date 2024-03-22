@@ -105,6 +105,7 @@ public class TicketService {
         dto.setEmail(user.getEmail());
         dto.setEvent_dateTime(event.getDateTime());
         dto.setEvent_venue(event.getVenue());
+        dto.setTicketPrice(event.getTicketPrice());
         dto.setBooking_id(booking.getBookingID());
         dto.setBooking_dateTime(booking.getBookingDate());
         dto.setTicket_id(ticket.getId());
