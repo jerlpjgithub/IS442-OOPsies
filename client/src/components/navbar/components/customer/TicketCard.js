@@ -17,7 +17,6 @@ export const TicketCard = () => {
 
   return (
     <>
-    <div>TicketCard</div>
       <Card
         style={{ width: 500 }}
         bodyStyle={{ padding: 0 }} // Add this line to remove the padding

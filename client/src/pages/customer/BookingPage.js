@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { BookingCard } from '../../components/navbar/components/customer/BookingCard';
-import { TicketCard } from '../../components/navbar/components/customer/TicketCard';
+import { TicketModal } from '../../components/navbar/components/customer/TicketModal';
 
 const BookingPage = () => {
   /* Boiler plate codes and thought processes */
@@ -12,18 +12,20 @@ const BookingPage = () => {
       ...
     ]
   */
+  /* This is to set the selected booking ID */
+  const [selectedID, setSelectedID] = useState(null);
 
   return (
     <>
       <div>Booking History Page</div>
       <div style={{ width: "850px"}}>
-        <TicketCard />
-        <BookingCard />
-        <BookingCard />
-        <BookingCard />
-        <BookingCard />
-        <BookingCard />
+        <BookingCard setSelectedID={setSelectedID}/>
+        <BookingCard setSelectedID={setSelectedID}/>
       </div>
+      <TicketModal
+        isModalOpen={selectedID !== null}
+        onClose={setSelectedID}
+      />
     </>
   )
 }

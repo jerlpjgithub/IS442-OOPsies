@@ -4,7 +4,9 @@ import { InfoCircleOutlined, StopOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
-export const BookingCard = () => {
+export const BookingCard = (props) => {
+  const { setSelectedID } = props;
+
   const dummyData = {
     id: 1,
     bookingDate: '01/01/2024',
@@ -19,7 +21,6 @@ export const BookingCard = () => {
     <>
       <Card
         id={dummyData.id}
-        onClick={() => { console.log('Card clicked') }}
         bodyStyle={{ padding: 0 }} // Add this line to remove the padding
       >
         <Row>
@@ -34,7 +35,7 @@ export const BookingCard = () => {
               <Text type="secondary">Booked on - {dummyData.bookingDate}</Text>
               <Text type="secondary">Number of tickets: {dummyData.numOfTickets}</Text>
               <div id="action-tab" style={{ display: "flex", width: "100%", paddingTop: "10px"}}>
-                <Button icon={<InfoCircleOutlined />} block style={{ borderRadius: 0 }}> View More </Button>
+                <Button icon={<InfoCircleOutlined />} block style={{ borderRadius: 0 }} onClick={() => setSelectedID(dummyData.id)}> View More </Button>
                 <Button icon={<StopOutlined />} type="primary" block danger style={{ borderRadius: 0 }}> Cancel booking </Button>
               </div>
             </div>
