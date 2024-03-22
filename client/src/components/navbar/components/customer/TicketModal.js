@@ -21,13 +21,15 @@ export const TicketModal = (props) => {
       title="Your E-tickets"
       open={isModalOpen}
       onCancel={handleClose}
-      width={550}
+      width={600}
       footer={null}
     >
-      <TicketCard />
-      <TicketCard />
-      <TicketCard />
-      <TicketCard />
+      <div style={{ overflowY: "auto", height: "100%", maxHeight: "50vh" }}>
+        <TicketCard />
+        <TicketCard />
+        <TicketCard />
+        <TicketCard />
+      </div>
     </Modal>
   )
 }
