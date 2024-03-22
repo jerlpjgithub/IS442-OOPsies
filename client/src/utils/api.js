@@ -32,3 +32,14 @@ export async function updateUser(id, body) {
     }
 }
 
+/* Booking Related */
+export async function retrieveBookingByUserId(user_id) {
+  try {
+    const response = await axios.get(`${BASE_USER_URL}/booking/get/${user_id}`);
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
