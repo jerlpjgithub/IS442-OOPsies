@@ -11,6 +11,8 @@ public class TicketDTO {
   private String last_name;
   @JsonProperty("userEmail")
   private String email;
+  @JsonProperty("eventName")
+  private String event_name;
   @JsonProperty("eventVenue")
   private String event_venue;
   @JsonProperty("eventDatetime")
@@ -41,6 +43,10 @@ public class TicketDTO {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public void setEventName(String event_name) {
+    this.event_name = event_name;
   }
 
   public void setEvent_venue(String event_venue) {
