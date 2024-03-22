@@ -44,8 +44,8 @@ export const AuthProvider = ({ children }) => {
       if (response.status === 200 && response.data) {
         setAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
-        setAuthUser(response.data); // Assume response.data is the user object
-        localStorage.setItem("authUser", JSON.stringify(response.data));
+        setAuthUser(response.data.data); // Assume response.data is the user object
+        localStorage.setItem("authUser", JSON.stringify(response.data.data));
       } else {
         setAuthUser(null);
         localStorage.removeItem("authUser");
@@ -81,8 +81,8 @@ export const AuthProvider = ({ children }) => {
         { email, password }
       );
       if (response.data && response.status === 200) {
-        setAuthUser(response.data); // responseData contains id, email, roles[]
-        localStorage.setItem("authUser", JSON.stringify(response.data));
+        setAuthUser(response.data.data); // responseData contains id, email, roles[]
+        localStorage.setItem("authUser", JSON.stringify(response.data.data));
         setAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
       }

@@ -1,4 +1,4 @@
-package com.oopsies.server.services.UserService;
+package com.oopsies.server.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

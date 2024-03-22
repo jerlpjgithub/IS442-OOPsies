@@ -31,7 +31,7 @@ import com.oopsies.server.entity.EnumRole;
 import com.oopsies.server.entity.Role;
 import com.oopsies.server.entity.User;
 import com.oopsies.server.repository.RoleRepository;
-import com.oopsies.server.services.UserService.UserServiceImpl;
+import com.oopsies.server.services.UserServiceImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
