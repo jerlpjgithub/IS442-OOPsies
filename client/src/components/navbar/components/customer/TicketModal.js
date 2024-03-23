@@ -44,13 +44,22 @@ export const TicketModal = (props) => {
         <div>Loading...</div>
       ) : (
         <div style={{ overflowY: 'auto', height: '100%', maxHeight: '50vh' }}>
-          {tickets.length > 0 ? (
-            tickets.map((ticket) => (
-              <TicketCard key={ticket.id} ticket={ticket} />
-            ))
-          ) : (
-            <Empty description="No tickets found" />
-          )}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '10px'
+            }}
+          >
+            {tickets.length > 0 ? (
+              tickets.map((ticket) => (
+                <TicketCard key={ticket.id} ticket={ticket} />
+              ))
+            ) : (
+              <Empty description="No tickets found" />
+            )}
+          </div>
         </div>
       )}
     </Modal>
