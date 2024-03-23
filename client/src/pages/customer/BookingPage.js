@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from "react-router-dom";
 
-import { retrieveBookingByUserId } from '../../utils/api';
+import { cancelBooking, retrieveBookingByUserId } from '../../utils/api';
 import { BookingCard } from '../../components/navbar/components/customer/BookingCard';
 import { TicketModal } from '../../components/navbar/components/customer/TicketModal';
 
@@ -23,17 +23,26 @@ const BookingPage = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const fetchBookingData = async () => {
+    setLoading(true);
+    const bookings = await retrieveBookingByUserId(user_id);
+
+    setBookings(bookings.data);
+    setLoading(false);
+  };
+
+  const handleRefund = async (bookingID) => {
+    const res = await cancelBooking(bookingID);
+
+    /* TODO: Work out a more elegant way to check */
+    if(res.status === 200 && res.message === "refund processed successfully") {
+      fetchBookingData();
+    }
+  };
+
   useEffect(() => {
-    const fetchBookingData = async () => {
-      setLoading(true);
-      const bookings = await retrieveBookingByUserId(user_id);
-
-      setBookings(bookings.data);
-      setLoading(false);
-    };
-
     fetchBookingData();
-  }, [user_id]);
+  }, []);
 
 
   if(loading) return <div>Loading...</div>; // Refactor this to a more elegant loading spinner
@@ -49,6 +58,7 @@ const BookingPage = () => {
                 key={booking.id}
                 booking={booking}
                 setSelectedID={setSelectedID}
+                handleRefund={handleRefund}
               />
             ))
           ) : (
