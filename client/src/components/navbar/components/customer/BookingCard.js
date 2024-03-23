@@ -9,20 +9,33 @@ import {
 
 const { Text } = Typography
 
+const isEventCancellable = (dateTime) => {
+  const currentDate = new Date()
+  const eventDate = new Date(dateTime)
+
+  const timeDifference = eventDate.getTime() - currentDate.getTime()
+  const hoursDifference = timeDifference / (1000 * 60 * 60)
+
+  return hoursDifference >= 48
+}
+
 export const BookingCard = (props) => {
   const { setSelectedID, key, booking, handleRefund } = props
 
   const { bookingID, bookingDate, numTickets, cancelDate, event } = booking
-  const { eventName, dateTime, venue, eventCancelled } = event
+  const { eventName, dateTime, venue, eventCancelled, cancellationFee } = event
 
+  console.log(booking)
   // Disregard if the event was cancelled by the organiser or the user
   const isCancelled = !!cancelDate || eventCancelled
+  const disableCancelBtn = isCancelled || !isEventCancellable(dateTime)
 
   return (
     <>
       <Card
         id={key}
         bodyStyle={{ padding: 0 }} // Add this line to remove the padding
+        style={{ marginBottom: '15px' }}
       >
         <Row>
           <Col
@@ -108,14 +121,19 @@ export const BookingCard = (props) => {
                   View More{' '}
                 </Button>
                 <Popconfirm
-                  title="Delete the task"
-                  description="Are you sure to delete this task?"
+                  title="Cancel booking?"
+                  description={
+                    <div style={{ width: "250px"}}>
+                      Are you sure you want to cancel booking? By doing so, you
+                      will incur a cancellation fee of ${cancellationFee || 0}.
+                    </div>
+                  }
                   onConfirm={() => handleRefund(bookingID)}
-                  okText="Yes"
-                  cancelText="No"
+                  okText="Confirm"
+                  cancelText="Cancel"
                 >
                   <Button
-                    disabled={isCancelled}
+                    disabled={disableCancelBtn}
                     icon={<StopOutlined />}
                     type="primary"
                     block
