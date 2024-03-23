@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Typography, Menu } from 'antd'
+import { Typography, Menu, Empty } from 'antd'
 import {
   StopOutlined,
   HistoryOutlined,
@@ -110,12 +110,12 @@ const BookingPage = () => {
         2. The event date is earlier than today
       */
       case 'cancelled':
-        setFilteredBookings(
-          bookings.filter(
-            (booking) =>
-              booking.cancelDate !== null || booking.event.eventCancelled
-          )
+        const cancelledBookings = bookings.filter(
+          (booking) =>
+            booking.cancelDate !== null || booking.event.eventCancelled
         )
+
+        setFilteredBookings(cancelledBookings)
         break
       default:
         return bookings
@@ -168,7 +168,7 @@ const BookingPage = () => {
               />
             ))
           ) : (
-            <div>No bookings found</div>
+            <Empty description="No bookings found" />
           )}
         </div>
         {selectedID !== null && (

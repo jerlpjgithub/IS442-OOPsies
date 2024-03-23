@@ -123,7 +123,7 @@ export const BookingCard = (props) => {
                 <Popconfirm
                   title="Cancel booking?"
                   description={
-                    <div style={{ width: "250px"}}>
+                    <div style={{ width: '250px' }}>
                       Are you sure you want to cancel booking? By doing so, you
                       will incur a cancellation fee of ${cancellationFee || 0}.
                     </div>
