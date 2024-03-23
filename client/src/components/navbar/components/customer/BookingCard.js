@@ -25,7 +25,6 @@ export const BookingCard = (props) => {
   const { bookingID, bookingDate, numTickets, cancelDate, event } = booking
   const { eventName, dateTime, venue, eventCancelled, cancellationFee } = event
 
-  console.log(booking)
   // Disregard if the event was cancelled by the organiser or the user
   const isCancelled = !!cancelDate || eventCancelled
   const disableCancelBtn = isCancelled || !isEventCancellable(dateTime)

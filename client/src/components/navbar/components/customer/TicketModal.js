@@ -16,7 +16,6 @@ export const TicketModal = (props) => {
   const [loading, setLoading] = useState(false)
 
   const handleClose = () => {
-    console.log('triggered')
     onClose(null)
   }
 

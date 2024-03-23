@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Typography, Menu, Empty } from 'antd'
+import { Typography, Menu, Empty, notification } from 'antd'
 import {
   StopOutlined,
   HistoryOutlined,
@@ -59,11 +59,20 @@ const BookingPage = () => {
   }
 
   const handleRefund = async (bookingID) => {
-    const res = await cancelBooking(bookingID)
-
-    /* TODO: Work out a more elegant way to check */
-    if (res.status === 200 && res.message === 'refund processed successfully') {
-      fetchBookingData()
+    try {
+      const res = await cancelBooking(bookingID)
+      /* TODO: Work out a more elegant way to check */
+      if (
+        res.status === 200 &&
+        res.message === 'refund processed successfully'
+      ) {
+        fetchBookingData()
+      }
+    } catch (err) {
+      notification.error({
+        message: 'Failed to cancel booking',
+        description: 'We have encountered an error processing your refund.'
+      })
     }
   }
 
