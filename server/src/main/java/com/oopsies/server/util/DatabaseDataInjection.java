@@ -81,39 +81,41 @@ public class DatabaseDataInjection implements CommandLineRunner {
 
     Optional<User> eventManager = userRepository.findByEmail("eventManager@gmail.com");
     if (eventManager.isPresent() && eventRepository.findAll().isEmpty()) {
+      Date currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() + 7);
       ArrayList<HashMap<String, Object>> events = new ArrayList<>(
           Arrays.asList(
               new HashMap<>(Map.of(
                   "eventName", "Taylor Swift - Era 1989",
-                  "dateTime", new Date(),
+                  "dateTime", currentDate,
                   "venue", "Singapore Indoor Sports Hall",
                   "capacity", 2000,
                   "cancellationFee", 100.0,
                   "ticketPrice", 500.0)),
               new HashMap<>(Map.of(
                   "eventName", "Ed Sheeran - Divide Tour",
-                  "dateTime", new Date(),
+                  "dateTime", currentDate,
                   "venue", "Singapore Indoor Sports Hall",
                   "capacity", 3000,
                   "cancellationFee", 150.0,
                   "ticketPrice", 750.0)),
               new HashMap<>(Map.of(
                   "eventName", "Michael Jackson - This Is It",
-                  "dateTime", new Date(),
+                  "dateTime", currentDate,
                   "venue", "National Stadium",
                   "capacity", 4000,
                   "cancellationFee", 200.0,
                   "ticketPrice", 1000.0)),
               new HashMap<>(Map.of(
                   "eventName", "TWICE - World Tour",
-                  "dateTime", new Date(),
+                  "dateTime", currentDate,
                   "venue", "National Stadium",
                   "capacity", 5000,
                   "cancellationFee", 250.0,
                   "ticketPrice", 1250.0)),
               new HashMap<>(Map.of(
                   "eventName", "Eason Chan - Live Concert",
-                  "dateTime", new Date(),
+                  "dateTime", currentDate,
                   "venue", "Singapore Indoor Sports Hall",
                   "capacity", 6000,
                   "cancellationFee", 300.0,
