@@ -1,121 +1,43 @@
 package com.oopsies.server.entity;
 
-import java.io.File;
-import java.net.URI;
-import java.util.Properties;
-import java.io.IOException;
+import java.util.Date;
 
-import jakarta.mail.Authenticator;
-import jakarta.mail.BodyPart;
-import jakarta.mail.Message;
-import jakarta.mail.Multipart;
-import jakarta.mail.MessagingException;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
+public class EmailStructure {
 
-public class EmailSender {
-
-    private String username;
-    private String password;
-    private String host;
-    private int port;
-
-    private final Properties prop;
-
-    public EmailSender(String host, int port, String username, String password) {
-        prop = new Properties();
-        prop.put("mail.smtp.auth", true);
-        prop.put("mail.smtp.starttls.enable", "true");
-        prop.put("mail.smtp.host", host);
-        prop.put("mail.smtp.port", port);
-        prop.put("mail.smtp.ssl.trust", host);
-
-        this.username = username;
-        this.password = password;
-    }
-
-    public EmailSender(String host, int port) {
-        prop = new Properties();
-        prop.put("mail.smtp.host", host);
-        prop.put("mail.smtp.port", port);
-    }
+    private String message;
+    private String subject;
 
 
-    public Session getSession() {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", this.host);
-        props.put("mail.smtp.port", this.port);
+    public EmailStructure(String name, String email, Long bookingID, Date bookingDate, 
+                            String eventName, Date eventDate, 
+                            Date refundDate, String venue, String type) {
 
-        return Session.getInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
-    }
+        if (type.equals("Booking Confirmation")) {
+            this.subject = String.format("Event Booking Confirmation - Booking Number: %d", bookingID);
+            this.message = String.format("Dear %s, " +
+            "\n\nWe're thrilled to let you know that your booking for the concert has been successfully confirmed! Get ready for an unforgettable night of music and memories. Below are the details of your booking and your concert ticket information." +
+            "\n\nBooking Confirmation Details:\nBooking Reference: %s\nContact Email: %s" +
+            "\n\nEvent Ticket Details: \nEvent Name: %s\nDate: %s\nVenue: %s"+
+            "\n\nThank you for choosing OOPsies for your event experience. We hope you enjoy your event! \n\nYours Sincerely, \nOOPsies", name, bookingID, email, eventName, eventDate, venue);
 
-    public void sendMail(Session session, String from, String to) throws MessagingException, IOException {
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(from));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-        message.setSubject("Testing Subject");
+        } else if (type.equals("Refund Confirmation")) {
+            this.subject = String.format("Refund Confirmation - Booking Number: %d", bookingID);
+            this.message = String.format("Dear %s, " +
+            "\n\nWe are writing to confirm the processing of your refund request for the booking referenced below. We understand that plans can change, and we're here to assist you through the process. Please find the details of your refund confirmation below." +
+            "\n\nBooking and Refund Details:\nBooking Reference: %s\nContact Email: %s" +
+            "\nEvent Name: %s\nEvent Date: %s\nRefund Date: %s" +
+            "\n\nWe hope to have the opportunity to welcome you to one of our events in the future. Keep an eye on our website for updates on upcoming events! \n\nYours Sincerely, \nOOPsies ", name, bookingID, email, eventName, eventDate, refundDate);
 
-        BodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setText("This is message body");
-
-        Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(messageBodyPart);
-
-        MimeBodyPart attachmentPart = new MimeBodyPart();
-        attachmentPart.attachFile(getFile("attachment.txt"));
-        multipart.addBodyPart(attachmentPart);
-
-        MimeBodyPart attachmentPart2 = new MimeBodyPart();
-        attachmentPart2.attachFile(getFile("attachment2.txt"));
-        multipart.addBodyPart(attachmentPart2);
-
-        message.setContent(multipart);
-        Transport.send(message);
-    }
-
-    private File getFile(String filename) {
-        try {
-            URI uri = this.getClass()
-              .getClassLoader()
-              .getResource(filename)
-              .toURI();
-            return new File(uri);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Unable to find file from resources: " + filename);
         }
     }
 
-//     public static void main(String[] args) {
-//         String MyUsername = "laiu.asher@gmail.com";
-//         String MyPassword = "18081808";
-//         String MyHost = "smtp.gmail.com";
-//         int MyPost = 587;
 
-//         EmailSender emailSender = new EmailSender(MyHost, MyPost, MyUsername, MyPassword);
+    public String getMessage() {
+        return this.message;
 
-//         Session session = emailSender.getSession();
+    }
 
-//         try {
-//             emailSender.sendMail("laiu.asher@gmail.com", "asher.laiu.2022@economics.smu.edu.sg");
-
-//         } catch(MessagingException | IOException e) {
-//             System.out.println("Error in sending email");
-//             e.printStackTrace();
-
-//         }
-
-
-
-//     }
+    public String getSubject() {
+        return this.subject;
+    }
 }
