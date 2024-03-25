@@ -3,15 +3,19 @@ package com.oopsies.server.controller;
 import java.util.*;
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.EventDTO;
+import com.oopsies.server.dto.TicketDTO;
 import com.oopsies.server.entity.Booking;
 import com.oopsies.server.entity.EmailStructure;
 import com.oopsies.server.entity.Event;
+import com.oopsies.server.entity.Ticket;
 import com.oopsies.server.entity.User;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.payload.request.BookingRequest;
 import com.oopsies.server.payload.response.MessageResponse;
 import com.oopsies.server.repository.BookingRepository;
+import com.oopsies.server.repository.TicketRepository;
 import com.oopsies.server.services.BookingService;
+import com.oopsies.server.services.TicketService;
 import com.oopsies.server.services.UserServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,12 @@ public class BookingController {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private TicketService ticketService;
+
+    @Autowired
+    private TicketRepository ticketRepository;
 
     public BookingController(BookingService bookingService){
       this.bookingService = bookingService;
@@ -67,13 +77,22 @@ public class BookingController {
             Date refundDate = null;
             String venue = event.getVenue();
             String type = "Booking Confirmation";
-            // long eventID = bookingRequest.getEventId();
-            // System.out.println("Test3");
 
-            EmailStructure emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName, eventDate, refundDate, venue, type);
-            // System.out.println("Test4");
+            //get ticket parameters
+            List<Ticket> tickets = ticketRepository.findTicketsByBooking(bookingRepository.findBookingById(bookingID));
+            List<Long> ticketIDs = new ArrayList<>();
+            for (Ticket ticket : tickets) {
+                ticketIDs.add(ticket.getId());
+            }
+            double ticketPrice = event.getTicketPrice();
+            double totalPrice = ticketPrice * tickets.size();
+
+            //send email
+            EmailStructure emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName, 
+                                                                eventDate, refundDate, venue, ticketIDs, 
+                                                                totalPrice, 0, type);
             emailController.sendEmail(email, emailStructure);
-            // System.out.println("Test5");
+
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
                     201, "Booking was created successfully!", bookingDTO
             ));
@@ -122,13 +141,24 @@ public class BookingController {
             Date refundDate = booking.getCancelDate();
             String venue = event.getVenue();
             String type = "Refund Confirmation";
-            // long eventID = bookingRequest.getEventId();
-            // System.out.println("Test3");
 
-            EmailStructure emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName, eventDate, refundDate, venue, type);
-            // System.out.println("Test4");
+            //get ticket parameters
+            List<Ticket> tickets = ticketRepository.findTicketsByBooking(bookingRepository.findBookingById(bookingID));
+            List<Long> ticketIDs = new ArrayList<>();
+            for (Ticket ticket : tickets) {
+                ticketIDs.add(ticket.getId());
+            }
+            double ticketPrice = event.getTicketPrice();
+            double totalPrice = ticketPrice * tickets.size();
+            double penaltyFee = event.getCancellationFee();
+            double refundedAmount = totalPrice - penaltyFee;
+
+            //send email
+            EmailStructure emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName, 
+                                                                eventDate, refundDate, venue, ticketIDs, refundedAmount,
+                                                                penaltyFee, type);
             emailController.sendEmail(email, emailStructure);
-            // System.out.println("Test5");
+
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
             200, "refund processed successfully", null
         ));

@@ -40,7 +40,7 @@ public class EmailController {
             return ResponseEntity.status(500).body("Error");
         }
 
-            //         //call EmailController method
+            //call EmailController method
             // //get booking parameters first
             // String name = "Asher Laiu";
             // String email = "laiu.asher@gmail.com";

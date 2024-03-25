@@ -24,11 +24,11 @@ public class EmailService {
 
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-
+        
         helper.setFrom(fromMail);
         helper.setTo(toMail);
         helper.setSubject(emailStructure.getSubject());
-        helper.setText(emailStructure.getMessage());
+        helper.setText(emailStructure.getMessage(), true);
 
         emailSender.send(mimeMessage);
     }
