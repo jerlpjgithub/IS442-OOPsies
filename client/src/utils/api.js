@@ -17,7 +17,7 @@ export async function loginUser(data) {
 export async function getUserData(id) {
   try {
     const response = await axios.get(`${BASE_URL}/user/${id}`)
-    return response.data
+    return response.data;
   } catch (error) {
     throw error
   }
@@ -62,6 +62,18 @@ export async function cancelBooking(booking_id) {
     return response.data
   } catch (error) {
     throw error
+  }
+}
+
+export async function createBooking(userId, eventId, numTickets) {
+  try {
+    const response = await axios.post(`${BASE_URL}/booking/create/${userId}`, {
+      eventId: eventId,
+      numTickets: numTickets
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -121,6 +133,17 @@ export async function getEvent(eventId) {
   try {
     const response = await axios.get(
       `${BASE_URL}/event/get/${eventId}`
+    )
+    return response.data.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function validateTicket(id){
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/ticket/validate/${id}`
     )
     return response.data.data
   } catch (error) {

@@ -45,7 +45,7 @@ const HomePage = () => {
     }, []);
 
     return (
-        <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Layout style={{ height: '105vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
             <Content style={{ padding: '0 48px' }}>
                 <Breadcrumb style={{ margin: '16px 0' }}>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>

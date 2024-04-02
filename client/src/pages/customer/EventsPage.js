@@ -1,81 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Breadcrumb, Button, Card, List, Input, Select, Typography, Carousel } from 'antd';
+import { Layout, Breadcrumb, Button, List, Input, Typography } from 'antd';
 import { Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 import { images } from '../imageloader';
+import { getAllEvents } from '../../utils/api';
+import { parseToReadableDate, parseToReadableTime } from '../../utils/methods';
 
 const { Content } = Layout;
-const { Meta } = Card;
 const { Title } = Typography;
 
-// TO-DO: Add more information about events
-
-const HomePage = () => {
-
-    // Currently using placeholder data
-    // Once mockdata are up, uncomment the bottom
-
-    // const [events, setEvents] = useState([]);
-
-    // useEffect(() => {
-    //     const fetchEvents = async () => {
-    //         try {
-    //             const response = await axios.get(`http://localhost:8080/event/get/all`);
-    //             setEvents(response.data);
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     };
-    
-    //     fetchEvents();
-    // }, []); 
-
-    const [events, setEvents] = useState([
-        {
-            title: 'Jerome Lim Small PP',
-            description: 'This is the description for event 1.',
-            eventCancelled: false,
-            capacity: 100
-        },
-        {
-            title: 'Event 2',
-            description: 'This is the description for event 2.',
-            eventCancelled: false,
-            capacity: 100
-        },
-        {
-            title: 'Event 3',
-            description: 'This is the description for event 2.',
-            eventCancelled: false,
-            capacity: 100
-        },
-        {
-            title: 'Event 4',
-            description: 'This is the description for event 2.',
-            eventCancelled: false,
-            capacity: 100
-        },
-        {
-            title: 'Event 5',
-            description: 'This is the description for event 2.',
-            eventCancelled: false,
-            capacity: 100
-        },
-        {
-            title: 'Event 6',
-            description: 'This is the description for event 2.',
-            eventCancelled: true,
-            capacity: 100
-        }
-    ]);
-
+const EventsPage = () => {
+    const [events, setEvents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [eventsPerPage] = useState(5);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Doing validation to ensure cancelled or events that are over do not get rendered
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const response = await getAllEvents();
+                setEvents(response);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
 
-    const filteredEvents = events.filter(event => !event.eventCancelled || new Date(event.date) > new Date());
+        fetchEvents();
+    }, []);
+
+    const filteredEvents = events.filter(event =>
+        (!event.eventCancelled || new Date(event.date) > new Date()) &&
+        event.eventName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const indexOfLastEvent = currentPage * eventsPerPage;
+    const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+    const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
     const paginate = (page) => {
         setCurrentPage(page);
@@ -83,8 +43,8 @@ const HomePage = () => {
 
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
+        setCurrentPage(1);
     };
-
 
     return (
         <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -94,9 +54,7 @@ const HomePage = () => {
                 overflow: 'auto',
             }}>
                 <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item><Link to="/home">
-                        Home
-                    </Link></Breadcrumb.Item>
+                    <Breadcrumb.Item><Link to="/home">Home</Link></Breadcrumb.Item>
                     <Breadcrumb.Item>Events</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ background: '#fff', minHeight: 280, padding: 24 }}>
@@ -108,7 +66,7 @@ const HomePage = () => {
 
                     <List
                         itemLayout="horizontal"
-                        dataSource={filteredEvents}
+                        dataSource={currentEvents}
                         renderItem={event => (
                             <List.Item
                                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}
@@ -119,14 +77,13 @@ const HomePage = () => {
                                 ]}
                             >
                                 <List.Item.Meta
-                                    avatar={<img alt={event.title} src={images[Math.floor(Math.random() * images.length)]} style={{ width: '200px', height: '100px', objectFit: 'cover' }} />}
-                                    title={<Link to={`/event/${event.id}`}>{event.title}</Link>}
+                                    avatar={<img alt={event.eventName} src={images[Math.floor(Math.random() * images.length)]} style={{ width: '200px', height: '100px', objectFit: 'cover' }} />}
+                                    title={<Link to={`/event/${event.id}`}>{event.eventName}</Link>}
                                     description={
                                         <>
-                                            <p>{event.description}</p>
-                                            {/* Add more info about the event! */}
-                                            <p>Date: {event.date ? new Date(event.dateTime).toLocaleDateString() : "Undated"}</p>
-                                            <p>Tickets left: {event.capacity} </p>
+                                            <div>Date: {event.dateTime ? parseToReadableDate(event.dateTime) : "Undated"}</div>
+                                            <div>This event starts at {parseToReadableTime(event.dateTime)}.</div>
+                                            <div>{event.capacity} tickets left. Tickets are ${event.ticketPrice}. </div>
                                         </>
                                     }
                                 />
@@ -147,4 +104,4 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
+export default EventsPage;

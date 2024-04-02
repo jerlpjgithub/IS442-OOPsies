@@ -18,6 +18,7 @@ import { AddEventPage } from '../pages/event-manager/AddEventPage';
 /* Ticketing Officer */
 import { HomePage as TicketingOfficerHomePage } from '../pages/ticketing-officer/HomePage'
 import { EventsPage as TicketingOfficerEventsPage } from '../pages/ticketing-officer/EventsPage';
+import { EventPage as TicketingOfficerEventPage } from '../pages/ticketing-officer/EventPage';
 
 import { SearchUserPage } from '../pages/SearchUserPage'
 
@@ -42,8 +43,7 @@ export const PRIVATE_ROUTES = [
   { path: "/home", element: <HomePage />},
   { path: "/profile/:id", element: <ProfilePage />},
   { path: "/booking/:id", element: <BookingPage />},
-  /* Add in :event_id  */
-  { path: "/event/:title", element: <EventPage />},
+  { path: "/event/:id", element: <EventPage />},
   { path: "/events", element: <EventsPage />},
 
 ];
@@ -60,8 +60,8 @@ export const EVENT_MANAGER_ROUTES = [
 export const TICKETING_OFFICER_ROUTES = [
   { path: "/home", element: <TicketingOfficerHomePage />},
   { path: "/usermanagement", element: <SearchUserPage />},
-  { path: "/events", element: <TicketingOfficerEventsPage />}
-
+  { path: "/events", element: <TicketingOfficerEventsPage />},
+  { path: "/event/:id", element: <TicketingOfficerEventPage />}
 ];
 
 /* Adding an ERROR_ROUTE to catch all pages that are not valid */
