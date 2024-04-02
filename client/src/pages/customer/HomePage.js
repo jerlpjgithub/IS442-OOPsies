@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Breadcrumb, Row, Card, Col, Input, Select, Typography, Carousel, Button, Image } from 'antd';
+import { Layout, Breadcrumb, Row, Card, Col, Typography, Carousel, Button, Image } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 import { images } from '../imageloader';
-import Logo from '../../assets/oopsies-logo.svg';
+import { getAllEvents } from '../../utils/api';
+import { parseToReadableDate, parseToReadableTime } from '../../utils/methods';
 
 const { Content } = Layout;
 const { Meta } = Card;
 const { Title } = Typography;
+
 const settings = {
     nextArrow: <Button shape="default" icon={<RightOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
     prevArrow: <Button shape="default" icon={<LeftOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
     autoplaySpeed: 2000,
 };
-
-// TODO: line 127
 
 function chunk(array, size) {
     const chunked = [];
@@ -30,77 +29,20 @@ function chunk(array, size) {
 }
 
 const HomePage = () => {
-
-    // Currently using placeholder data
-    // Once mockdata are up, uncomment the bottom
-
-    // const [events, setEvents] = useState([]);
-
-    // useEffect(() => {
-    //     const fetchEvents = async () => {
-    //         try {
-    //             const response = await axios.get(`http://localhost:8080/event/get/all`);
-    //             setEvents(response.data);
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     };
-
-    //     fetchEvents();
-    // }, []); 
-
-    const [events, setEvents] = useState([
-        {
-            title: 'Jerome Lim Small PP',
-            description:
-                "Join us for an intimate and informative session with Jerome Lim, a renowned expert in the field of small PowerPoint (PP) presentations. In this event, Jerome will share his insights and best practices for creating impactful and concise PP slides for small audiences. Whether you're a beginner looking to enhance your presentation skills or a seasoned presenter seeking new ideas, this event promises to be both enlightening and inspiring. Don't miss this opportunity to learn from Jerome and take your small PP presentations to the next level!",
-            date: Date()
-        },
-        {
-            title: 'Event 2',
-            description: 'This is the description for event 2.',
-        },
-        {
-            title: 'Event 3',
-            description: 'This is the description for event 2.',
-        },
-        {
-            title: 'Event 4',
-            description: 'This is the description for event 2.',
-        },
-        {
-            title: 'Event 5',
-            description: 'This is the description for event 2.',
-        },
-        {
-            title: 'Event 6',
-            description: 'This is the description for event 2.',
-        }
-    ]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [eventsPerPage] = useState(6); // Set the number of events per page
-    const [searchTerm, setSearchTerm] = useState('');
+    const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        setEvents(events);
-    }, [events]);
+        const fetchEvents = async () => {
+            try {
+                const response = await getAllEvents();
+                setEvents(response);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
 
-    // Get current events
-    const indexOfLastEvent = currentPage * eventsPerPage;
-    const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-    const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
-
-    // Currently, there are some issues with the pagination. If I go to second page then
-    // back to first, the second page items would still stay.
-
-    const paginate = (page) => {
-        setCurrentPage(page);
-    };
-
-    const handleSearch = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
+        fetchEvents();
+    }, []);
 
     return (
         <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -119,29 +61,29 @@ const HomePage = () => {
                     </div>
                     <div style={{ overflow: 'auto', width: '100%' }}>
                         <Carousel {...settings} autoplay>
-                            {chunk(currentEvents, 4).map((events, index) => (
+                            {chunk(events, 4).map((eventChunk, index) => (
                                 <div key={index}>
                                     <Row gutter={16}>
-                                        {events.map((event, index) => (
-                                            <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ padding: '20px' }}>
-                                                {/* Change the index to event_id! */}
-                                                <Link to={{ pathname: `/event/${index}` }}>
+                                        {eventChunk.map((event) => (
+                                            <Col xs={24} sm={12} md={8} lg={6} key={event.id} style={{ padding: '20px' }}>
+                                                <Link to={`/event/${event.id}`}>
                                                     <Card
                                                         hoverable
                                                         style={{ width: '100%', marginBottom: '20px' }}
-                                                        cover={<img alt={event.title} src={images[Math.floor(Math.random() * images.length)]}
+                                                        cover={<img alt={event.name} src={images[Math.floor(Math.random() * images.length)]}
                                                             style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                                                         />}
                                                     >
                                                         <Meta
-                                                            title={event.title}
+                                                            title={event.eventName}
                                                             description={<div style={{
                                                                 whiteSpace: 'nowrap',
                                                                 overflow: 'hidden',
                                                                 textOverflow: 'ellipsis'
                                                             }}>
-                                                                <p>{event.date}</p>
-                                                                {event.description}
+                                                                <div>{event.venue} 
+                                                                <br/> Tickets left: {event.capacity}</div>
+                                                                <div>{parseToReadableDate(event.dateTime)}, {parseToReadableTime(event.dateTime)}</div>
                                                             </div>}
                                                         />
                                                     </Card>
