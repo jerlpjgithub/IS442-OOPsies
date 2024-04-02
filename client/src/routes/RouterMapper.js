@@ -5,13 +5,16 @@ import HomePage from '../pages/customer/HomePage';
 import ProfilePage from '../pages/customer/ProfilePage';
 import BookingPage from '../pages/customer/BookingPage';
 import Error404 from '../pages/error-pages/Error404';
+import EventPage from '../pages/customer/EventPage';
+import EventsPage from '../pages/customer/EventsPage';
 
 /* Event Manager */
 import { HomePage as EventManagerHomePage } from '../pages/event-manager/HomePage';
 import { AddEventPage } from '../pages/event-manager/AddEventPage';
 
 /* Ticketing Officer */
-import { HomePage as TicketingOfficerHomePage } from '../pages/ticketing-officer/HomePage';
+import { HomePage as TicketingOfficerHomePage } from '../pages/ticketing-officer/HomePage'
+import { EventsPage as TicketingOfficerEventsPage } from '../pages/ticketing-officer/EventsPage';
 
 import { SearchUserPage } from '../pages/SearchUserPage'
 
@@ -25,6 +28,10 @@ export const PRIVATE_ROUTES = [
   { path: "/home", element: <HomePage />},
   { path: "/profile/:id", element: <ProfilePage />},
   { path: "/booking/:id", element: <BookingPage />},
+  /* Add in :event_id  */
+  { path: "/event/:title", element: <EventPage />},
+  { path: "/events", element: <EventsPage />},
+
 ];
 
 /* Temporarily toggle isPrivate false until we are capable to check for authorisation based on jwt */
@@ -39,10 +46,12 @@ export const EVENT_MANAGER_ROUTES = [
 export const TICKETING_OFFICER_ROUTES = [
   { path: "/home", element: <TicketingOfficerHomePage />},
   { path: "/usermanagement", element: <SearchUserPage />},
+  { path: "/events", element: <TicketingOfficerEventsPage />}
+
 ];
 
 /* Adding an ERROR_ROUTE to catch all pages that are not valid */
 export const ERROR_ROUTES = [
   { path: "*", element: <Error404 />},
-  { path: "/pagenotfound", element: <Error404 />}
+  { path: "/pagenotfound", element: <Error404 />},
 ]
