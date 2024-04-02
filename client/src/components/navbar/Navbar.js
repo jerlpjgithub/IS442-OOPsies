@@ -19,7 +19,7 @@ const getItems = (role) => {
     if (role == 'ROLE_OFFICER') {
         return [
             { key: '1', label: 'Upcoming Events', route: `/ticketing-officer/events` },
-            { key: '2', label: 'Ticketing Home', route: `/ticketing-officer/home`}
+            { key: '2', label: 'Ticketing Home', route: `/ticketing-officer/home`},
             { key: '3', label: 'User Management', route: '/ticketing-officer/usermanagement' },
         ];
     } else if (role == 'ROLE_MANAGER') {
