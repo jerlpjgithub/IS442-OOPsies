@@ -1,107 +1,100 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Breadcrumb, Row, Card, Col, Input, Select } from 'antd';
-import { Pagination } from 'antd';
+import { Layout, Breadcrumb, Row, Card, Col, Typography, Carousel, Button, Image } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { images } from '../imageloader';
+import { getAllEvents } from '../../utils/api';
+import { parseToReadableDate, parseToReadableTime } from '../../utils/methods';
+
 const { Content } = Layout;
 const { Meta } = Card;
-const { Option } = Select;
+const { Title } = Typography;
+
+const settings = {
+    nextArrow: <Button shape="default" icon={<RightOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
+    prevArrow: <Button shape="default" icon={<LeftOutlined style={{ fontSize: '20px', color: 'black' }} />} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />,
+    autoplaySpeed: 2000,
+};
+
+function chunk(array, size) {
+    const chunked = [];
+    let index = 0;
+
+    while (index < array.length) {
+        chunked.push(array.slice(index, size + index));
+        index += size;
+    }
+
+    return chunked;
+}
 
 const HomePage = () => {
-    const [events, setEvents] = useState([
-        {
-            title: 'Jerome Lim Small PP',
-            description: 'This is the description for event 1.',
-            image: 'https://media.licdn.com/dms/image/C5103AQHCHy2M0HoXsg/profile-displayphoto-shrink_800_800/0/1541057709013?e=1715817600&v=beta&t=d_N4Ov_IOjfKa1DYDpirAnI5F4JYczriY10CE7v-xoU'
-        },
-        {
-            title: 'Event 2',
-            description: 'This is the description for event 2.',
-            image: 'https://media.licdn.com/dms/image/D5603AQFJU9Q4E453fQ/profile-displayphoto-shrink_800_800/0/1661907635137?e=1715817600&v=beta&t=SdmRwWOgFgiET0ezV1IIeCdZKPC_wrvd-vOqqnDKilw'
-        },
-        {
-            title: 'Event 2',
-            description: 'This is the description for event 2.',
-        },
-        {
-            title: 'Event 2',
-            description: 'This is the description for event 2.',
-        }
-    ]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [eventsPerPage] = useState(6); // Set the number of events per page
-    const [searchTerm, setSearchTerm] = useState('');
-    const [category, setCategory] = useState('');
-
-    const handleCategoryChange = (value) => {
-        setCategory(value);
-    };
-
+    const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        setEvents(events);
-    }, [events]);
+        const fetchEvents = async () => {
+            try {
+                const response = await getAllEvents();
+                setEvents(response);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
 
-    // Get current events
-    const indexOfLastEvent = currentPage * eventsPerPage;
-    const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-    const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
-
-    // Change page
-    const paginate = (page) => {
-        setCurrentPage(page);
-    };
-
-    const handleSearch = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
+        fetchEvents();
+    }, []);
 
     return (
-        <Layout>
+        <Layout style={{ height: '105vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
             <Content style={{ padding: '0 48px' }}>
                 <Breadcrumb style={{ margin: '16px 0' }}>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ background: '#fff', minHeight: 280, padding: 24 }}>
-                    <Input.Search
-                        placeholder="Search for events"
-                        onChange={handleSearch}
-                        style={{ marginBottom: '20px' }}
-                    />
-                    
-                    {/* Might not want this if we don't have a category for Events */}
-                    
-                    {/* <Select
-                        placeholder="Select a category"
-                        onChange={handleCategoryChange}
-                        style={{ width: '100%', marginBottom: '20px' }}
-                    >
-                        <Option value="category1">Category 1</Option>
-                        <Option value="category2">Category 2</Option>
-                        <Option value="category3">Category 3</Option>
-                    </Select> */}
-                    <Row gutter={16}>
-                        {currentEvents.map((event) => (
-                            <Col xs={24} sm={12} md={8} lg={6} key={event.title}>
-                                {/* <Link to={`/event/${event.id}`}> */}
-                                <Card
-                                    hoverable
-                                    style={{ width: '100%', marginBottom: '20px' }}
-                                    cover={<img alt={event.title} src={event.image} />}
-                                >
-                                    <Meta title={event.title} description={event.description} />
-                                </Card>
-                                {/* </Link> */}
-                            </Col>
-                        ))}
-                    </Row>
-                    <Pagination
-                        current={currentPage}
-                        total={events.length}
-                        pageSize={eventsPerPage}
-                        onChange={paginate}
-                        style={{ marginTop: '20px', textAlign: 'center' }}
-                    />
+                    <div style={{ padding: 30, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Title level={1} style={{ fontSize: '70px', textAlign: 'center' }}>
+                            Welcome to OOPsies Ticketing!
+                        </Title>
+                        <Typography.Paragraph style={{ fontSize: '20px', textAlign: 'center' }}>
+                            Find and participate in your favourite events.
+                        </Typography.Paragraph>
+                    </div>
+                    <div style={{ overflow: 'auto', width: '100%' }}>
+                        <Carousel {...settings} autoplay>
+                            {chunk(events, 4).map((eventChunk, index) => (
+                                <div key={index}>
+                                    <Row gutter={16}>
+                                        {eventChunk.map((event) => (
+                                            <Col xs={24} sm={12} md={8} lg={6} key={event.id} style={{ padding: '20px' }}>
+                                                <Link to={`/event/${event.id}`}>
+                                                    <Card
+                                                        hoverable
+                                                        style={{ width: '100%', marginBottom: '20px' }}
+                                                        cover={<img alt={event.name} src={images[Math.floor(Math.random() * images.length)]}
+                                                            style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                                                        />}
+                                                    >
+                                                        <Meta
+                                                            title={event.eventName}
+                                                            description={<div style={{
+                                                                whiteSpace: 'nowrap',
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis'
+                                                            }}>
+                                                                <div>{event.venue} 
+                                                                <br/> Tickets left: {event.capacity}</div>
+                                                                <div>{parseToReadableDate(event.dateTime)}, {parseToReadableTime(event.dateTime)}</div>
+                                                            </div>}
+                                                        />
+                                                    </Card>
+                                                </Link>
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                </div>
+                            ))}
+                        </Carousel>
+                    </div>
                 </div>
             </Content>
         </Layout>

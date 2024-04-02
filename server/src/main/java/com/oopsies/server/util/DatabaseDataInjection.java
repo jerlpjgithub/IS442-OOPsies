@@ -68,7 +68,7 @@ public class DatabaseDataInjection implements CommandLineRunner {
       User ticketingOfficer = new User("ticketingOfficer@gmail.com", encoder.encode("ticketingofficer"), "Ticketing",
           "Officer");
       User eventManager = new User("eventManager@gmail.com", encoder.encode("eventmanager"), "Event", "Manager");
-      User customer = new User("customer1@gmail.com", encoder.encode("customer"), "Customer", "One");
+      User customer = new User("customer1@gmail.com", encoder.encode("customer"),"Customer", "One", 1000);
 
       ticketingOfficer.setRoles(new HashSet<>(Arrays.asList(roleRepository.findByName(EnumRole.ROLE_OFFICER).get())));
       eventManager.setRoles(new HashSet<>(Arrays.asList(roleRepository.findByName(EnumRole.ROLE_MANAGER).get())));
