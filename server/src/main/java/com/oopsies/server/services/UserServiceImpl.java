@@ -1,4 +1,4 @@
-package com.oopsies.server.services.UserService;
+package com.oopsies.server.services;
 
 import java.util.Optional;
 
@@ -56,11 +56,40 @@ public class UserServiceImpl implements UserServiceInterface {
     // Removed implementation of delete as it requires cascade deletion.
     // @Override
     // public void deleteUserById(Long id) {
-    //     if (id == null) {
-    //         throw new IllegalArgumentException("Id must not be null");
-    //     }
-    //     userRepository.deleteById(id);
+    // if (id == null) {
+    // throw new IllegalArgumentException("Id must not be null");
     // }
+    // userRepository.deleteById(id);
+    // }
+    @Override
+    public User searchUser(String query) {
+        Optional<User> optionalUser = userRepository.searchUser(query);
+
+        if (!optionalUser.isPresent()) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+
+        User user = optionalUser.get();
+
+        return user;
+    }
+
+    @Override
+    public User searchUserById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id must not be null");
+        }
+
+        Optional<User> optionalUser = userRepository.searchUserById(id);
+
+        if (!optionalUser.isPresent()) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+
+        User user = optionalUser.get();
+
+        return user;
+    }
 
     @Override
     public User getUserById(Long id) {

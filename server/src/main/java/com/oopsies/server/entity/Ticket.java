@@ -7,14 +7,14 @@ import jakarta.persistence.*;
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long ticketId;
 
     // Map this to event
-    @Column(nullable = false)
-    private int eventId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "booking_id")
+    private Booking booking;
 
-    @Column(nullable = false)
-    private double price;
+    private boolean redeemed;
 
     @OneToOne
     @JoinColumn(name = "image_id")
@@ -22,28 +22,20 @@ public class Ticket {
 
     public Ticket() {}
 
-    public int getId() {
-        return this.id;
+    public long getId() {
+        return this.ticketId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(long id) {
+        this.ticketId = id;
     }
 
-    public int getEventId() {
-        return this.eventId;
+    public Booking getBooking() {
+        return this.booking;
     }
 
-    public void setEventId(int eventId) {
-        this.eventId = eventId;
-    }
-
-    public double getPrice() {
-        return this.price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
     public Image getImage() {
@@ -54,4 +46,21 @@ public class Ticket {
         this.image = image;
     }
 
+    public boolean isRedeemed() {
+        return redeemed;
+    }
+
+    public void setRedeemed(boolean redeemed) {
+        this.redeemed = redeemed;
+    }
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "ticketId=" + ticketId +
+                ", bookingId=" + booking +
+                ", redeemed=" + redeemed +
+                ", image=" + image +
+                '}';
+    }
 }

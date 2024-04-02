@@ -6,16 +6,18 @@
 // @Entity
 // @Table(name = "BookingDetails")
 
+// ==== BROKEN CLASS: NEEDS AN IDENTIFIER 
+
 // public class BookingDetails {
 //     private String eventName;
 //     private int numTickets;
 //     private int paymentDetails;
 
 
-//       *
-//       * @param eventName    
-//       @param numTickets  the password of the user.
-//      @param paymentDetails the first name of the user.
+//     //   *
+//     //   * @param eventName    
+//     //   @param numTickets  the password of the user.
+//     //  @param paymentDetails the first name of the user.
 
       
 //     public BookingDetails(String eventName, int numTickets, int paymentDetails) {

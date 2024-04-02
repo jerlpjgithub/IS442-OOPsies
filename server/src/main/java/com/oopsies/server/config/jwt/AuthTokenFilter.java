@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.oopsies.server.exception.JwtTokenExpiredException;
-import com.oopsies.server.services.UserDetails.UserDetailsServiceImpl;
+import com.oopsies.server.services.UserDetailsServiceImpl;
 import com.oopsies.server.util.JwtUtils;
 
 import jakarta.servlet.FilterChain;

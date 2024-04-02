@@ -10,10 +10,13 @@ import EventsPage from '../pages/customer/EventsPage';
 
 /* Event Manager */
 import { HomePage as EventManagerHomePage } from '../pages/event-manager/HomePage';
+import { AddEventPage } from '../pages/event-manager/AddEventPage';
 
 /* Ticketing Officer */
 import { HomePage as TicketingOfficerHomePage } from '../pages/ticketing-officer/HomePage'
 import { EventsPage as TicketingOfficerEventsPage } from '../pages/ticketing-officer/EventsPage';
+
+import { SearchUserPage } from '../pages/SearchUserPage'
 
 /* By adding routes here, it will be simply localhost:3000/login */
 export const PUBLIC_ROUTES = [
@@ -35,11 +38,14 @@ export const PRIVATE_ROUTES = [
 /* Eg. By adding routes here, it will be simply localhost:3000/event-manager/home */
 export const EVENT_MANAGER_ROUTES = [
   { path: "/home", element: <EventManagerHomePage />},
+  { path: "/addevent", element: <AddEventPage />},
+  { path: "/usermanagement", element: <SearchUserPage />},
 ];
 
 /* Eg. By adding routes here, it will be simply localhost:3000/ticketing-officer/home */
 export const TICKETING_OFFICER_ROUTES = [
   { path: "/home", element: <TicketingOfficerHomePage />},
+  { path: "/usermanagement", element: <SearchUserPage />},
   { path: "/events", element: <TicketingOfficerEventsPage />}
 
 ];
