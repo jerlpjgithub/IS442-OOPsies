@@ -52,7 +52,7 @@ export const PRIVATE_ROUTES = [
 /* Eg. By adding routes here, it will be simply localhost:3000/event-manager/home */
 export const EVENT_MANAGER_ROUTES = [
   { path: "/home", element: <EventManagerHomePage />},
-  { path: "/addevent", element: <AddEventPage />},
+  { path: "/eventmanagement", element: <AddEventPage />},
   { path: "/usermanagement", element: <SearchUserPage />},
 ];
 

@@ -16,11 +16,10 @@ export const SearchUserPage = () => {
         try {
             // Updated to include the searchTerm in the request
             const response = await axios.get(`http://localhost:8080/api/user?page=${currentPage - 1}&size=${pageSize}&query=${searchTerm}`);
-            setUsers(response.data.content); // Adjust according to your API response structure
-            setTotal(response.data.totalElements); // Adjust according to your API response structure
+            setUsers(response.data.content); 
+            setTotal(response.data.totalElements); 
         } catch (error) {
             console.error('Failed to fetch users:', error);
-            // Implement your error handling logic here
         } finally {
             setLoading(false);
         }

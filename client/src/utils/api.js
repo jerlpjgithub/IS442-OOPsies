@@ -67,6 +67,16 @@ export async function cancelBooking(booking_id) {
 
 /* Event Related */
 
+export async function createEvent(body) {
+  try {
+    const response = await axios.post(`${BASE_URL}/event/create`, body);
+    return response.data;
+
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getAllEvents() {
   try {
     const response = await axios.get(
@@ -75,6 +85,24 @@ export async function getAllEvents() {
     return response.data.data
   } catch (error) {
     throw error
+  }
+}
+
+export async function updateEvent(eventId, body) {
+  try {
+    const response = await axios.put(`${BASE_URL}/event/update/${eventId}`, body);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function cancelEvent(eventId) {
+  try {
+    const response = await axios.post(`${BASE_URL}/event/cancel/${eventId}`);
+    return response;
+  } catch (error) {
+    throw error;
   }
 }
 

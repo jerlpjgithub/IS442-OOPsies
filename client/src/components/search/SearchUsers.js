@@ -5,6 +5,11 @@ import UserTable from './UserTable';
 const SearchUsers = ({ onSearch }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
+    const resetSearch = () => {
+        setSearchTerm('');
+        onSearch('');
+    };
+
     return (
         <div style={{ marginBottom: '20px' }}>
             <Input
@@ -14,6 +19,7 @@ const SearchUsers = ({ onSearch }) => {
                 style={{ width: '200px', marginRight: '10px' }}
             />
             <Button type="primary" onClick={() => onSearch(searchTerm)}>Search</Button>
+            <Button onClick={resetSearch} style={{ marginLeft: '10px' }}>Reset</Button>
         </div>
     );
 };
