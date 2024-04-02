@@ -170,4 +170,14 @@ public class BookingController {
         }
     }
 
+    // @GetMapping("/get/{event_id}")
+    // //get all bookings by event id. from this, we can derive ticket sales, revenue and customer attendance
+    // public ResponseEntity<?> getBookingsByEventID(@PathVariable("event_id") long eventId) {
+    //    List<BookingDTO> _bookings = bookingService.findBookingsByEventID(eventId);
+    //     return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+    //             200, "successful", _bookings
+    //     ));
+    // }
+
+    
 }

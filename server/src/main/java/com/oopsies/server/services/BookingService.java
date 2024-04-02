@@ -121,6 +121,14 @@ public class BookingService {
     refundService.processRefund(booking_id);
   }
 
+  //add findBookingsByEventID
+  public List<BookingDTO> findBookingsByEventID(long eventID) {
+    List<Booking> bookings = bookingRepository.findByEventId(eventID);
+    return bookings.stream()
+        .map(this::convertToDTO)
+        .collect(Collectors.toList());    
+  }
+  
   private BookingDTO convertToDTO(Booking booking) {
     BookingDTO dto = new BookingDTO();
     dto.setBookingID(booking.getBookingID());
