@@ -16,7 +16,7 @@ export async function loginUser(data) {
 // Get User Information
 export async function getUserData(id) {
   try {
-    const response = await axios.get(`${BASE_URL}/user/get/${id}`)
+    const response = await axios.get(`${BASE_URL}/user/${id}`)
     return response.data
   } catch (error) {
     throw error
