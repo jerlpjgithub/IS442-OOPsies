@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 /* Customer */
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/customer/RegisterPage';
@@ -18,6 +21,16 @@ import { EventsPage as TicketingOfficerEventsPage } from '../pages/ticketing-off
 
 import { SearchUserPage } from '../pages/SearchUserPage'
 
+const RedirectToHome = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate('/home');
+  }, [navigate]);
+
+  return null;
+}
+
 /* By adding routes here, it will be simply localhost:3000/login */
 export const PUBLIC_ROUTES = [
   { path: "/login", element: <LoginPage />},
@@ -25,6 +38,7 @@ export const PUBLIC_ROUTES = [
 ];
 
 export const PRIVATE_ROUTES = [
+  { path: "/", element: <RedirectToHome />},
   { path: "/home", element: <HomePage />},
   { path: "/profile/:id", element: <ProfilePage />},
   { path: "/booking/:id", element: <BookingPage />},
