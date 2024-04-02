@@ -68,7 +68,7 @@ const App = () => {
         } else {
             setSelectedKey([]);
         }
-    }, [location, items]);
+    }, [location]);
 
     return (
         <Layout>
@@ -83,7 +83,7 @@ const App = () => {
                     <Logo className='logo' />
                 </Link>
                 {screens.xs ? (
-                    <Dropdown overlay={dropdownMenu}>
+                    <Dropdown menu={dropdownMenu}>
                         <Button
                             className="menu-button"
                             type="primary"
