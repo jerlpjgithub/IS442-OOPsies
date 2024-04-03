@@ -6,9 +6,12 @@ import org.springframework.stereotype.Service;
 
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.EventDTO;
+import com.oopsies.server.dto.TicketDTO;
 
 @Service
 public class DataService {
+
+    private TicketService ticketService;
 
     //to do : make sure it can handle refunds. Also might be simpler to do from eventService side.  (Done)
     public int getTotalTicketsSold(List<BookingDTO> bookingList) {
@@ -36,6 +39,20 @@ public class DataService {
         return totalRevenue;
     }
 
+    public int getAttendance(List<BookingDTO> bookingList) {
+        int numRedeemed = 0;
 
-    
+        for (BookingDTO booking : bookingList) {
+            long bookingId = booking.getBookingID();
+            List<TicketDTO> tickets = ticketService.getAllTicketsForBooking(bookingId);
+
+            for (TicketDTO ticket : tickets) {
+                if (ticket.isRedeemed()) {
+                    numRedeemed++;
+                }
+            }
+        }
+
+        return numRedeemed;
+    }
 }

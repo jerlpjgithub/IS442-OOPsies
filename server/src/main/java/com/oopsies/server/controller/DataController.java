@@ -38,18 +38,31 @@ public class DataController {
 
     @GetMapping("/totalTicketsSold/{event_id}")
     public ResponseEntity<?> getTotalTicketsSold(@PathVariable("event_id") long eventId) {
-        List<BookingDTO> bookings = bookingService.findBookingsByEventID(eventId);
-        int totalTicketsSold = dataService.getTotalTicketsSold(bookings);
 
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
-        200, "Return Num Tickets Sold", totalTicketsSold));   
+        Optional<EventDTO> optionalEvent = eventService.getEventById(eventId);
+
+        if (optionalEvent.isPresent()) {
+            List<BookingDTO> bookings = bookingService.findBookingsByEventID(eventId);
+            
+            int totalTicketsSold = dataService.getTotalTicketsSold(bookings);
+
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+            200, "Return Num Tickets Sold", totalTicketsSold));
+
+        } else {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        }
     }
 
     @GetMapping("/totalRevenue/{event_id}")
     public ResponseEntity<?> getTotalRevenue(@PathVariable("event_id") long eventId) {
-        List<BookingDTO> bookings = bookingService.findBookingsByEventID(eventId);
+
         Optional<EventDTO> optionalEvent = eventService.getEventById(eventId);
+
         if (optionalEvent.isPresent()) {
+            List<BookingDTO> bookings = bookingService.findBookingsByEventID(eventId);
             EventDTO event = optionalEvent.get();
 
             double totalRevenue = dataService.getTotalRevenue(bookings, event);
@@ -57,8 +70,27 @@ public class DataController {
             200, "Return Total Revenue", totalRevenue));
             
         } else {
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }        
-   
     }
-}
+
+    @GetMapping("/attendance/{event_id}")
+    public ResponseEntity<?> getAttendance(@PathVariable("event_id") long eventId) {
+
+        Optional<EventDTO> optionalEvent = eventService.getEventById(eventId);
+
+        if (optionalEvent.isPresent()) {
+            List<BookingDTO> bookings = bookingService.findBookingsByEventID(eventId);
+            int attendance = dataService.getAttendance(bookings);
+            
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+                200, "Return Attendance", attendance));
+
+        } else {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        }
+    }
+} 
