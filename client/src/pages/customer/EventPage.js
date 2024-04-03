@@ -49,7 +49,6 @@ const EventPage = () => {
 
     // to handle bookings
     const [isModalVisible, setIsModalVisible] = useState(false);
-
     const [userDetails, setUserDetails] = useState({ accountBalance: 0 });
 
     useEffect(() => {
@@ -64,7 +63,7 @@ const EventPage = () => {
             }
         }
         fetchUser();
-    }, [getUserData, setUserDetails, userId]);
+    }, [userId]);
 
     const showModal = () => {
         setIsModalVisible(true);

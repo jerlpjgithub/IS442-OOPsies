@@ -15,11 +15,13 @@ import {
     Col,
     Card,
     Statistic,
-    Tooltip
+    Tooltip,
+    Input
 } from "antd";
 import { images } from '../imageloader';
 import { getEvent, createBooking, getUserData, validateTicket } from "../../utils/api";
 import { parseToReadableDate, parseToReadableTime } from '../../utils/methods';
+import QRCode from '../ticketing-officer/louis_paylah.jpg';
 
 const { Content } = Layout;
 const { Title, Paragraph } = Typography;
@@ -28,6 +30,11 @@ export const EventPage = () => {
     const user = JSON.parse(localStorage.getItem('authUser'));
     const userId = user.id;
     const [isValidateModalVisible, setIsValidateModalVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [ticketId, setTicketId] = useState(0);
+    const [userDetails, setUserDetails] = useState({ accountBalance: 0 });
+    const [numTickets, setNumTickets] = useState(0);
+    const [buyerEmail, setBuyerEmail] = useState("");
 
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -49,11 +56,6 @@ export const EventPage = () => {
         fetchEvent();
     }, [id]);
 
-    // to handle bookings
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [ticketId, setTicketId] = useState(0);
-    const [userDetails, setUserDetails] = useState({ accountBalance: 0 });
-
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -65,7 +67,7 @@ export const EventPage = () => {
             }
         }
         fetchUser();
-    }, [getUserData, setUserDetails, userId]);
+    }, [userId]);
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -76,7 +78,6 @@ export const EventPage = () => {
 
         try {
             await createBooking(userId, id, numTickets);
-
             notification.success({
                 message: "Purchase Successful",
                 description: `You have successfully purchased tickets to ${event.eventName}.`,
@@ -93,8 +94,6 @@ export const EventPage = () => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-
-    const [numTickets, setNumTickets] = useState(1);
 
     const calculateTotalPrice = (numTickets, ticketPrice) => {
         return numTickets * ticketPrice;
@@ -250,43 +249,24 @@ export const EventPage = () => {
                             onChange={setNumTickets}
                         />
                     </div>
+                    <div>
+                        Buyer's email
+                        <Input 
+                        value={buyerEmail} 
+                        onChange={(event) => setBuyerEmail(event.target.value)}    
+                        />
+                    </div>
                     <Divider />
                     <Typography.Title level={5}>Payment Details</Typography.Title>
-                    <Row gutter={[16, 16]}>
-                        <Col xs={12}>Your Account Balance:</Col>
-                        <Col xs={12} style={{ textAlign: 'right' }}>
-                            ${userDetails.accountBalance}
-                        </Col>
-                    </Row>
                     <Row gutter={[16, 16]}>
                         <Col xs={12}>Total Price:</Col>
                         <Col xs={12} style={{ textAlign: 'right' }}>
                             ${calculateTotalPrice(numTickets, event.ticketPrice)}
                         </Col>
                     </Row>
-                    <Row gutter={[16, 16]}>
-                        <Col xs={12}>Remaining Balance:</Col>
-                        <Col
-                            xs={12}
-                            style={{
-                                textAlign: 'right',
-                                color:
-                                    userDetails.accountBalance -
-                                        calculateTotalPrice(numTickets, event.ticketPrice) <
-                                        0
-                                        ? 'red'
-                                        : 'inherit',
-                            }}
-                        >
-                            ${userDetails.accountBalance - calculateTotalPrice(numTickets, event.ticketPrice)}
-                        </Col>
-                    </Row>
-                    {userDetails.accountBalance - calculateTotalPrice(numTickets, event.ticketPrice) < 0 && (
-                        <div style={{ marginTop: '16px', color: 'red' }}>
-                            Insufficient balance! Please choose fewer tickets or add funds to your account.
-                        </div>
-                    )}
-                    <Tooltip><strong>Remember to get the buyer to paynow you!</strong></Tooltip>
+                    <img src={QRCode} style={{height:"50%", width: "50%"}}></img>
+                    <br/>
+                    <Tooltip><strong>Remember to get the buyer to PayLah first!</strong></Tooltip>
                 </Modal>
             </Content>
         </Layout>

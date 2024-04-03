@@ -25,7 +25,7 @@ export async function getUserData(id) {
 
 export async function updateUser(id, body) {
   try {
-    const response = await axios.post(`${BASE_URL}/user/${id}`, body)
+    const response = await axios.put(`${BASE_URL}/user/${id}`, body)
     return response.data
   } catch (error) {
     throw error
