@@ -62,8 +62,8 @@ public class BookingService {
     }
 
     boolean isOfficer = userDetailsService.isOfficer();
-
     EventDTO event = someEvent.get();
+    double totalPriceOfTickets = numTickets * event.getTicketPrice(); 
 
     if (!isOfficer) {
       DateUtil dateUtil = new DateUtil();
@@ -81,6 +81,9 @@ public class BookingService {
     if (getCurrentGuestCount(user_id, eventId) + numTickets > 5) {
       throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
     }
+    if(!hasUserValidBalance(user, totalPriceOfTickets)){
+      throw new UserInsufficientFundsException();
+    }
 
     // Reduce event capacity by numGuests + the og booker
     Booking booking = new Booking();
@@ -91,11 +94,11 @@ public class BookingService {
     Booking newBooking = bookingRepository.save(booking);
     eventService.updateEventCapacity(event, numTickets);
 
+    paymentService.processPayment(user, booking, event, numTickets);
+
     for (int i = 0; i < numTickets; i++) {
       ticketService.createNewTicket(newBooking);
     }
-
-    paymentService.processPayment(user, booking, event, numTickets);
 
     return convertToDTO(booking);
   }
@@ -144,4 +147,10 @@ public class BookingService {
 
     return dto;
   }
+
+  private boolean hasUserValidBalance(User user, double price) {
+        return user.getAccountBalance() >= price;
+  }
 }
+
+
