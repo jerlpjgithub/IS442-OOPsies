@@ -155,7 +155,7 @@ public class EventController {
         List<CsvDTO> csvDTOs = bookingService.getCsvDTOForEvent(event_id);
         
         ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-        String[] csvHeader = {"booking_id", "booking_date", "cancel_date", "num_of_tickets", "customer_full_name", "email"};
+        String[] csvHeader = {"booking_id", "booking_date", "cancel_date", "customer_full_name", "email"};
         String[] nameMapping = {"bookingID", "bookingDate", "cancelDate", "fullName", "email"};
         
         csvWriter.writeHeader(csvHeader);
