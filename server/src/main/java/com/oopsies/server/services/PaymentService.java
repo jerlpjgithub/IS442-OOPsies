@@ -52,10 +52,6 @@ public class PaymentService {
         return ticketPrice * numTickets;
     }
 
-    // private boolean hasUserValidBalance(User user, double price) {
-    //     return user.getAccountBalance() >= price;
-    // }
-
    private long createNewPayment(Booking booking, double paymentAmount) {
        Payment newPayment = new Payment(
                booking,
