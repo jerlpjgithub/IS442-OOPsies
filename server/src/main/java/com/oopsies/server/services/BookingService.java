@@ -1,5 +1,6 @@
 package com.oopsies.server.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.oopsies.server.dto.BookingDTO;
+import com.oopsies.server.dto.CsvDTO;
 import com.oopsies.server.dto.EventDTO;
 import com.oopsies.server.dto.TicketDTO;
 import com.oopsies.server.entity.Booking;
@@ -147,6 +149,21 @@ public class BookingService {
 
     return dto;
   }
+
+  public List<CsvDTO> getCsvDTOForEvent(long event_id) {
+    List<Booking> bookings = bookingRepository.findByEventId(event_id);
+    
+    List<CsvDTO> csvDTOs = new ArrayList<>();
+
+    for(Booking booking: bookings){
+      User userThatBooked = booking.getUser();
+      CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail());
+      csvDTOs.add(CsvDTO);
+    }
+
+    return csvDTOs;
+  }
+
 
   private boolean hasUserValidBalance(User user, double price) {
         return user.getAccountBalance() >= price;
