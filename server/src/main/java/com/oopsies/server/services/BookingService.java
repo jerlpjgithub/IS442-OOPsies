@@ -1,5 +1,6 @@
 package com.oopsies.server.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.oopsies.server.dto.BookingDTO;
+import com.oopsies.server.dto.CsvDTO;
 import com.oopsies.server.dto.EventDTO;
 import com.oopsies.server.dto.TicketDTO;
 import com.oopsies.server.entity.Booking;
@@ -62,8 +64,8 @@ public class BookingService {
     }
 
     boolean isOfficer = userDetailsService.isOfficer();
-
     EventDTO event = someEvent.get();
+    double totalPriceOfTickets = numTickets * event.getTicketPrice(); 
 
     if (!isOfficer) {
       DateUtil dateUtil = new DateUtil();
@@ -81,6 +83,9 @@ public class BookingService {
     if (getCurrentGuestCount(user_id, eventId) + numTickets > 5) {
       throw new IllegalArgumentException("Cannot purchase more than 5 tickets");
     }
+    if(!hasUserValidBalance(user, totalPriceOfTickets)){
+      throw new UserInsufficientFundsException();
+    }
 
     // Reduce event capacity by numGuests + the og booker
     Booking booking = new Booking();
@@ -91,11 +96,11 @@ public class BookingService {
     Booking newBooking = bookingRepository.save(booking);
     eventService.updateEventCapacity(event, numTickets);
 
+    paymentService.processPayment(user, booking, event, numTickets);
+
     for (int i = 0; i < numTickets; i++) {
       ticketService.createNewTicket(newBooking);
     }
-
-    paymentService.processPayment(user, booking, event, numTickets);
 
     return convertToDTO(booking);
   }
@@ -121,6 +126,14 @@ public class BookingService {
     refundService.processRefund(booking_id);
   }
 
+  //add findBookingsByEventID
+  public List<BookingDTO> findBookingsByEventID(long eventID) {
+    List<Booking> bookings = bookingRepository.findByEventId(eventID);
+    return bookings.stream()
+        .map(this::convertToDTO)
+        .collect(Collectors.toList());    
+  }
+  
   private BookingDTO convertToDTO(Booking booking) {
     BookingDTO dto = new BookingDTO();
     dto.setBookingID(booking.getBookingID());
@@ -136,4 +149,25 @@ public class BookingService {
 
     return dto;
   }
+
+  public List<CsvDTO> getCsvDTOForEvent(long event_id) {
+    List<Booking> bookings = bookingRepository.findByEventId(event_id);
+    
+    List<CsvDTO> csvDTOs = new ArrayList<>();
+
+    for(Booking booking: bookings){
+      User userThatBooked = booking.getUser();
+      CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail());
+      csvDTOs.add(CsvDTO);
+    }
+
+    return csvDTOs;
+  }
+
+
+  private boolean hasUserValidBalance(User user, double price) {
+        return user.getAccountBalance() >= price;
+  }
 }
+
+

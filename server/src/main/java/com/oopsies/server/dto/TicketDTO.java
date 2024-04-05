@@ -3,6 +3,7 @@ package com.oopsies.server.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class TicketDTO {
   @JsonProperty("userFirstMame")
@@ -80,4 +81,30 @@ public class TicketDTO {
   public void setRedeemed(boolean redeemed) {
     this.redeemed = redeemed;
   }
+
+  public double getTicketPrice() {
+    return this.ticket_price;
+  }
+
+  public long getTicket_id() {
+    return this.ticket_id;
+  }
+
+  public long getBooking_id() {
+    return this.booking_id;
+  }
+
+  public Date getBooking_dateTime() {
+    return this.booking_dateTime;
+  }
+
+  public boolean isValid() {
+    return this.isValid;
+  }
+
+  public boolean isRedeemed() {
+    return this.redeemed;
+  }
+  
+
 }
