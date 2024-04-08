@@ -79,6 +79,16 @@ public class TicketService {
     return isSameDateAndBeforeTime(new Date(), eventDateTime);
   }
 
+  public boolean redeemTicket(long ticket_id) {
+    if (validateTicket(ticket_id)) {
+      Ticket ticket = ticketRepository.findTicketByTicketId(ticket_id);
+      ticket.setRedeemed(true);
+      ticketRepository.save(ticket);
+      return true;
+    }
+    return false;
+  }
+
   public boolean isSameDateAndBeforeTime(Date date1, Date date2) {
     Calendar cal1 = Calendar.getInstance();
     cal1.setTime(date1);

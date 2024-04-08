@@ -134,7 +134,7 @@ public class BookingService {
         .collect(Collectors.toList());    
   }
   
-  private BookingDTO convertToDTO(Booking booking) {
+  public BookingDTO convertToDTO(Booking booking) {
     BookingDTO dto = new BookingDTO();
     dto.setBookingID(booking.getBookingID());
     dto.setBookingDate(booking.getBookingDate());
@@ -156,8 +156,9 @@ public class BookingService {
     List<CsvDTO> csvDTOs = new ArrayList<>();
 
     for(Booking booking: bookings){
+      int numOfTicketsToBooking = ticketService.getAllTicketsForBooking(booking.getBookingID()).size();
       User userThatBooked = booking.getUser();
-      CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail());
+      CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail(), numOfTicketsToBooking);
       csvDTOs.add(CsvDTO);
     }
 
