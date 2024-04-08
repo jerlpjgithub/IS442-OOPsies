@@ -156,8 +156,9 @@ public class BookingService {
     List<CsvDTO> csvDTOs = new ArrayList<>();
 
     for(Booking booking: bookings){
+      int numOfTicketsToBooking = ticketService.getAllTicketsForBooking(booking.getBookingID()).size();
       User userThatBooked = booking.getUser();
-      CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail());
+      CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail(), numOfTicketsToBooking);
       csvDTOs.add(CsvDTO);
     }
 
