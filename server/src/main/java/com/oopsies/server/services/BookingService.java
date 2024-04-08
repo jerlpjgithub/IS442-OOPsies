@@ -134,7 +134,7 @@ public class BookingService {
         .collect(Collectors.toList());    
   }
   
-  private BookingDTO convertToDTO(Booking booking) {
+  public BookingDTO convertToDTO(Booking booking) {
     BookingDTO dto = new BookingDTO();
     dto.setBookingID(booking.getBookingID());
     dto.setBookingDate(booking.getBookingDate());

@@ -13,10 +13,7 @@ import com.oopsies.server.repository.BookingRepository;
 import com.oopsies.server.repository.RoleRepository;
 import com.oopsies.server.repository.TicketRepository;
 import com.oopsies.server.repository.UserRepository;
-import com.oopsies.server.services.BookingService;
-import com.oopsies.server.services.EventService;
-import com.oopsies.server.services.TicketService;
-import com.oopsies.server.services.UserServiceImpl;
+import com.oopsies.server.services.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +32,9 @@ public class BookingController {
 
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     UserRepository userRepository;
@@ -72,39 +72,11 @@ public class BookingController {
             int numTickets = bookingRequest.getNumTickets();
             BookingDTO bookingDTO = bookingService.createBooking(user_id, eventId, numTickets);
 
-            //call emailController method 
             //get user
             User user = userService.getUserById(user_id);
 
-            //get booking parameters first
-            String name = user.getFirstName() + " " + user.getLastName();
-            // String email = user.getEmail();
-            String email = "laiu.asher@gmail.com"; //this will need to change when we have proper user emails
-            long bookingID = bookingDTO.getBookingID();
-            Date bookingDate = bookingDTO.getBookingDate();
-
-            //get event parameters
-            EventDTO event = bookingDTO.getEvent();
-            String eventName = event.getEventName();
-            Date eventDate = event.getDateTime();
-            Date refundDate = null;
-            String venue = event.getVenue();
-            String type = "Booking Confirmation";
-
-            //get ticket parameters
-            List<Ticket> tickets = ticketRepository.findTicketsByBooking(bookingRepository.findBookingById(bookingID));
-            List<Long> ticketIDs = new ArrayList<>();
-            for (Ticket ticket : tickets) {
-                ticketIDs.add(ticket.getId());
-            }
-            double ticketPrice = event.getTicketPrice();
-            double totalPrice = ticketPrice * tickets.size();
-
-            //send email
-            EmailStructure emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName, 
-                                                                eventDate, refundDate, venue, ticketIDs, 
-                                                                totalPrice, 0, type);
-            emailController.sendEmail(email, emailStructure);
+            //call emailController method
+            emailService.createEmail(user, bookingDTO, "Booking Confirmation");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
                     201, "Booking was created successfully!", bookingDTO
@@ -165,36 +137,7 @@ public class BookingController {
             BookingDTO bookingDTO = bookingService.createBooking(user.getId(), eventId, numTickets);
 
             //call emailController method
-            //get user
-
-            //get booking parameters first
-            String name = user.getFirstName() + " " + user.getLastName();
-            String email = user.getEmail();
-//            String email = "laiu.asher@gmail.com"; //this will need to change when we have proper user emails
-            long bookingID = bookingDTO.getBookingID();
-            Date bookingDate = bookingDTO.getBookingDate();
-
-            //get event parameters
-            String eventName = event.getEventName();
-            Date eventDate = event.getDateTime();
-            Date refundDate = null;
-            String venue = event.getVenue();
-            String type = "Booking Confirmation";
-
-            //get ticket parameters
-            List<Ticket> tickets = ticketRepository.findTicketsByBooking(bookingRepository.findBookingById(bookingID));
-            List<Long> ticketIDs = new ArrayList<>();
-            for (Ticket ticket : tickets) {
-                ticketIDs.add(ticket.getId());
-            }
-            double ticketPrice = event.getTicketPrice();
-            double totalPrice = ticketPrice * tickets.size();
-
-            //send email
-            EmailStructure emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName,
-                    eventDate, refundDate, venue, ticketIDs,
-                    totalPrice, 0, type);
-            emailController.sendEmail(email, emailStructure);
+            emailService.createEmail(user, bookingDTO, "Booking Confirmation");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
                     201, "Booking was created successfully!", bookingDTO
@@ -230,37 +173,7 @@ public class BookingController {
             Booking booking = bookingRepository.findBookingById(booking_id);
             User user = booking.getUser();
 
-            //get user details
-            String name = user.getFirstName() + " " + user.getLastName();
-            // String email = user.getEmail();
-            String email = "laiu.asher@gmail.com"; //this will need to change when we have proper user emails
-            long bookingID = booking.getBookingID();
-            Date bookingDate = booking.getBookingDate();
-
-            //get event parameters
-            Event event = booking.getEvent();
-            String eventName = event.getEventName();
-            Date eventDate = event.getDateTime();
-            Date refundDate = booking.getCancelDate();
-            String venue = event.getVenue();
-            String type = "Refund Confirmation";
-
-            //get ticket parameters
-            List<Ticket> tickets = ticketRepository.findTicketsByBooking(bookingRepository.findBookingById(bookingID));
-            List<Long> ticketIDs = new ArrayList<>();
-            for (Ticket ticket : tickets) {
-                ticketIDs.add(ticket.getId());
-            }
-            double ticketPrice = event.getTicketPrice();
-            double totalPrice = ticketPrice * tickets.size();
-            double penaltyFee = event.getCancellationFee();
-            double refundedAmount = totalPrice - penaltyFee;
-
-            //send email
-            EmailStructure emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName, 
-                                                                eventDate, refundDate, venue, ticketIDs, refundedAmount,
-                                                                penaltyFee, type);
-            emailController.sendEmail(email, emailStructure);
+            emailService.createEmail(user, bookingService.convertToDTO(booking), "Refund Confirmation");
 
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
             200, "refund processed successfully", null
