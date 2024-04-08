@@ -42,26 +42,16 @@ export async function retrieveBookingByUserId(user_id) {
   }
 }
 
-/* Ticket Related */
-export async function retrieveTicketByBookingId(booking_id) {
+export async function createOnsiteBooking(eventId, numTickets, userEmail) {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/ticket/get/booking/${booking_id}`
-    )
-    return response.data
+    const response = await axios.post(`${BASE_URL}/booking/create/on-site`, {
+      eventId: eventId,
+      numTickets: numTickets,
+      userEmail: userEmail
+    });
+    return response.data;
   } catch (error) {
-    throw error
-  }
-}
-
-export async function cancelBooking(booking_id) {
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/booking/refund/${booking_id}`
-    )
-    return response.data
-  } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -77,6 +67,51 @@ export async function createBooking(userId, eventId, numTickets) {
   }
 }
 
+export async function cancelBooking(booking_id) {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/booking/refund/${booking_id}`
+    )
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+/* Ticket Related */
+export async function retrieveTicketByBookingId(booking_id) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/ticket/get/booking/${booking_id}`
+    )
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+
+export async function validateTicket(id){
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/ticket/validate/${id}`
+    )
+    return response.data.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function redeemTicket(id){
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/ticket/redeem/${id}`
+    )
+    return response.data.data
+  } catch (error) {
+    throw error
+  }
+}
 /* Event Related */
 
 export async function createEvent(body) {
@@ -140,13 +175,3 @@ export async function getEvent(eventId) {
   }
 }
 
-export async function validateTicket(id){
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/ticket/validate/${id}`
-    )
-    return response.data.data
-  } catch (error) {
-    throw error
-  }
-}
