@@ -13,7 +13,6 @@ const { Header } = Layout;
 const getItems = (role) => {
     const commonItems = [
         { key: '1', label: 'Upcoming Events', route: `/events` },
-        { key: '2', label: 'Your Tickets', route: `/tickets` },
     ];
 
     if (role == 'ROLE_OFFICER') {
@@ -24,10 +23,8 @@ const getItems = (role) => {
         ];
     } else if (role == 'ROLE_MANAGER') {
         return [
-
-            { key: '1', label: 'Your Events', route: "/home" },
-            { key: '2', label: 'Events Management', route: "/event-manager/eventmanagement" },
-            { key: '3', label: 'User Management', route: '/event-manager/usermanagement' },
+            { key: '1', label: 'Events Management', route: "/event-manager/eventmanagement" },
+            { key: '2', label: 'User Management', route: '/event-manager/usermanagement' },
         ];
     }
 
