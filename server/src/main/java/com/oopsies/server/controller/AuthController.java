@@ -86,7 +86,7 @@ public class AuthController {
                         User user = userRepository.findByEmail(googleUser.getEmail()).orElseGet(() -> {
                                 String randomPassword = UUID.randomUUID().toString().replace("-", "");
                                 User newUser = new User(googleUser.getEmail(), encoder.encode(randomPassword),
-                                                googleUser.getName(), "");
+                                                googleUser.getName(), "", 1000.0);
 
                                 // Default Role User is set
                                 Set<Role> roles = new HashSet<>();
