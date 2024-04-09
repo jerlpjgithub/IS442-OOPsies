@@ -2,7 +2,6 @@ package com.oopsies.server.entity;
 
 import java.util.Date;
 import java.util.List;
-
 public class EmailStructure {
 
     private String message;

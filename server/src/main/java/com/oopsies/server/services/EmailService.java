@@ -1,25 +1,27 @@
 package com.oopsies.server.services;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.oopsies.server.dto.BookingDTO;
+import com.oopsies.server.dto.EventDTO;
+import com.oopsies.server.entity.Event;
+import com.oopsies.server.entity.Ticket;
+import com.oopsies.server.entity.User;
+import com.oopsies.server.repository.BookingRepository;
+import com.oopsies.server.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.oopsies.server.dto.BookingDTO;
-import com.oopsies.server.dto.EventDTO;
 import com.oopsies.server.entity.EmailStructure;
-import com.oopsies.server.entity.Ticket;
-import com.oopsies.server.entity.User;
-import com.oopsies.server.repository.BookingRepository;
-import com.oopsies.server.repository.TicketRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+
+import java.awt.print.Book;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class EmailService {
@@ -53,8 +55,7 @@ public class EmailService {
         //get booking parameters first
         String name = user.getFirstName() + " " + user.getLastName();
          String email = user.getEmail();
-        // String email = "laiu.asher@gmail.com"; 
-        //this will need to change when we have proper user emails
+//        String email = "laiu.asher@gmail.com"; //this will need to change when we have proper user emails
         long bookingID = bookingDTO.getBookingID();
         Date bookingDate = bookingDTO.getBookingDate();
 
