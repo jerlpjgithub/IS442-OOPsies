@@ -276,6 +276,13 @@ export const EventPage = () => {
                         You are helping a potential buyer to buy tickets to {event.eventName}!
                     </Typography.Title>
                     <div style={{ marginBottom: '16px' }}>
+                        Buyer's email
+                        <Input 
+                        value={buyerEmail} 
+                        onChange={(event) => setBuyerEmail(event.target.value)}    
+                        />
+                    </div>
+                    <div>
                         Number of Tickets:{' '}
                         <InputNumber
                             min={1}
@@ -284,13 +291,9 @@ export const EventPage = () => {
                             onChange={setNumTickets}
                         />
                     </div>
-                    <div>
-                        Buyer's email
-                        <Input 
-                        value={buyerEmail} 
-                        onChange={(event) => setBuyerEmail(event.target.value)}    
-                        />
-                    </div>
+
+                    <br />
+                        Please understand that you are only able to purchase up to 5 tickets for each customer.
                     <Divider />
                     <Typography.Title level={5}>Payment Details</Typography.Title>
                     <Row gutter={[16, 16]}>
@@ -299,7 +302,7 @@ export const EventPage = () => {
                             ${calculateTotalPrice(numTickets, event.ticketPrice)}
                         </Col>
                     </Row>
-                    <Tooltip><strong>Remember to get the buyer to pay first!</strong></Tooltip>
+                    <Tooltip><strong>Remember to get the customer to pay first!</strong></Tooltip>
                 </Modal>
             </Content>
         </Layout>
