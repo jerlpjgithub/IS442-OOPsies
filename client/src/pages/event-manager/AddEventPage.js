@@ -37,18 +37,19 @@ export const AddEventPage = () => {
 
   const authUser = JSON.parse(localStorage.getItem('authUser'))
 
-  useEffect(() => {
-    const loadEvents = async () => {
-      const fetchedEvents = await getAllEvents()
-      setEvents(
-        fetchedEvents.map((event) => ({
-          ...event,
-          dateTime: moment(event.dateTime)
-        }))
-      ) // Convert dateTime to moment
-    }
+  const retrieveEvents = async () => {
+    const fetchedEvents = await getAllEvents()
 
-    loadEvents()
+    setEvents(
+      fetchedEvents.map((event) => ({
+        ...event,
+        dateTime: moment(event.dateTime)
+      }))
+    ) // Convert dateTime to moment
+  }
+
+  useEffect(() => {
+    retrieveEvents()
   }, [])
 
   const onFinish = async (values) => {
@@ -65,10 +66,7 @@ export const AddEventPage = () => {
       console.log(response)
       if (response && response.status == 201) {
         message.success(response.message)
-        setEvents((prev) => [
-          ...prev,
-          { ...response.data, dateTime: moment(response.data.dateTime) }
-        ]) // Ensure new event's dateTime is also a moment object
+        retrieveEvents()
         form.resetFields()
       } else {
         message.error('Failed to create event.')
@@ -91,12 +89,10 @@ export const AddEventPage = () => {
       cancelText: 'No, keep it',
       onOk: async () => {
         try {
-          // Assuming `cancelEvent` is your API call to cancel the event and initiate refund
           const response = await cancelEvent(record.id)
           if (response && response.status === 200) {
             message.success('Event canceled successfully!')
-            // Optionally remove the event from the state to update the UI
-            setEvents(events.filter((event) => event.id !== record.id))
+            retrieveEvents()
           } else {
             message.error('Failed to cancel the event.')
           }
@@ -152,13 +148,8 @@ export const AddEventPage = () => {
       const response = await updateEvent(eventId, requestBody)
       if (response && response.status === 201) {
         message.success('Event updated successfully!')
-        setEvents(
-          events.map((event) =>
-            event.id === eventId
-              ? { ...event, ...values, dateTime: moment(values.dateTime) }
-              : event
-          )
-        )
+
+        retrieveEvents()
         setEditingEvent(null)
       } else {
         message.error('Update failed.')
@@ -167,6 +158,10 @@ export const AddEventPage = () => {
       console.error(error)
       message.error('An error occurred while updating the event.')
     }
+  }
+
+  const isEditAndCancelDisabled = (event) => {
+    return event.eventCancelled || moment().isSameOrAfter(event.dateTime, 'day')
   }
 
   const validateMessages = {
@@ -185,7 +180,7 @@ export const AddEventPage = () => {
       align: 'left'
     },
     {
-      title: 'Date and Time',
+      title: 'Date and Time of Event',
       dataIndex: 'dateTime',
       key: 'dateTime',
       align: 'left',
@@ -199,7 +194,7 @@ export const AddEventPage = () => {
       align: 'center'
     },
     {
-      title: 'Ticket Price',
+      title: 'Ticket Price ($)',
       dataIndex: 'ticketPrice',
       key: 'ticketPrice',
       align: 'center'
@@ -232,15 +227,29 @@ export const AddEventPage = () => {
       align: 'center',
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Tooltip title="Edit Event">
+          <Tooltip
+            title={
+              isEditAndCancelDisabled(record)
+                ? 'Unable to edit this event as this event has already started or is cancelled.'
+                : 'Edit Event'
+            }
+          >
             <Button
               type="text"
+              disabled={isEditAndCancelDisabled(record)}
               icon={<EditOutlined />}
               onClick={() => handleEdit(record)}
             />
           </Tooltip>
-          <Tooltip title="Cancel Event">
+          <Tooltip
+            title={
+              isEditAndCancelDisabled(record)
+                ? 'Unable to cancel this event as this event has already started or is cancelled.'
+                : 'Edit Event'
+            }
+          >
             <Button
+              disabled={isEditAndCancelDisabled(record)}
               type="text"
               danger
               icon={<StopOutlined />}
@@ -319,7 +328,7 @@ export const AddEventPage = () => {
 
             <Form.Item
               name="ticketPrice"
-              label="Ticket Price"
+              label="Ticket Price ($)"
               rules={[{ required: true, type: 'number', min: 0 }]}
             >
               <InputNumber min={0} style={{ width: '100%' }} prefix="$" />
