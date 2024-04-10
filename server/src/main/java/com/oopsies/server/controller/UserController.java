@@ -33,6 +33,9 @@ import com.oopsies.server.entity.User;
 import com.oopsies.server.repository.RoleRepository;
 import com.oopsies.server.services.UserServiceImpl;
 
+/**
+ * Controller for handling user-related requests.
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/user")
@@ -46,6 +49,16 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    /**
+     * Endpoint for getting a list of users.
+     * If a search query is provided, it will return the user that matches the query.
+     * If no query is provided, it will return all users.
+     *
+     * @param page The page number.
+     * @param size The page size.
+     * @param query The search query.
+     * @return The response entity containing a list of users or an error message.
+     */
     @GetMapping()
     @PreAuthorize("hasRole('ROLE_OFFICER') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> getUsers(
@@ -87,6 +100,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Endpoint for getting a user by ID.
+     *
+     * @param userId The user ID.
+     * @return The response entity containing the user info or an error message.
+     */
     @GetMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_OFFICER', 'ROLE_MANAGER') or #userId == authentication.principal.id")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long userId) {
@@ -98,6 +117,14 @@ public class UserController {
         }
     }
 
+    /**
+     * Endpoint for updating a user.
+     *
+     * @param userId The user ID.
+     * @param updates The updates to apply.
+     * @param authentication The authentication object.
+     * @return The response entity containing the updated user info or an error message.
+     */
     @PutMapping("/{userId}")
     @PreAuthorize("hasRole('ROLE_MANAGER') or #userId == authentication.principal.id")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long userId,
@@ -142,7 +169,12 @@ public class UserController {
         }
     }
 
-    // Utility Method to convert User entity to UserResponseDTO
+    /**
+     * Utility method to convert a User entity to a UserResponseDTO.
+     *
+     * @param user The user entity.
+     * @return The UserResponseDTO.
+     */
     private UserResponseDTO convertToDto(User user) {
         return new UserResponseDTO(
                 user.getId(),

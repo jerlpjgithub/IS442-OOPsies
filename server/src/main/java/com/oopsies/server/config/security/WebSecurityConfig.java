@@ -21,6 +21,10 @@ import com.oopsies.server.config.jwt.AuthEntryPointJwt;
 import com.oopsies.server.config.jwt.AuthTokenFilter;
 import com.oopsies.server.services.UserDetailsServiceImpl;
 
+/**
+ * Configuration class for web security.
+ * This class sets up the security filters and authentication mechanisms for the application.
+ */
 @Configuration
 @EnableMethodSecurity
 // (securedEnabled = true,
@@ -33,11 +37,21 @@ public class WebSecurityConfig {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
+    /**
+     * Creates a new AuthTokenFilter bean.
+     *
+     * @return A new AuthTokenFilter.
+     */
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
 
+    /**
+     * Creates a new DaoAuthenticationProvider bean.
+     *
+     * @return A new DaoAuthenticationProvider.
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -48,16 +62,33 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
+    /**
+     * Creates a new AuthenticationManager bean.
+     *
+     * @param authConfig The authentication configuration.
+     * @return A new AuthenticationManager.
+     * @throws Exception If an error occurred while getting the AuthenticationManager.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
+    /**
+     * Creates a new PasswordEncoder bean.
+     *
+     * @return A new PasswordEncoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Creates a new CorsFilter bean.
+     *
+     * @return A new CorsFilter.
+     */
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -70,6 +101,13 @@ public class WebSecurityConfig {
         return new CorsFilter(source);
     }
 
+    /**
+     * Creates a new SecurityFilterChain bean.
+     *
+     * @param http The HttpSecurity object.
+     * @return A new SecurityFilterChain.
+     * @throws Exception If an error occurred while building the SecurityFilterChain.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())

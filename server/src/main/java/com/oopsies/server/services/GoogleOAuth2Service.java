@@ -12,12 +12,24 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 
+/**
+ * Service for handling Google OAuth2 operations.
+ * This service provides a method for extracting user information from a Google ID token.
+ */
 @Service
 public class GoogleOAuth2Service {
 
     @Value("${oopsies.oauth.clientid}")
     private String clientId;
 
+    /**
+     * Extracts user information from a Google ID token.
+     *
+     * @param idTokenString The Google ID token as a string.
+     * @return A GoogleUser object containing the user's information.
+     * @throws GeneralSecurityException If a security exception occurs while verifying the ID token.
+     * @throws IOException If an I/O exception occurs while verifying the ID token.
+     */
     public GoogleUser getUserInfo(String idTokenString) throws GeneralSecurityException, IOException {
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singletonList(clientId))
