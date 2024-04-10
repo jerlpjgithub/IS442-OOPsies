@@ -42,7 +42,7 @@ public class EventController {
     @Autowired
     private BookingService bookingService;
 
-    @Autowired 
+    @Autowired
     private DataService dataService;
 
     public EventController(EventService eventService){
@@ -98,8 +98,8 @@ public class EventController {
 
         List<BookingDTO> bookings = bookingService.findBookingsByEventID(event_id);
         int totalTicketsSold = dataService.getTotalTicketsSold(bookings);
-        _events.setTotalTicketsSold(totalTicketsSold); 
-        
+        _events.setTotalTicketsSold(totalTicketsSold);
+
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
                 200, "successful", _events
         ));
@@ -114,8 +114,14 @@ public class EventController {
             long eventId = event.getId();
             List<BookingDTO> bookings = bookingService.findBookingsByEventID(eventId);
             int totalTicketsSold = dataService.getTotalTicketsSold(bookings);
-            event.setTotalTicketsSold(totalTicketsSold); 
+            int attendance = dataService.getAttendance(bookings);
+            int numRefunds = dataService.getNumRefunds(bookings);
+            double totalRevenue = dataService.getTotalRevenue(bookings, event);
 
+            event.setTotalTicketsSold(totalTicketsSold);
+            event.setAttendance(attendance);
+            event.setTotalTicketsRefunded(numRefunds);
+            event.setTotalRevenue(totalRevenue);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
@@ -132,7 +138,7 @@ public class EventController {
             if(_events.isEmpty()){
                 return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
                     200, "successful, no events created by this manager", _events
-            )); 
+            ));
             }
                 return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
                     200, "successful", _events
@@ -173,11 +179,11 @@ public class EventController {
         response.setHeader(headerKey, headerValue);
 
         List<CsvDTO> csvDTOs = bookingService.getCsvDTOForEvent(event_id);
-        
+
         ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
         String[] csvHeader = {"booking_id", "booking_date", "cancel_date", "customer_full_name", "email" ,"no_of_tickets_booked"};
         String[] nameMapping = {"bookingID", "bookingDate", "cancelDate", "fullName", "email", "numOfTickets"};
-        
+
         csvWriter.writeHeader(csvHeader);
         for (CsvDTO csvDTO : csvDTOs) {
             csvWriter.write(csvDTO, nameMapping);
