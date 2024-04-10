@@ -1,55 +1,80 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, DatePicker, InputNumber, message, Typography, Tabs, Table, Modal } from 'antd';
-import { createEvent, getAllEvents, updateEvent, cancelEvent } from '../../utils/api.js';
-import moment from 'moment';
+import React, { useState, useEffect } from 'react'
+import {
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  InputNumber,
+  message,
+  Typography,
+  Tabs,
+  Table,
+  Modal
+} from 'antd'
+import {
+  createEvent,
+  getAllEvents,
+  updateEvent,
+  cancelEvent,
+  exportEventDetails
+} from '../../utils/api.js'
+import moment from 'moment'
 
-const { Title } = Typography;
-const { TabPane } = Tabs;
+const { Title } = Typography
+const { TabPane } = Tabs
 
 export const AddEventPage = () => {
-  const [form] = Form.useForm();
-  const [events, setEvents] = useState([]);
-  const [editingEvent, setEditingEvent] = useState(null);
+  const [form] = Form.useForm()
+  const [events, setEvents] = useState([])
+  const [editingEvent, setEditingEvent] = useState(null)
 
-  const authUser = JSON.parse(localStorage.getItem("authUser"));
+  const authUser = JSON.parse(localStorage.getItem('authUser'))
 
   useEffect(() => {
     const loadEvents = async () => {
-      const fetchedEvents = await getAllEvents();
-      setEvents(fetchedEvents.map(event => ({ ...event, dateTime: moment(event.dateTime) }))); // Convert dateTime to moment
-    };
+      const fetchedEvents = await getAllEvents()
+      setEvents(
+        fetchedEvents.map((event) => ({
+          ...event,
+          dateTime: moment(event.dateTime)
+        }))
+      ) // Convert dateTime to moment
+    }
 
-    loadEvents();
-  }, []);
+    loadEvents()
+  }, [])
 
   const onFinish = async (values) => {
     const requestBody = {
       event: {
         ...values,
-        dateTime: values.dateTime.toISOString(),
+        dateTime: values.dateTime.toISOString()
       },
-      managerId: authUser.id,
-    };
+      managerId: authUser.id
+    }
 
     try {
-      const response = await createEvent(requestBody);
-      console.log(response);
+      const response = await createEvent(requestBody)
+      console.log(response)
       if (response && response.status == 201) {
-        message.success(response.message);
-        setEvents(prev => [...prev, { ...response.data, dateTime: moment(response.data.dateTime) }]); // Ensure new event's dateTime is also a moment object
-        form.resetFields();
+        message.success(response.message)
+        setEvents((prev) => [
+          ...prev,
+          { ...response.data, dateTime: moment(response.data.dateTime) }
+        ]) // Ensure new event's dateTime is also a moment object
+        form.resetFields()
       } else {
-        message.error('Failed to create event.');
+        message.error('Failed to create event.')
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
       if (error.response && error.response.status === 400) {
-        message.error(error.response.data.message);
+        message.error(error.response.data.message)
       } else {
-        message.error('An error occurred while creating the event.');
+        message.error('An error occurred while creating the event.')
       }
     }
-  };
+  }
 
   const handleDelete = (record) => {
     Modal.confirm({
@@ -60,60 +85,87 @@ export const AddEventPage = () => {
       onOk: async () => {
         try {
           // Assuming `cancelEvent` is your API call to cancel the event and initiate refund
-          const response = await cancelEvent(record.id);
+          const response = await cancelEvent(record.id)
           if (response && response.status === 200) {
-            message.success('Event canceled successfully!');
+            message.success('Event canceled successfully!')
             // Optionally remove the event from the state to update the UI
-            setEvents(events.filter(event => event.id !== record.id));
+            setEvents(events.filter((event) => event.id !== record.id))
           } else {
-            message.error('Failed to cancel the event.');
+            message.error('Failed to cancel the event.')
           }
         } catch (error) {
-          console.error('Error cancelling the event:', error);
-          message.error('An error occurred while cancelling the event.');
+          console.error('Error cancelling the event:', error)
+          message.error('An error occurred while cancelling the event.')
         }
-      },
-    });
-  };
+      }
+    })
+  }
 
   const handleEdit = (record) => {
-    setEditingEvent(record);
+    setEditingEvent(record)
     form.setFieldsValue({
       ...record,
-      dateTime: moment(record.dateTime), // Ensure dateTime is set as a moment object for DatePicker
-    });
-  };
+      dateTime: moment(record.dateTime) // Ensure dateTime is set as a moment object for DatePicker
+    })
+  }
+
+  const handleExport = async (eventId) => {
+    try {
+      /* To handle the downloading of the data */
+      const response = await exportEventDetails(eventId)
+      const blob = new Blob([response.data], { type: 'text/csv' })
+
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `event_details_${eventId}_${moment(new Date()).format('DDMMYYYY')}.csv`
+
+      link.click()
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.log(error)
+      message.error(
+        'Something went wrong while exporting data. Try again later!'
+      )
+    }
+  }
 
   const handleUpdate = async (eventId, values) => {
     const requestBody = {
       event: {
         ...values,
-        dateTime: values.dateTime.toISOString(),
+        dateTime: values.dateTime.toISOString()
       },
-      managerId: authUser.id,
-    };
+      managerId: authUser.id
+    }
 
     try {
-      const response = await updateEvent(eventId, requestBody);
+      const response = await updateEvent(eventId, requestBody)
       if (response && response.status === 201) {
-        message.success('Event updated successfully!');
-        setEvents(events.map(event => event.id === eventId ? { ...event, ...values, dateTime: moment(values.dateTime) } : event));
-        setEditingEvent(null);
+        message.success('Event updated successfully!')
+        setEvents(
+          events.map((event) =>
+            event.id === eventId
+              ? { ...event, ...values, dateTime: moment(values.dateTime) }
+              : event
+          )
+        )
+        setEditingEvent(null)
       } else {
-        message.error('Update failed.');
+        message.error('Update failed.')
       }
     } catch (error) {
-      console.error(error);
-      message.error('An error occurred while updating the event.');
+      console.error(error)
+      message.error('An error occurred while updating the event.')
     }
-  };
+  }
 
   const validateMessages = {
     required: '${label} is required!',
     types: {
-      number: '${label} is not a valid number!',
-    },
-  };
+      number: '${label} is not a valid number!'
+    }
+  }
 
   const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id' },
@@ -127,24 +179,42 @@ export const AddEventPage = () => {
     { title: 'Venue', dataIndex: 'venue', key: 'venue' },
     { title: 'Capacity', dataIndex: 'capacity', key: 'capacity' },
     { title: 'Ticket Price', dataIndex: 'ticketPrice', key: 'ticketPrice' },
-    { title: 'Cancellation Fee', dataIndex: 'cancellationFee', key: 'cancellationFee' },
+    {
+      title: 'Cancellation Fee',
+      dataIndex: 'cancellationFee',
+      key: 'cancellationFee'
+    },
     {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          {/* TODO: Handle the spacing and use icons instead */}
           <Button onClick={() => handleEdit(record)}>Edit</Button>
-          <Button style={{ marginLeft: '10px' }} onClick={() => handleDelete(record)}>Cancel</Button>
+          <Button
+            style={{ marginLeft: '10px' }}
+            onClick={() => handleDelete(record)}
+          >
+            Cancel
+          </Button>
+          <Button
+            style={{ marginLeft: '10px' }}
+            onClick={() => handleExport(record.id)}
+          >
+            Export
+          </Button>
         </div>
-      ),
+      )
     }
-  ];
+  ]
 
   return (
     <>
       <Tabs defaultActiveKey="1" style={{ marginLeft: '20px' }}>
         <TabPane tab="Create Event" key="1">
-          <Title level={2} style={{ marginLeft: '30px' }}>Create Event</Title>
+          <Title level={2} style={{ marginLeft: '30px' }}>
+            Create Event
+          </Title>
           <Form
             form={form}
             name="event_form"
@@ -153,7 +223,7 @@ export const AddEventPage = () => {
             layout="vertical"
             initialValues={{
               cancellationFee: 0.0,
-              ticketPrice: 0.0,
+              ticketPrice: 0.0
             }}
             style={{ margin: '30px ' }}
           >
@@ -173,11 +243,7 @@ export const AddEventPage = () => {
               <DatePicker showTime />
             </Form.Item>
 
-            <Form.Item
-              name="venue"
-              label="Venue"
-              rules={[{ required: true }]}
-            >
+            <Form.Item name="venue" label="Venue" rules={[{ required: true }]}>
               <Input placeholder="Enter the event venue" />
             </Form.Item>
 
@@ -221,7 +287,9 @@ export const AddEventPage = () => {
         open={!!editingEvent}
         onCancel={() => setEditingEvent(null)}
         footer={[
-          <Button key="back" onClick={() => setEditingEvent(null)}>Cancel</Button>,
+          <Button key="back" onClick={() => setEditingEvent(null)}>
+            Cancel
+          </Button>,
           <Button
             key="submit"
             type="primary"
@@ -229,7 +297,7 @@ export const AddEventPage = () => {
             htmlType="submit"
           >
             Update Event
-          </Button>,
+          </Button>
         ]}
       >
         <Form
@@ -254,11 +322,7 @@ export const AddEventPage = () => {
             <DatePicker showTime />
           </Form.Item>
 
-          <Form.Item
-            name="venue"
-            label="Venue"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="venue" label="Venue" rules={[{ required: true }]}>
             <Input placeholder="Enter the event venue" />
           </Form.Item>
 
@@ -287,7 +351,6 @@ export const AddEventPage = () => {
           </Form.Item>
         </Form>
       </Modal>
-
     </>
-  );
-};
+  )
+}

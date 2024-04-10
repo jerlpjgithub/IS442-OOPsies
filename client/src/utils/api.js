@@ -17,7 +17,7 @@ export async function loginUser(data) {
 export async function getUserData(id) {
   try {
     const response = await axios.get(`${BASE_URL}/user/${id}`)
-    return response.data;
+    return response.data
   } catch (error) {
     throw error
   }
@@ -48,10 +48,10 @@ export async function createOnsiteBooking(eventId, numTickets, userEmail) {
       eventId: eventId,
       numTickets: numTickets,
       userEmail: userEmail
-    });
-    return response.data;
+    })
+    return response.data
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
@@ -60,10 +60,10 @@ export async function createBooking(userId, eventId, numTickets) {
     const response = await axios.post(`${BASE_URL}/booking/create/${userId}`, {
       eventId: eventId,
       numTickets: numTickets
-    });
-    return response.data;
+    })
+    return response.data
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
@@ -90,23 +90,18 @@ export async function retrieveTicketByBookingId(booking_id) {
   }
 }
 
-
-export async function validateTicket(id){
+export async function validateTicket(id) {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/ticket/validate/${id}`
-    )
+    const response = await axios.post(`${BASE_URL}/ticket/validate/${id}`)
     return response.data.data
   } catch (error) {
     throw error
   }
 }
 
-export async function redeemTicket(id){
+export async function redeemTicket(id) {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/ticket/redeem/${id}`
-    )
+    const response = await axios.post(`${BASE_URL}/ticket/redeem/${id}`)
     return response.data.data
   } catch (error) {
     throw error
@@ -116,19 +111,16 @@ export async function redeemTicket(id){
 
 export async function createEvent(body) {
   try {
-    const response = await axios.post(`${BASE_URL}/event/create`, body);
-    return response.data;
-
+    const response = await axios.post(`${BASE_URL}/event/create`, body)
+    return response.data
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
 export async function getAllEvents() {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/event/get/all`
-    )
+    const response = await axios.get(`${BASE_URL}/event/get/all`)
     return response.data.data
   } catch (error) {
     throw error
@@ -137,27 +129,28 @@ export async function getAllEvents() {
 
 export async function updateEvent(eventId, body) {
   try {
-    const response = await axios.put(`${BASE_URL}/event/update/${eventId}`, body);
-    return response;
+    const response = await axios.put(
+      `${BASE_URL}/event/update/${eventId}`,
+      body
+    )
+    return response
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
 export async function cancelEvent(eventId) {
   try {
-    const response = await axios.post(`${BASE_URL}/event/cancel/${eventId}`);
-    return response;
+    const response = await axios.post(`${BASE_URL}/event/cancel/${eventId}`)
+    return response
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
 export async function getManagedEventsById(managerId) {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/event/get/all/${managerId}`
-    )
+    const response = await axios.get(`${BASE_URL}/event/get/all/${managerId}`)
     return response.data.data
   } catch (error) {
     throw error
@@ -166,12 +159,20 @@ export async function getManagedEventsById(managerId) {
 
 export async function getEvent(eventId) {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/event/get/${eventId}`
-    )
+    const response = await axios.get(`${BASE_URL}/event/get/${eventId}`)
     return response.data.data
   } catch (error) {
     throw error
   }
 }
 
+export async function exportEventDetails(eventId) {
+  try {
+    const url = `${BASE_URL}/event/export/:event_id`
+    const response = await axios.get(url.replace(':event_id', eventId))
+
+    return response
+  } catch (error) {
+    throw error
+  }
+}
