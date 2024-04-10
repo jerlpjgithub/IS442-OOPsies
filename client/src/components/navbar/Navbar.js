@@ -1,31 +1,30 @@
-import React, { useState } from 'react';
-import { Layout, Menu, theme, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Layout, Menu } from 'antd';
 import { Grid } from 'antd';
 import { Dropdown, Button } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import Logo from './components/Logo';
 import './Navbar.css';
-import Profile from './components/Profile'; // Import your Profile component
-import { Link } from 'react-router-dom';
-// import { useAuth } from '../../context/AuthContext';
+import Profile from './components/Profile';
+import { Link, useLocation } from 'react-router-dom';
 const { useBreakpoint } = Grid;
 const { Header } = Layout;
 
 const getItems = (role) => {
-    // Default role is customer?
     const commonItems = [
-        { key: '1', label: 'Upcoming Events', route: "/home" },
-        { key: '2', label: 'Your Tickets', route: '/tickets' },
+        { key: '1', label: 'Upcoming Events', route: `/events` },
     ];
 
-    if (role === 'ROLE_OFFICER') {
+    if (role == 'ROLE_OFFICER') {
         return [
-            { key: '1', label: 'Your Events', route: '/home' },
+            { key: '1', label: 'Ticketing Home', route: `/ticketing-officer/home`},
+            { key: '2', label: 'Upcoming Events', route: `/ticketing-officer/events` },
+            { key: '3', label: 'User Management', route: '/ticketing-officer/usermanagement' },
         ];
-    } else if (role === 'ROLE_MANAGER') {
+    } else if (role == 'ROLE_MANAGER') {
         return [
-            { key: '1', label: 'Your Events', route: "/home" },
-            { key: '2', label: 'Add Event', route: "/event-manager/home" },
+            { key: '1', label: 'Events Management', route: "/event-manager/eventmanagement" },
+            { key: '2', label: 'User Management', route: '/event-manager/usermanagement' },
         ];
     }
 
@@ -33,23 +32,21 @@ const getItems = (role) => {
 };
 
 const App = () => {
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
-    // const { authUser } = useAuth();
-    // console.log(authUser.roles);
-    const role = 'ROLE_MANAGER'; // Add in logic to retrieve user's role
+    const user = JSON.parse(localStorage.getItem("authUser"));
+    const role = user.roles;
     const items = getItems(role);
-    const [searchWidth, setSearchWidth] = useState('50px');
     const screens = useBreakpoint();
+    const [selectedKey, setSelectedKey] = useState([]);
+    const location = useLocation();
+
     const dropdownMenu = (
         <Menu
             theme="dark"
             mode="vertical"
-            defaultSelectedKeys={['1']}
+            defaultSelectedKeys={[]}
+            selectedKeys={selectedKey}
         >
             {items.map(item => {
-                console.log(item.route);
                 return (
                     <Menu.Item key={item.key}>
                         <Link to={item.route}>
@@ -61,18 +58,30 @@ const App = () => {
         </Menu>
     );
 
+    useEffect(() => {
+        const currentPath = location.pathname;
+        const matchingItem = items.find(item => item.route === currentPath);
+        if (matchingItem) {
+            setSelectedKey([matchingItem.key]);
+        } else {
+            setSelectedKey([]);
+        }
+    }, [location]);
+
     return (
         <Layout>
             <Header
                 style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between', // Add this line
+                    justifyContent: 'space-between',
                 }}
             >
-                <Logo className='logo' />
+                <Link to="/home">
+                    <Logo className='logo' />
+                </Link>
                 {screens.xs ? (
-                    <Dropdown overlay={dropdownMenu}>
+                    <Dropdown menu={dropdownMenu}>
                         <Button
                             className="menu-button"
                             type="primary"
@@ -83,24 +92,22 @@ const App = () => {
                     <Menu
                         theme="dark"
                         mode="horizontal"
-                        defaultSelectedKeys={['1']}
+                        defaultSelectedKeys={[]}
+                        selectedKeys={selectedKey}
                         style={{ flex: 1 }}
                     >
-                        {items.map(item => (
-                            <Menu.Item key={item.key}>
-                                {item.label}
-                            </Menu.Item>
-                        ))}
+                        {items.map(item => {
+                            return (
+                                <Menu.Item key={item.key}>
+                                    <Link to={item.route}>
+                                        {item.label}
+                                    </Link>
+                                </Menu.Item>
+                            );
+                        })}
                     </Menu>
                 )}
-                <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: 0 }}>
-                    <Input.Search
-                        className='search-bar'
-                        enterButton
-                        style={{ width: searchWidth, marginRight: '100px' }}
-                        onFocus={() => setSearchWidth('200px')}
-                        onBlur={() => setSearchWidth('50px')}
-                    />
+                <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: 10 }}>
                     <Profile />
                 </div>
             </Header>

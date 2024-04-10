@@ -57,4 +57,20 @@ public class TicketController {
           500, "failed", e.getMessage()));
     }
   }
+
+  @PostMapping(path = "/redeem/{ticket_id}")
+  @PreAuthorize("hasAnyRole('ROLE_OFFICER')")
+  public ResponseEntity<?> redeemTicket(@PathVariable("ticket_id") long ticket_id) {
+    try {
+      boolean redeem = ticketService.redeemTicket(ticket_id);
+      return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+              200, "successful", redeem));
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+              400, "failed", e.getMessage()));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
+              500, "failed", e.getMessage()));
+    }
+  }
 }

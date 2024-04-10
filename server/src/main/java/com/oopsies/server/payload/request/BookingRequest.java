@@ -30,4 +30,12 @@ public class BookingRequest {
     public void setNumTickets(int numTickets) {
         this.numTickets = numTickets;
     }
+
+    @Override
+    public String toString() {
+        return "BookingRequest{" +
+                "eventId=" + eventId +
+                ", numTickets=" + numTickets +
+                '}';
+    }
 }

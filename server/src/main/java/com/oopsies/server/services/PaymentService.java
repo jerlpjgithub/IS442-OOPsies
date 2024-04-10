@@ -39,11 +39,8 @@ public class PaymentService {
         return convertToDTO(payment);
     }
 
-    public long processPayment(User user, Booking booking,EventDTO event, int numTickets) throws UserInsufficientFundsException {
+    public long processPayment(User user, Booking booking,EventDTO event, int numTickets){
         double totalPrice = getTotalPrice(event, numTickets);
-        if (!hasUserValidBalance(user, totalPrice)) {
-            throw new UserInsufficientFundsException();
-        }
         user.decrementAccountBalance(totalPrice);
         userDetailsService.saveUser(user);
 
@@ -53,10 +50,6 @@ public class PaymentService {
     private double getTotalPrice(EventDTO event, int numTickets) {
         double ticketPrice = event.getTicketPrice();
         return ticketPrice * numTickets;
-    }
-
-    private boolean hasUserValidBalance(User user, double price) {
-        return user.getAccountBalance() >= price;
     }
 
    private long createNewPayment(Booking booking, double paymentAmount) {

@@ -16,9 +16,9 @@ public class EmailStructure {
             this.subject = String.format("Event Booking Confirmation - Booking Number: %d", bookingID);
             this.message = String.format("Dear %s, " +
             "<br><br>We're thrilled to let you know that your booking for the concert has been successfully confirmed! Get ready for an unforgettable night of music and memories. Below are the details of your booking and your concert ticket information." +
-            "<br><br><b>Booking Confirmation Details:<b><br>Booking Reference: %s<br>Contact Email: %s" +
-            "<br><br><b>Event Details:<b> <br>Event Name: %s<br>Date: %s<br>Venue: %s"+
-            "<br><br><b>Ticket Details:<b> <br>Ticket ID(s): %s<br>Total Price: %s" +
+            "<br><br><b>Booking Confirmation Details:</b><br>Booking Reference: %s<br>Contact Email: %s" +
+            "<br><br><b>Event Details:</b> <br>Event Name: %s<br>Date: %s<br>Venue: %s"+
+            "<br><br><b>Ticket Details:</b> <br>Ticket ID(s): %s<br>Total Price: %s" +
             "<br><br>Thank you for choosing OOPsies for your event experience. We hope you enjoy your event! <br><br>Yours Sincerely, <br>OOPsies", 
             name, bookingID, email, eventName, eventDate, venue, ticketIDs, totalPrice);
 
