@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.oopsies.server.entity.Image;
 import com.oopsies.server.services.ImageService;
 
+/**
+ * Controller for handling image-related requests.
+ */
 @RestController
 @RequestMapping("/image")
 public class ImageController {
@@ -23,6 +26,14 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
+    /**
+     * Endpoint for uploading an image.
+     * The image should be provided as a Base64-encoded string.
+     *
+     * @param name The name of the image.
+     * @param base64Image The Base64-encoded image.
+     * @return The response entity containing the stored image info.
+     */
     @PostMapping("/upload")
     public ResponseEntity<Image> uploadImage(@RequestParam("name") String name,
             @RequestParam("image") String base64Image) {
@@ -30,6 +41,13 @@ public class ImageController {
         return ResponseEntity.ok(storedImage);
     }
 
+    /**
+     * Endpoint for getting an image by name.
+     * The image is returned as a Base64-encoded string.
+     *
+     * @param name The name of the image.
+     * @return The response entity containing the image name and data.
+     */
     @GetMapping("/{name}")
     public ResponseEntity<?> getImageByName(@PathVariable String name) {
         Image image = imageService.getImageByName(name);
