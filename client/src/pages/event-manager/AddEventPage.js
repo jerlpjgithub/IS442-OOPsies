@@ -9,8 +9,15 @@ import {
   Typography,
   Tabs,
   Table,
-  Modal
+  Modal,
+  Tooltip
 } from 'antd'
+import {
+  CloudDownloadOutlined,
+  StopOutlined,
+  EditOutlined
+} from '@ant-design/icons'
+
 import {
   createEvent,
   getAllEvents,
@@ -118,7 +125,9 @@ export const AddEventPage = () => {
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `event_details_${eventId}_${moment(new Date()).format('DDMMYYYY')}.csv`
+      link.download = `event_details_${eventId}_${moment(new Date()).format(
+        'DDMMYYYY'
+      )}.csv`
 
       link.click()
       window.URL.revokeObjectURL(url)
@@ -168,41 +177,70 @@ export const AddEventPage = () => {
   }
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Event Name', dataIndex: 'eventName', key: 'eventName' },
+    { title: 'ID', dataIndex: 'id', key: 'id', align: 'center' },
+    {
+      title: 'Event Name',
+      dataIndex: 'eventName',
+      key: 'eventName',
+      align: 'left'
+    },
     {
       title: 'Date and Time',
       dataIndex: 'dateTime',
       key: 'dateTime',
+      align: 'left',
       render: (text) => moment(text).format('Do MMMM YYYY, h:mm a')
     },
-    { title: 'Venue', dataIndex: 'venue', key: 'venue' },
-    { title: 'Capacity', dataIndex: 'capacity', key: 'capacity' },
-    { title: 'Ticket Price', dataIndex: 'ticketPrice', key: 'ticketPrice' },
+    { title: 'Venue', dataIndex: 'venue', key: 'venue', align: 'left' },
+    {
+      title: 'Capacity',
+      dataIndex: 'capacity',
+      key: 'capacity',
+      align: 'center'
+    },
+    {
+      title: 'Ticket Price',
+      dataIndex: 'ticketPrice',
+      key: 'ticketPrice',
+      align: 'center'
+    },
     {
       title: 'Cancellation Fee',
       dataIndex: 'cancellationFee',
-      key: 'cancellationFee'
+      key: 'cancellationFee',
+      align: 'center'
     },
     {
       title: 'Action',
       key: 'action',
+      align: 'center',
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {/* TODO: Handle the spacing and use icons instead */}
-          <Button onClick={() => handleEdit(record)}>Edit</Button>
-          <Button
-            style={{ marginLeft: '10px' }}
-            onClick={() => handleDelete(record)}
-          >
-            Cancel
-          </Button>
-          <Button
-            style={{ marginLeft: '10px' }}
-            onClick={() => handleExport(record.id)}
-          >
-            Export
-          </Button>
+          <Tooltip title="Edit Event">
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => handleEdit(record)}
+            />
+          </Tooltip>
+          <Tooltip title="Cancel Event">
+            <Button
+              type="text"
+              danger
+              icon={<StopOutlined />}
+              style={{ marginLeft: '10px' }}
+              onClick={() => handleDelete(record)}
+            />
+          </Tooltip>
+          <Tooltip title="Export Event Details">
+            <Button
+              type="text"
+              primary
+              icon={<CloudDownloadOutlined />}
+              style={{ marginLeft: '10px' }}
+              onClick={() => handleExport(record.id)}
+            />
+          </Tooltip>
         </div>
       )
     }
