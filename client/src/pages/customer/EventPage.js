@@ -196,6 +196,8 @@ const EventPage = () => {
                             onChange={setNumTickets}
                         />
                     </div>
+                    <br />
+                        Please understand that you are only able to purchase up to 5 tickets.
                     <Divider />
                     <Typography.Title level={5}>Payment Details</Typography.Title>
                     <Row gutter={[16, 16]}>

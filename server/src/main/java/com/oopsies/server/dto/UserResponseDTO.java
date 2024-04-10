@@ -5,6 +5,10 @@ import java.util.Set;
 import com.oopsies.server.entity.Role;
 import com.oopsies.server.entity.Provider;
 
+/**
+ * Data Transfer Object for User responses.
+ * This is used to send user data to the client.
+ */
 public class UserResponseDTO {
     private Long id;
     private String email;
@@ -15,11 +19,24 @@ public class UserResponseDTO {
     private double accountBalance;
     private Provider provider;
 
-    // Constructors, Getters, and Setters
-
+    /**
+     * Default constructor.
+     */
     public UserResponseDTO() {
     }
 
+    /**
+     * Full constructor.
+     *
+     * @param id             The user ID.
+     * @param email          The user email.
+     * @param firstName      The user's first name.
+     * @param lastName       The user's last name.
+     * @param roles          The user's roles.
+     * @param emailVerified  Whether the user's email is verified.
+     * @param accountBalance The user's account balance.
+     * @param provider       The user's provider.
+     */
     public UserResponseDTO(Long id, String email, String firstName, String lastName, Set<Role> roles,
             boolean emailVerified, double accountBalance, Provider provider) {
         this.id = id;
@@ -32,6 +49,7 @@ public class UserResponseDTO {
         this.provider = provider;
     }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
