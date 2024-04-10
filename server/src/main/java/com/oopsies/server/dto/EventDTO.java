@@ -11,10 +11,11 @@ public class EventDTO {
     private int capacity;
     private double cancellationFee;
     private double ticketPrice;
+    private int totalTicketsSold;
 
     public EventDTO() { }
 
-    public EventDTO(Long id, String eventName, Date dateTime, String venue, Date cancelDate, int capacity, double cancellationFee, double ticketPrice) {
+    public EventDTO(Long id, String eventName, Date dateTime, String venue, Date cancelDate, int capacity, double cancellationFee, double ticketPrice, int totalTicketsSold) {
         this.id = id;
         this.eventName = eventName;
         this.dateTime = dateTime;
@@ -23,6 +24,7 @@ public class EventDTO {
         this.capacity = capacity;
         this.cancellationFee = cancellationFee;
         this.ticketPrice = ticketPrice;
+        this.totalTicketsSold = totalTicketsSold;
     }
 
     public Long getId() {
@@ -88,6 +90,14 @@ public class EventDTO {
     public void setTicketPrice(double ticketPrice) {
         this.ticketPrice = ticketPrice;
     }
+    
+    public int getTotalTicketsSold() { 
+        return totalTicketsSold;
+    }
+
+    public void setTotalTicketsSold(int totalTicketsSold) {
+        this.totalTicketsSold = totalTicketsSold;
+    }
 
     public EventDTO eventID(long eventId) {
         setId(eventId);
@@ -126,6 +136,11 @@ public class EventDTO {
 
     public EventDTO ticketPrice(double ticketPrice) {
         setTicketPrice(ticketPrice);
+        return this;
+    }
+
+    public EventDTO totalTicketsSold(int totalTicketsSold) {
+        setTotalTicketsSold(totalTicketsSold);
         return this;
     }
 }

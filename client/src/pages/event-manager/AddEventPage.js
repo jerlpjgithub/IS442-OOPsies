@@ -211,6 +211,22 @@ export const AddEventPage = () => {
       align: 'center'
     },
     {
+      title: 'Tickets Purchased',
+      key: 'capacity',
+      render: (_, record) => `${record.totalTicketsSold} / ${record.capacity}`
+    },
+    { title: 'Ticket Price', dataIndex: 'ticketPrice', key: 'ticketPrice' },
+    {
+      title: 'Cancellation Fee',
+      dataIndex: 'cancellationFee',
+      key: 'cancellationFee'
+    },
+    {
+      title: 'Revenue ($)',
+      key: 'revenue',
+      render: (_, record) => `${record.totalTicketsSold * record.ticketPrice}`
+    },
+    {
       title: 'Action',
       key: 'action',
       align: 'center',

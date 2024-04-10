@@ -2,6 +2,8 @@ package com.oopsies.server.services;
 
 import java.util.Date;
 import java.util.List;
+
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.oopsies.server.dto.BookingDTO;
@@ -11,7 +13,11 @@ import com.oopsies.server.dto.TicketDTO;
 @Service
 public class DataService {
 
+    @Lazy
     private TicketService ticketService;
+
+    @Lazy
+    private BookingService bookingService;
 
     //to do : make sure it can handle refunds. Also might be simpler to do from eventService side.  (Done)
     public int getTotalTicketsSold(List<BookingDTO> bookingList) {

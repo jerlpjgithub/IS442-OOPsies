@@ -29,6 +29,9 @@ public class EventService {
     @Autowired
     private RefundService refundService;
 
+    @Autowired
+    private DataService dataService;
+
     public EventService() { }
 
     public Optional<EventDTO> getEventById(long eventId) {
@@ -180,7 +183,9 @@ public class EventService {
         dto.setCapacity(event.getCapacity());
         dto.setCancellationFee(event.getCancellationFee());
         dto.setTicketPrice(event.getTicketPrice());
+        dto.setTotalTicketsSold(0);
         return dto;
     }
+    // dataService.getTotalTicketsSold(event.getId())
 }
 
