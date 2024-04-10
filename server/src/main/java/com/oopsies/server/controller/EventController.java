@@ -3,6 +3,7 @@ package com.oopsies.server.controller;
 import java.util.*;
 
 import com.oopsies.server.services.BookingService;
+import com.oopsies.server.services.DataService;
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.CsvDTO;
 import com.oopsies.server.dto.EventDTO;
@@ -40,6 +41,9 @@ public class EventController {
 
     @Autowired
     private BookingService bookingService;
+
+    @Autowired 
+    private DataService dataService;
 
     public EventController(EventService eventService){
         this.eventService = eventService;
@@ -89,7 +93,13 @@ public class EventController {
 
     @GetMapping(path = "/get/{event_id}")
     public ResponseEntity<?> getEventsByEventId(@PathVariable("event_id") long event_id){
-        Optional<EventDTO> _events = eventService.getEventById(event_id);
+        Optional<EventDTO> optionalEvent = eventService.getEventById(event_id);
+        EventDTO _events = optionalEvent.get();
+
+        List<BookingDTO> bookings = bookingService.findBookingsByEventID(event_id);
+        int totalTicketsSold = dataService.getTotalTicketsSold(bookings);
+        _events.setTotalTicketsSold(totalTicketsSold); 
+        
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
                 200, "successful", _events
         ));
@@ -97,7 +107,17 @@ public class EventController {
 
     @GetMapping(path = "/get/all")
     public ResponseEntity<?> getAllEvents(){
+
         List<EventDTO> _events = eventService.getAllEvents();
+
+        for (EventDTO event : _events) {
+            long eventId = event.getId();
+            List<BookingDTO> bookings = bookingService.findBookingsByEventID(eventId);
+            int totalTicketsSold = dataService.getTotalTicketsSold(bookings);
+            event.setTotalTicketsSold(totalTicketsSold); 
+
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
                 200, "successful", _events
         ));

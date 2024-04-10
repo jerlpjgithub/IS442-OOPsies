@@ -125,9 +125,18 @@ export const AddEventPage = () => {
       render: (text) => moment(text).format('Do MMMM YYYY, h:mm a')
     },
     { title: 'Venue', dataIndex: 'venue', key: 'venue' },
-    { title: 'Capacity', dataIndex: 'capacity', key: 'capacity' },
+    {
+      title: 'Tickets Purchased',
+      key: 'capacity',
+      render: (_, record) => `${record.totalTicketsSold} / ${record.capacity}`,
+    },
     { title: 'Ticket Price', dataIndex: 'ticketPrice', key: 'ticketPrice' },
     { title: 'Cancellation Fee', dataIndex: 'cancellationFee', key: 'cancellationFee' },
+    { 
+      title: 'Revenue ($)', 
+      key: 'revenue',
+      render: (_, record) => `${record.totalTicketsSold * record.ticketPrice}`, 
+    },
     {
       title: 'Action',
       key: 'action',
