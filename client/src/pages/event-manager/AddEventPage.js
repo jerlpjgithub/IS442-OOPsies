@@ -15,7 +15,8 @@ import {
 import {
   CloudDownloadOutlined,
   StopOutlined,
-  EditOutlined
+  EditOutlined,
+  InfoCircleOutlined
 } from '@ant-design/icons'
 
 import {
@@ -26,6 +27,7 @@ import {
   exportEventDetails
 } from '../../utils/api.js'
 import moment from 'moment'
+import { EventStatistics } from './EventStatistics.js'
 
 const { Title } = Typography
 const { TabPane } = Tabs
@@ -34,6 +36,8 @@ export const AddEventPage = () => {
   const [form] = Form.useForm()
   const [events, setEvents] = useState([])
   const [editingEvent, setEditingEvent] = useState(null)
+  const [eventStatisticsVisible, setEventStatisticsVisible] = useState(false)
+  const [selectedRecord, setSelectedRecord] = useState(null)
 
   const authUser = JSON.parse(localStorage.getItem('authUser'))
 
@@ -191,8 +195,10 @@ export const AddEventPage = () => {
       title: 'Capacity',
       dataIndex: 'capacity',
       key: 'capacity',
-      align: 'center'
+      align: 'center',
+      render: (_, record) => record.capacity + record.totalTicketsSold
     },
+
     {
       title: 'Ticket Price ($)',
       dataIndex: 'ticketPrice',
@@ -200,26 +206,10 @@ export const AddEventPage = () => {
       align: 'center'
     },
     {
-      title: 'Cancellation Fee',
+      title: 'Cancellation Fee ($)',
       dataIndex: 'cancellationFee',
       key: 'cancellationFee',
       align: 'center'
-    },
-    {
-      title: 'Tickets Purchased',
-      key: 'capacity',
-      render: (_, record) => `${record.totalTicketsSold} / ${record.capacity}`
-    },
-    { title: 'Ticket Price', dataIndex: 'ticketPrice', key: 'ticketPrice' },
-    {
-      title: 'Cancellation Fee',
-      dataIndex: 'cancellationFee',
-      key: 'cancellationFee'
-    },
-    {
-      title: 'Revenue ($)',
-      key: 'revenue',
-      render: (_, record) => `${record.totalTicketsSold * record.ticketPrice}`
     },
     {
       title: 'Action',
@@ -227,6 +217,16 @@ export const AddEventPage = () => {
       align: 'center',
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button
+            type="text"
+            primary
+            icon={<InfoCircleOutlined />}
+            style={{ marginLeft: '10px' }}
+            onClick={() => {
+              setSelectedRecord(record)
+              setEventStatisticsVisible(true)
+            }}
+          />
           <Tooltip
             title={
               isEditAndCancelDisabled(record)
@@ -343,6 +343,14 @@ export const AddEventPage = () => {
         </TabPane>
         <TabPane tab="Manage Events" key="2">
           <Table dataSource={events} columns={columns} rowKey="id" />
+          {selectedRecord && (
+            <EventStatistics
+              visible={eventStatisticsVisible}
+              setVisible={setEventStatisticsVisible}
+              selectedRecord={selectedRecord}
+              onClose={setSelectedRecord} // Default it back to null
+            />
+          )}
         </TabPane>
       </Tabs>
       <Modal
