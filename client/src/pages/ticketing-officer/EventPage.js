@@ -19,7 +19,7 @@ import {
     Input
 } from "antd";
 import { images } from '../imageloader';
-import { getEvent, validateTicket, redeemTicket, createOnsiteBooking} from "../../utils/api";
+import { getEvent, validateTicket, redeemTicket, createOnsiteBooking } from "../../utils/api";
 import { parseToReadableDate, parseToReadableTime } from '../../utils/methods';
 
 const { Content } = Layout;
@@ -64,11 +64,12 @@ export const EventPage = () => {
         setIsModalVisible(false);
 
         try {
-            await createOnsiteBooking( id, numTickets, buyerEmail );
+            await createOnsiteBooking(id, numTickets, buyerEmail);
             notification.success({
                 message: "Purchase Successful",
                 description: `You have successfully purchased tickets to ${event.eventName}.`,
             });
+            
         } catch (error) {
             console.error('Error creating booking:', error);
             notification.error({
@@ -142,7 +143,7 @@ export const EventPage = () => {
 
     const handleRedeemCancel = () => {
         setIsRedeemModalVisible(false);
-    };  
+    };
 
 
     return (
@@ -200,18 +201,18 @@ export const EventPage = () => {
                                         />
                                     </div>
                                 </Col>
-                                <div style={{ marginTop: '24px', display: 'flex', justifyContent:'center' }}>
-                                <Row gutter={16}>
-                                    <Col>
-                                        <Button type="primary" onClick={showValidateModal}>Validate Ticket</Button>
-                                    </Col>
-                                    <Col>
-                                        <Button type="primary" onClick={showRedeemModal}>Redeem Ticket</Button>
-                                    </Col>
-                                    <Col>
-                                        <Button type="primary" onClick={showModal}>Buy Ticket</Button>
-                                    </Col>
-                                </Row>
+                                <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
+                                    <Row gutter={16}>
+                                        <Col>
+                                            <Button type="primary" onClick={showValidateModal}>Validate Ticket</Button>
+                                        </Col>
+                                        <Col>
+                                            <Button type="primary" onClick={showRedeemModal}>Redeem Ticket</Button>
+                                        </Col>
+                                        <Col>
+                                            <Button type="primary" onClick={showModal}>Buy Ticket</Button>
+                                        </Col>
+                                    </Row>
                                 </div>
                                 <Modal
                                     title="Validate Ticket"
@@ -275,6 +276,14 @@ export const EventPage = () => {
                     <Typography.Title level={4}>
                         You are helping a potential buyer to buy tickets to {event.eventName}!
                     </Typography.Title>
+                    <div>
+                        Buyer's email
+                        <Input
+                            value={buyerEmail}
+                            onChange={(event) => setBuyerEmail(event.target.value)}
+                        />
+                    </div>
+                    <br/>
                     <div style={{ marginBottom: '16px' }}>
                         Number of Tickets:{' '}
                         <InputNumber
@@ -283,14 +292,10 @@ export const EventPage = () => {
                             value={numTickets}
                             onChange={setNumTickets}
                         />
+                        <br/>
+                        Please understand that you are only able to purchase up to 5 tickets per customer.
                     </div>
-                    <div>
-                        Buyer's email
-                        <Input 
-                        value={buyerEmail} 
-                        onChange={(event) => setBuyerEmail(event.target.value)}    
-                        />
-                    </div>
+
                     <Divider />
                     <Typography.Title level={5}>Payment Details</Typography.Title>
                     <Row gutter={[16, 16]}>
