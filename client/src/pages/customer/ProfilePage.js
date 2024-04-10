@@ -79,9 +79,9 @@ const ProfilePage = () => {
     try {
       await updateUser(userInfo.id, {
         ...values,
-        roles: values.roles ? values.roles : userInfo.roles,
+        roles: values.roles ? [values.roles] : userInfo.roles,
       });
-      setUserInfo({ ...userInfo, ...values });
+      setUserInfo({ ...userInfo, ...values, roles: values.roles ? [values.roles] : userInfo.roles });
       notification.success({
         message: "Update Successful",
         description: "Your profile has been updated successfully.",
@@ -129,11 +129,13 @@ const ProfilePage = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item label="Roles" name="roles">
+            <Form.Item
+              label="Roles"
+              name="roles"
+            >
               <Select
-                mode="multiple"
                 disabled={!isRoleEditable}
-                placeholder="Select roles"
+                placeholder="Select a role"
               >
 
                 {roles.map((role) => (
