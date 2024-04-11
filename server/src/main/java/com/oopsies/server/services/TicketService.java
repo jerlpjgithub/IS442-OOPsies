@@ -71,6 +71,10 @@ public class TicketService {
       return false;
     }
 
+    else{ticket.setRedeemed(true);
+    ticketRepository.save(ticket);
+    }
+
     Booking booking = ticket.getBooking();
     if (booking.getCancelDate() != null) {
       return false;
@@ -78,16 +82,6 @@ public class TicketService {
     Event event = booking.getEvent();
     Date eventDateTime = event.getDateTime();
     return isSameDateAndBeforeTime(new Date(), eventDateTime);
-  }
-
-  public boolean redeemTicket(long ticket_id) {
-    if (validateTicket(ticket_id)) {
-      Ticket ticket = ticketRepository.findTicketByTicketId(ticket_id);
-      ticket.setRedeemed(true);
-      ticketRepository.save(ticket);
-      return true;
-    }
-    return false;
   }
 
   public boolean isSameDateAndBeforeTime(Date date1, Date date2) {

@@ -90,23 +90,19 @@ export async function retrieveTicketByBookingId(booking_id) {
   }
 }
 
-export async function validateTicket(id) {
+export async function validateAndRedeemTicket(id) {
   try {
-    const response = await axios.post(`${BASE_URL}/ticket/validate/${id}`)
-    return response.data.data
+    const response = await axios.post(`${BASE_URL}/ticket/validate/${id}`);
+    return response.data.data;
   } catch (error) {
-    throw error
+    if (error.response) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw error;
+    }
   }
 }
 
-export async function redeemTicket(id) {
-  try {
-    const response = await axios.post(`${BASE_URL}/ticket/redeem/${id}`)
-    return response.data.data
-  } catch (error) {
-    throw error
-  }
-}
 /* Event Related */
 
 export async function createEvent(body) {

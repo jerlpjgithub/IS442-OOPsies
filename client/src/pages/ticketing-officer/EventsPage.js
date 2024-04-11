@@ -3,7 +3,7 @@ import { Layout, Breadcrumb, Button, Card, List, Input, Modal, Typography, notif
 import { Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 import { images } from '../imageloader';
-import { getAllEvents, validateTicket, redeemTicket } from '../../utils/api';
+import { getAllEvents, validateAndRedeemTicket } from '../../utils/api';
 import { parseToReadableDate, parseToReadableTime } from '../../utils/methods';
 
 const { Content } = Layout;
@@ -32,7 +32,6 @@ export const EventsPage = () => {
     const [eventsPerPage] = useState(5);
     const [searchTerm, setSearchTerm] = useState('');
     const [isValidateModalVisible, setIsValidateModalVisible] = useState(false);
-    const [isRedeemModalVisible, setIsRedeemModalVisible] = useState(false);
     const [eventName, setEventName] = useState('');
     const [ticketId, setTicketId] = useState(0);
 
@@ -60,55 +59,38 @@ export const EventsPage = () => {
         setIsValidateModalVisible(true);
     };
 
-    const handleValidateOk = () => {
+    const handleValidateOk = async () => {
         try {
-            validateTicket(ticketId);
-
-            console.log(ticketId);
-            notification.success({
-                message: "Validate Successful",
-                description: `You have successfully validated the ticket.`,
-            });
+            const response = await validateAndRedeemTicket(ticketId);
+            if (typeof response === "boolean") {
+                if (response) {
+                    notification.success({
+                        message: "Redemption Successful",
+                        description: "The ticket is valid and successfully redeemed.",
+                    });
+                } else {
+                    notification.warning({
+                        message: "Redemption Unsuccessful",
+                        description: "The ticket is invalid or already redeemed.",
+                    });
+                }
+            } else if (typeof response === 'string'){
+                notification.warning({
+                    message: "Redemption Unsuccessful",
+                    description: response + ".",
+                })
+            }
         } catch (error) {
             notification.error({
-                message: "Validate Unsuccessful",
-                description: `Your attempt to validate the ticket was unsuccessful.`,
+                message: "Validate Error",
+                description: error.message,
             });
-            throw error;
         }
         setIsValidateModalVisible(false);
     };
 
     const handleValidateCancel = () => {
         setIsValidateModalVisible(false);
-    };
-
-    const showRedeemModal = (name) => {
-        setEventName(name);
-        setIsRedeemModalVisible(true);
-    };
-
-    const handleRedeemOk = () => {
-        try {
-            redeemTicket(ticketId);
-
-            console.log(ticketId);
-            notification.success({
-                message: "Redeem Successful",
-                description: `You have successfully redeemed the ticket.`,
-            });
-        } catch (error) {
-            notification.error({
-                message: "Redeem Unsuccessful",
-                description: `Your attempt to redeem the ticket was unsuccessful.`,
-            });
-            throw error;
-        }
-        setIsRedeemModalVisible(false);
-    };
-
-    const handleRedeemCancel = () => {
-        setIsRedeemModalVisible(false);
     };
 
 
@@ -138,8 +120,7 @@ export const EventsPage = () => {
                             <List.Item
                                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}
                                 actions={[
-                                    <Button type="primary" onClick={() => { showValidateModal(event.eventName) }}>Validate Ticket</Button>,
-                                    <Button type="primary" onClick={() => { showRedeemModal(event.eventName) }}>Redeem Ticket</Button>,
+                                    <Button type="primary" onClick={() => { showValidateModal(event.eventName) }}>Redeem Ticket</Button>,
                                     <Link to={`/ticketing-officer/event/${event.id}`}>
                                         <Button type="primary">View Details</Button>
                                     </Link>
@@ -159,11 +140,12 @@ export const EventsPage = () => {
                             </List.Item>
                         )}
                     />
+
                     <Modal
                         title="Redeem Ticket"
-                        visible={isRedeemModalVisible}
-                        onOk={handleRedeemOk}
-                        onCancel={handleRedeemCancel}
+                        visible={isValidateModalVisible}
+                        onOk={handleValidateOk}
+                        onCancel={handleValidateCancel}
                     >
                         <Typography.Title level={4}>
                             You are helping to redeem a ticket to {eventName}.
@@ -176,26 +158,11 @@ export const EventsPage = () => {
                             onChange={setTicketId}
                             style={{ width: '70%' }}
                         />
-                        <p>Are you sure you want to redeem the ticket?</p>
-                    </Modal>
-                    <Modal
-                        title="Validate Ticket"
-                        visible={isValidateModalVisible}
-                        onOk={handleValidateOk}
-                        onCancel={handleValidateCancel}
-                    >
-                        <Typography.Title level={4}>
-                            You are validating a ticket to {eventName}.
-                        </Typography.Title>
                         <Divider />
-                        <Typography.Title level={5}>Ticket Details</Typography.Title>
-                        Ticket ID: {' '}
-                        <InputNumber
-                            value={ticketId}
-                            onChange={setTicketId}
-                            style={{ width: '70%' }}
-                        />
-                        <p>Are you sure you want to validate the ticket?</p>
+                        <Typography.Paragraph strong>
+                            Before redeeming, ensure that the details on the ticket are correct!
+                        </Typography.Paragraph>
+                        <p>Are you sure you want to redeem the ticket?</p>
                     </Modal>
 
                     <Pagination
