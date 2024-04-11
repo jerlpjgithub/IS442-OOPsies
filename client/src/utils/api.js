@@ -176,3 +176,15 @@ export async function exportEventDetails(eventId) {
     throw error
   }
 }
+
+// TODO: Herman replace it with the actual endpoint
+export async function exportFullEventDetails() {
+  try {
+    const url = `${BASE_URL}/smth/smth/smth`
+    const response = await axios.get(url)
+
+    return response
+  } catch (error) {
+    throw error
+  }
+}

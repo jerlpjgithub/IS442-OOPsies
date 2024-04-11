@@ -16,7 +16,8 @@ import {
   CloudDownloadOutlined,
   StopOutlined,
   EditOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  DownloadOutlined
 } from '@ant-design/icons'
 
 import {
@@ -24,7 +25,8 @@ import {
   getAllEvents,
   updateEvent,
   cancelEvent,
-  exportEventDetails
+  exportEventDetails,
+  exportFullEventDetails
 } from '../../utils/api.js'
 import moment from 'moment'
 import { EventStatistics } from './EventStatistics.js'
@@ -126,6 +128,29 @@ export const AddEventPage = () => {
       const link = document.createElement('a')
       link.href = url
       link.download = `event_details_${eventId}_${moment(new Date()).format(
+        'DDMMYYYY'
+      )}.csv`
+
+      link.click()
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.log(error)
+      message.error(
+        'Something went wrong while exporting data. Try again later!'
+      )
+    }
+  }
+
+  const handleFullExport = async () => {
+    try {
+      /* To handle the downloading of the data */
+      const response = await exportFullEventDetails()
+      const blob = new Blob([response.data], { type: 'text/csv' })
+
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `all_event_details_${moment(new Date()).format(
         'DDMMYYYY'
       )}.csv`
 
@@ -342,6 +367,20 @@ export const AddEventPage = () => {
           </Form>
         </TabPane>
         <TabPane tab="Manage Events" key="2">
+          <div
+            style={{
+              display: 'flex',
+              padding: '0px 5px 5px 0px',
+              justifyContent: 'flex-end'
+            }}
+          >
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => handleFullExport()}
+            >
+              Export All
+            </Button>
+          </div>
           <Table dataSource={events} columns={columns} rowKey="id" />
           {selectedRecord && (
             <EventStatistics
