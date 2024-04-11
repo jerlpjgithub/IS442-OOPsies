@@ -92,13 +92,14 @@ export async function retrieveTicketByBookingId(booking_id) {
 
 export async function validateAndRedeemTicket(id) {
   try {
-    const response = await axios.post(`${BASE_URL}/ticket/validate/${id}`);
-    return response.data.data;
+    const response = await axios.post(`${BASE_URL}/ticket/validate/${id}`)
+
+    return response.data
   } catch (error) {
     if (error.response) {
-      throw new Error(error.response.data.message);
+      throw new Error(error.response)
     } else {
-      throw error;
+      throw error
     }
   }
 }

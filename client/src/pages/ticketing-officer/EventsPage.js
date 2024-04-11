@@ -76,27 +76,24 @@ export const EventsPage = () => {
   const handleValidateOk = async () => {
     try {
       const response = await validateAndRedeemTicket(ticketId)
-      if (typeof response === 'boolean') {
-        if (response) {
-          notification.success({
-            message: 'Redemption Successful',
-            description: 'The ticket is valid and successfully redeemed.'
-          })
-        } else {
-          notification.warning({
-            message: 'Redemption Unsuccessful',
-            description: 'The ticket is invalid or already redeemed.'
-          })
-        }
-      } else if (typeof response === 'string') {
+
+      const { data, message } = response
+
+      if (data) {
+        notification.success({
+          message: 'Redemption Successful',
+          description: 'The ticket is valid and successfully redeemed.'
+        })
+      } else {
         notification.warning({
           message: 'Redemption Unsuccessful',
-          description: response + '.'
+          description: message
         })
       }
     } catch (error) {
       notification.error({
-        message: 'Validate Error',
+        message:
+          'We might have run into an error while redeeming the ticket. Please try again later!',
         description: error.message
       })
     }
@@ -155,7 +152,7 @@ export const EventsPage = () => {
                     Redeem Ticket
                   </Button>,
                   <Link to={`/ticketing-officer/event/${event.id}`}>
-                    <Button type="primary">View Details</Button>
+                    <Button type="primary">Onsite Purchase</Button>
                   </Link>
                 ]}
               >

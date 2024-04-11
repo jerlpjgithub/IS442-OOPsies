@@ -51,7 +51,7 @@ public class TicketController {
           200, "successful", valid));
     } catch (IllegalArgumentException e) {
       return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
-          400, "failed", e.getMessage()));
+          200, e.getMessage(), false));
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
           500, "failed", e.getMessage()));
