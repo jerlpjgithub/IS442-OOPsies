@@ -92,13 +92,14 @@ export async function retrieveTicketByBookingId(booking_id) {
 
 export async function validateAndRedeemTicket(id) {
   try {
-    const response = await axios.post(`${BASE_URL}/ticket/validate/${id}`);
-    return response.data.data;
+    const response = await axios.post(`${BASE_URL}/ticket/validate/${id}`)
+
+    return response.data
   } catch (error) {
     if (error.response) {
-      throw new Error(error.response.data.message);
+      throw new Error(error.response)
     } else {
-      throw error;
+      throw error
     }
   }
 }
@@ -117,6 +118,19 @@ export async function createEvent(body) {
 export async function getAllEvents() {
   try {
     const response = await axios.get(`${BASE_URL}/event/get/all`)
+    return response.data.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function getAllEventsByManager(managerId) {
+  try {
+    const url = `${BASE_URL}/event/get/all/:event_manager_id`
+    const response = await axios.get(
+      url.replace(':event_manager_id', managerId)
+    )
+
     return response.data.data
   } catch (error) {
     throw error
@@ -144,15 +158,6 @@ export async function cancelEvent(eventId) {
   }
 }
 
-export async function getManagedEventsById(managerId) {
-  try {
-    const response = await axios.get(`${BASE_URL}/event/get/all/${managerId}`)
-    return response.data.data
-  } catch (error) {
-    throw error
-  }
-}
-
 export async function getEvent(eventId) {
   try {
     const response = await axios.get(`${BASE_URL}/event/get/${eventId}`)
@@ -166,6 +171,17 @@ export async function exportEventDetails(eventId) {
   try {
     const url = `${BASE_URL}/event/export/:event_id`
     const response = await axios.get(url.replace(':event_id', eventId))
+
+    return response
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function exportFullEventDetails(managerId) {
+  try {
+    const url = `${BASE_URL}/event/export/all/:manager_id`
+    const response = await axios.get(url.replace(':manager_id', managerId))
 
     return response
   } catch (error) {

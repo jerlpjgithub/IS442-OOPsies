@@ -5,62 +5,63 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "ticket")
 public class Ticket {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ticketId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long ticketId;
 
-    // Map this to event
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
+  // Map this to event
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "booking_id")
+  private Booking booking;
 
-    private boolean redeemed;
+  private boolean redeemed;
 
-    @OneToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
+  @OneToOne
+  @JoinColumn(name = "image_id")
+  private Image image;
 
-    public Ticket() {}
+  public Ticket() {
+  }
 
-    public long getId() {
-        return this.ticketId;
-    }
+  public long getId() {
+    return this.ticketId;
+  }
 
-    public void setId(long id) {
-        this.ticketId = id;
-    }
+  public void setId(long id) {
+    this.ticketId = id;
+  }
 
-    public Booking getBooking() {
-        return this.booking;
-    }
+  public Booking getBooking() {
+    return this.booking;
+  }
 
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
+  public void setBooking(Booking booking) {
+    this.booking = booking;
+  }
 
-    public Image getImage() {
-        return this.image;
-    }
+  public Image getImage() {
+    return this.image;
+  }
 
-    public void setImage(Image image) {
-        this.image = image;
-    }
+  public void setImage(Image image) {
+    this.image = image;
+  }
 
-    public boolean isRedeemed() {
-        return redeemed;
-    }
+  public boolean isRedeemed() {
+    return this.redeemed;
+  }
 
-    public void setRedeemed(boolean redeemed) {
-        this.redeemed = redeemed;
-    }
+  public void setRedeemed(boolean redeemed) {
+    this.redeemed = redeemed;
+  }
 
-    @Override
-    public String toString() {
-        return "Ticket{" +
-                "ticketId=" + ticketId +
-                ", bookingId=" + booking +
-                ", redeemed=" + redeemed +
-                ", image=" + image +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Ticket{" +
+        "ticketId=" + ticketId +
+        ", bookingId=" + booking +
+        ", redeemed=" + redeemed +
+        ", image=" + image +
+        '}';
+  }
 }
