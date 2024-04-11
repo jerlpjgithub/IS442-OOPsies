@@ -137,7 +137,6 @@ const EventPage = () => {
           }}
         >
           <Card
-            hoverable
             style={{ width: 1000 }}
             cover={
               <Image
