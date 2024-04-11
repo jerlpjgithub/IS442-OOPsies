@@ -178,11 +178,10 @@ export async function exportEventDetails(eventId) {
   }
 }
 
-// TODO: Herman replace it with the actual endpoint
 export async function exportFullEventDetails(managerId) {
   try {
-    const url = `${BASE_URL}/smth/smth/smth`
-    const response = await axios.get(url)
+    const url = `${BASE_URL}/event/export/all/:manager_id`
+    const response = await axios.get(url.replace(':manager_id', managerId))
 
     return response
   } catch (error) {

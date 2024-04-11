@@ -144,7 +144,7 @@ export const AddEventPage = () => {
   const handleFullExport = async () => {
     try {
       /* To handle the downloading of the data */
-      const response = await exportFullEventDetails()
+      const response = await exportFullEventDetails(authUser.id)
       const blob = new Blob([response.data], { type: 'text/csv' })
 
       const url = window.URL.createObjectURL(blob)
