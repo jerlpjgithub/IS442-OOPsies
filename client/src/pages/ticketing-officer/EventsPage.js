@@ -158,6 +158,10 @@ export const EventsPage = () => {
                             onChange={setTicketId}
                             style={{ width: '70%' }}
                         />
+                        <Divider />
+                        <Typography.Paragraph strong>
+                            Before redeeming, ensure that the details on the ticket are correct!
+                        </Typography.Paragraph>
                         <p>Are you sure you want to redeem the ticket?</p>
                     </Modal>
 
