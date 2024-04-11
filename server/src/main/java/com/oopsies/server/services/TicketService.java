@@ -38,6 +38,7 @@ public class TicketService {
   public List<TicketDTO> getAllTicketsForBooking(long booking_id) {
     Booking booking = bookingRepository.findBookingById(booking_id);
     List<Ticket> tickets = ticketRepository.findTicketsByBooking(booking);
+
     return tickets.stream()
         .map(this::convertToDTO)
         .toList();
@@ -123,7 +124,8 @@ public class TicketService {
     dto.setBooking_dateTime(booking.getBookingDate());
     dto.setTicket_id(ticket.getId());
     dto.setValid(validateTicket(ticket.getId()));
-    
+    dto.setRedeemed(ticket.isRedeemed());
+
     return dto;
   }
 }
