@@ -15,6 +15,7 @@ import {
   Col,
   Card,
   Alert,
+  Tooltip
 } from 'antd'
 import {
   CalendarOutlined,
@@ -226,9 +227,11 @@ const EventPage = () => {
               </div>
             </div>
             <div style={{ paddingTop: '25px' }}>
-              <Button type="primary" block onClick={showModal}>
-                Buy Now - $ {event.ticketPrice}
-              </Button>
+              <Tooltip title={new Date(event.dateTime) < new Date() ? "This event has already ended.": ""}>
+                <Button type="primary" block onClick={showModal} disabled={new Date(event.dateTime) < new Date()}>
+                  Buy Now - $ {event.ticketPrice}
+                </Button>
+              </Tooltip>
             </div>
           </Card>
         </div>
@@ -261,7 +264,7 @@ const EventPage = () => {
             type="info"
             showIcon
           />
-           <Alert
+          <Alert
             message={
               <div
                 style={{
