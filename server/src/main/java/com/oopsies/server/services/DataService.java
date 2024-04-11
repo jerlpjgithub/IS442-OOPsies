@@ -10,6 +10,12 @@ import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.EventDTO;
 import com.oopsies.server.dto.TicketDTO;
 
+/**
+ * Service for handling data for observing statistics
+ * This service provides methods for retrieving the total number of
+ * tickets sold, total revenue, potential attendance, and number of
+ * refunds made
+ */
 @Service
 public class DataService {
 

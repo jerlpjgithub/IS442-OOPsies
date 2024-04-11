@@ -13,17 +13,15 @@ import com.oopsies.server.entity.User;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.repository.PaymentRepository;
 
+/**
+ * Service for handling Payment entities
+ * This service contains methods for creating payments
+ */
 @Service
 public class PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
-
-    @Autowired
-    private TicketService ticketService;
-
-    @Autowired
-    private EventService eventService;
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
@@ -39,12 +37,12 @@ public class PaymentService {
         return convertToDTO(payment);
     }
 
-    public long processPayment(User user, Booking booking,EventDTO event, int numTickets){
+    public void processPayment(User user, Booking booking,EventDTO event, int numTickets){
         double totalPrice = getTotalPrice(event, numTickets);
         user.decrementAccountBalance(totalPrice);
         userDetailsService.saveUser(user);
 
-        return createNewPayment(booking, totalPrice);
+        createNewPayment(booking, totalPrice);
     }
 
     private double getTotalPrice(EventDTO event, int numTickets) {
@@ -52,14 +50,13 @@ public class PaymentService {
         return ticketPrice * numTickets;
     }
 
-   private long createNewPayment(Booking booking, double paymentAmount) {
+   private void createNewPayment(Booking booking, double paymentAmount) {
        Payment newPayment = new Payment(
                booking,
                paymentAmount,
                new Date()
        );
        Payment payment = paymentRepository.save(newPayment);
-       return payment.getPaymentId();
    }
 
     private PaymentDTO convertToDTO(Payment payment) {

@@ -1,5 +1,10 @@
 package com.oopsies.server.payload.response;
 
+/**
+ * Payload for HTTP responses
+ * Contains HTTP status code, message and
+ * relevant data to the request
+ */
 public class MessageResponse<T> {
     private int status;
     private String message;

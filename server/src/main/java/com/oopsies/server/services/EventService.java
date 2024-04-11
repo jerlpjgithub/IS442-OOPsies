@@ -14,6 +14,12 @@ import com.oopsies.server.repository.EventRepository;
 import com.oopsies.server.repository.UserRepository;
 import com.oopsies.server.util.DateUtil;
 
+/**
+ * Service for handling Event entities
+ * This service contains methods for creating, finding
+ * events by id or manager id, as well as updating and
+ * cancelling events
+ */
 @Service
 public class EventService {
 
@@ -147,7 +153,7 @@ public class EventService {
         }
     }
 
-    public Optional<Event> checkUniqueEvent(Event event) {
+    private Optional<Event> checkUniqueEvent(Event event) {
         return eventRepository.findEventByDateTimeAndVenue(event.getDateTime(), event.getVenue());
     }
 

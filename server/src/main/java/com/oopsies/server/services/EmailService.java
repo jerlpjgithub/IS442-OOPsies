@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Service for handling emails to users
+ */
 @Service
 public class EmailService {
 

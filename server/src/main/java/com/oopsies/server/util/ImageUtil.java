@@ -6,6 +6,9 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.DataFormatException;
 
+/**
+ * ImageUtil is a helper class to process images
+ */
 public class ImageUtil {
 
     public static byte[] compressImage(byte[] data) {
