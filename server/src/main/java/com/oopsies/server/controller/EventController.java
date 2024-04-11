@@ -6,9 +6,8 @@ import com.oopsies.server.services.BookingService;
 import com.oopsies.server.services.DataService;
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.CsvDTO;
+import com.oopsies.server.dto.EventCSVDTO;
 import com.oopsies.server.dto.EventDTO;
-import com.oopsies.server.entity.Booking;
-import com.oopsies.server.entity.Event;
 import com.oopsies.server.payload.request.EventRequest;
 import com.oopsies.server.payload.response.MessageResponse;
 import com.oopsies.server.services.EventService;
@@ -19,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.stereotype.Controller;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
@@ -27,7 +25,6 @@ import org.supercsv.prefs.CsvPreference;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -163,21 +160,21 @@ public class EventController {
     }
   }
 
-  @GetMapping("/export/{event_id}")
-  public void exportToCSV(HttpServletResponse response, @PathVariable("event_id") long event_id) throws IOException {
-    response.setContentType("text/csv");
-    DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-    String currentDateTime = dateFormatter.format(new Date());
-    String headerKey = "Content-Disposition";
-    String headerValue = "attachment; filename=event_bookings_" + currentDateTime + ".csv";
-    response.setHeader(headerKey, headerValue);
+    @GetMapping("/export/{event_id}")
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER')")
+    public void exportToCSV(HttpServletResponse response, @PathVariable("event_id") long event_id) throws IOException {
+        response.setContentType("text/csv");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=event_bookings_" + currentDateTime + ".csv";
+        response.setHeader(headerKey, headerValue);
 
-    List<CsvDTO> csvDTOs = bookingService.getCsvDTOForEvent(event_id);
+        List<CsvDTO> csvDTOs = bookingService.getCsvDTOForEvent(event_id);
 
-    ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-    String[] csvHeader = { "booking_id", "booking_date", "cancel_date", "customer_full_name", "email",
-        "no_of_tickets_booked" };
-    String[] nameMapping = { "bookingID", "bookingDate", "cancelDate", "fullName", "email", "numOfTickets" };
+        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        String[] csvHeader = {"booking_id", "booking_date", "cancel_date", "customer_full_name", "email" ,"no_of_tickets_booked", "no_of_redeemed_tickets"};
+        String[] nameMapping = {"bookingID", "bookingDate", "cancelDate", "fullName", "email", "numOfTickets", "numOfRedeemedTickets"};
 
     csvWriter.writeHeader(csvHeader);
     for (CsvDTO csvDTO : csvDTOs) {
@@ -185,5 +182,28 @@ public class EventController {
     }
     csvWriter.close();
   }
+
+    @GetMapping("/export/all/{event_manager_id}")
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER')")
+    public void exportAllEventCSV(HttpServletResponse response, @PathVariable("event_manager_id") long event_manager_id) throws IOException {
+        response.setContentType("text/csv");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=all_events_" + currentDateTime + ".csv";
+        response.setHeader(headerKey, headerValue);
+
+        List<EventCSVDTO> eventDTOs = eventService.getEventCSVDTOs(event_manager_id);
+
+        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        String[] csvHeader = {"event_id", "event_name", "event_date_time", "event_venue", "cancel_date", "capacity", "cancellation_fee", "ticket_price", "total_tickets_sold", "total_revenue", "attendance", "total_tickets_refunded"};
+        String[] nameMapping = {"eventID", "eventName", "dateTime", "venue", "cancelDate", "capacity", "cancellationFee", "ticketPrice", "totalTicketsSold", "totalRevenue", "attendance", "totalTicketsRefunded"};
+        csvWriter.writeHeader(csvHeader);
+
+        for (EventCSVDTO eventCSVDTO : eventDTOs) {
+            csvWriter.write(eventCSVDTO, nameMapping);
+        }
+        csvWriter.close();
+    }
 
 }

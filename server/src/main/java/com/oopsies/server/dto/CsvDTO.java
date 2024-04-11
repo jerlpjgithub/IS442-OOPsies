@@ -1,6 +1,7 @@
 package com.oopsies.server.dto;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class CsvDTO {
     private Long bookingID;
@@ -9,19 +10,21 @@ public class CsvDTO {
     private String fullName;
     private String email;
     private int numOfTickets;
+    private int numOfRedeemedTickets; 
 
 
     // Constructor, getters, and setters
     public CsvDTO() {
     }
 
-    public CsvDTO(long bookingID, Date bookingDate, Date cancelDate, String fullName, String email, int numOfTickets) {
+    public CsvDTO(long bookingID, Date bookingDate, Date cancelDate, String fullName, String email, int numOfTickets, int numOfRedeemedTickets) {
       this.bookingID = bookingID;
       this.bookingDate = bookingDate;
       this.cancelDate = cancelDate;
       this.fullName = fullName;
       this.email = email;
       this.numOfTickets = numOfTickets;
+      this.numOfRedeemedTickets = numOfRedeemedTickets;
     }
 
 
@@ -67,5 +70,9 @@ public class CsvDTO {
 
   public String getEmail() {
     return this.email;
+  }
+
+  public int getNumOfRedeemedTickets(){
+    return this.numOfRedeemedTickets;
   }
 }
