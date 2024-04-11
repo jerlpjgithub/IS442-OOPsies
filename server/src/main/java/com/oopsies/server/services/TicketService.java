@@ -71,8 +71,9 @@ public class TicketService {
       return false;
     }
 
-    else{ticket.setRedeemed(true);
-    ticketRepository.save(ticket);
+    else {
+      ticket.setRedeemed(true);
+      ticketRepository.save(ticket);
     }
 
     Booking booking = ticket.getBooking();
@@ -117,7 +118,6 @@ public class TicketService {
     dto.setBooking_id(booking.getBookingID());
     dto.setBooking_dateTime(booking.getBookingDate());
     dto.setTicket_id(ticket.getId());
-    dto.setValid(validateTicket(ticket.getId()));
     dto.setRedeemed(ticket.isRedeemed());
 
     return dto;
