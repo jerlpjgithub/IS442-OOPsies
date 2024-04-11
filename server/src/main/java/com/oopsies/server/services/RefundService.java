@@ -86,12 +86,12 @@ public class RefundService {
         user.setAccountBalance(updatedAccountBalance);
         userRepository.save(user);
 
-        event.setEventCancelled(new Date());
-        eventRepository.save(event);
-
         refundRepository.save(processedRefund);
       }
     }
+
+    event.setEventCancelled(new Date());
+    eventRepository.save(event);
   }
 
   public void processRefund(Long booking_id) throws Exception {

@@ -3,7 +3,7 @@ package com.oopsies.server.services;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.oopsies.server.dto.BookingDTO;
@@ -13,52 +13,63 @@ import com.oopsies.server.dto.TicketDTO;
 @Service
 public class DataService {
 
-    @Lazy
-    private TicketService ticketService;
+  @Autowired
+  private TicketService ticketService;
 
-    @Lazy
-    private BookingService bookingService;
+  // to do : make sure it can handle refunds. Also might be simpler to do from
+  // eventService side. (Done)
+  public int getTotalTicketsSold(List<BookingDTO> bookingList) {
+    int totalTicketsSold = 0;
 
-    //to do : make sure it can handle refunds. Also might be simpler to do from eventService side.  (Done)
-    public int getTotalTicketsSold(List<BookingDTO> bookingList) {
-        int totalTicketsSold = 0;
+    for (BookingDTO booking : bookingList) {
+      Date cancelDate = booking.getCancelDate();
+      // System.out.println(cancelDate);
+      if (cancelDate == null) {
+        int numTickets = booking.getNumTickets();
+        totalTicketsSold = totalTicketsSold + numTickets;
+      }
+    }
 
-        for (BookingDTO booking : bookingList) {
-            Date cancelDate = booking.getCancelDate();
-            // System.out.println(cancelDate);
-            if (cancelDate == null) {
-                int numTickets = booking.getNumTickets();
-                totalTicketsSold = totalTicketsSold + numTickets;
-            }
+    return totalTicketsSold;
+  }
+
+  public double getTotalRevenue(List<BookingDTO> bookingList, EventDTO event) {
+    double totalRevenue = 0.0;
+    double ticketPrice = event.getTicketPrice();
+
+    int totalTicketsSold = this.getTotalTicketsSold(bookingList);
+    totalRevenue = totalTicketsSold * ticketPrice;
+
+    return totalRevenue;
+  }
+
+  public int getAttendance(List<BookingDTO> bookingList) {
+    int numRedeemed = 0;
+
+    for (BookingDTO booking : bookingList) {
+      long bookingId = booking.getBookingID();
+      List<TicketDTO> tickets = ticketService.getAllTicketsForBooking(bookingId);
+
+      for (TicketDTO ticket : tickets) {
+        if (ticket.isRedeemed()) {
+          numRedeemed++;
         }
-
-        return totalTicketsSold;
+      }
     }
 
-    public double getTotalRevenue(List<BookingDTO> bookingList, EventDTO event) {
-        double totalRevenue = 0.0;
-        double ticketPrice = event.getTicketPrice();
+    return numRedeemed;
+  }
 
-        int totalTicketsSold = this.getTotalTicketsSold(bookingList);
-        totalRevenue = totalTicketsSold * ticketPrice;
+  public int getNumRefunds(List<BookingDTO> bookingList) {
+    int numRefunds = 0;
 
-        return totalRevenue;
+    for (BookingDTO booking : bookingList) {
+      Date cancelDate = booking.getCancelDate();
+      if (cancelDate != null) {
+        numRefunds += booking.getNumTickets();
+      }
     }
 
-    public int getAttendance(List<BookingDTO> bookingList) {
-        int numRedeemed = 0;
-
-        for (BookingDTO booking : bookingList) {
-            long bookingId = booking.getBookingID();
-            List<TicketDTO> tickets = ticketService.getAllTicketsForBooking(bookingId);
-
-            for (TicketDTO ticket : tickets) {
-                if (ticket.isRedeemed()) {
-                    numRedeemed++;
-                }
-            }
-        }
-
-        return numRedeemed;
-    }
+    return numRefunds;
+  }
 }
