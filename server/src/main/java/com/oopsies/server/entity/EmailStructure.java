@@ -2,11 +2,32 @@ package com.oopsies.server.entity;
 
 import java.util.Date;
 import java.util.List;
+
+/**
+ * The EmailStructure class represents the structure of an email.
+ * It includes the subject and message of the email.
+ */
 public class EmailStructure {
 
     private String message;
     private String subject;
-
+    
+    /**
+     * Constructs a new EmailStructure with the specified details.
+     *
+     * @param name        the name of the recipient
+     * @param email       the email of the recipient
+     * @param bookingID   the booking ID
+     * @param bookingDate the booking date
+     * @param eventName   the event name
+     * @param eventDate   the event date
+     * @param refundDate  the refund date
+     * @param venue       the venue of the event
+     * @param ticketIDs   the list of ticket IDs
+     * @param totalPrice  the total price of the tickets
+     * @param penaltyFee  the penalty fee for refund
+     * @param type        the type of the email ("Booking Confirmation" or "Refund Confirmation")
+     */
 
     public EmailStructure(String name, String email, Long bookingID, Date bookingDate, 
                             String eventName, Date eventDate, 

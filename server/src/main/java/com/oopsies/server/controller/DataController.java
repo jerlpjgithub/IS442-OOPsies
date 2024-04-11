@@ -18,6 +18,11 @@ import com.oopsies.server.services.BookingService;
 import com.oopsies.server.services.DataService;
 import com.oopsies.server.services.EventService;
 
+/**
+ * The DataController class handles HTTP requests related to data.
+ * It uses the DataService, BookingService, and EventService to perform operations.
+ */
+
 @RestController
 @RequestMapping("/data")
 public class DataController {
@@ -36,6 +41,12 @@ public class DataController {
 
     }
 
+    /**
+     * Gets the total number of tickets sold for a specific event.
+     *
+     * @param eventId The ID of the event.
+     * @return A ResponseEntity with the total number of tickets sold if the event exists, or a 404 Not Found status if the event does not exist.
+     */
     @GetMapping("/totalTicketsSold/{event_id}")
     public ResponseEntity<?> getTotalTicketsSold(@PathVariable("event_id") long eventId) {
 
@@ -56,6 +67,13 @@ public class DataController {
         }
     }
 
+
+    /**
+     * Gets the total revenue for a specific event.
+     *
+     * @param eventId The ID of the event.
+     * @return A ResponseEntity with the total revenue if the event exists, or a 404 Not Found status if the event does not exist.
+     */
     @GetMapping("/totalRevenue/{event_id}")
     public ResponseEntity<?> getTotalRevenue(@PathVariable("event_id") long eventId) {
 
@@ -75,6 +93,12 @@ public class DataController {
         }        
     }
 
+    /**
+     * Gets the attendance for a specific event.
+     *
+     * @param eventId The ID of the event.
+     * @return A ResponseEntity with the attendance count if the event exists, or a 404 Not Found status if the event does not exist.
+     */  
     @GetMapping("/attendance/{event_id}")
     public ResponseEntity<?> getAttendance(@PathVariable("event_id") long eventId) {
 
