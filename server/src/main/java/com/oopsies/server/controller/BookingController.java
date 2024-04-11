@@ -3,7 +3,6 @@ package com.oopsies.server.controller;
 import java.util.*;
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.EventDTO;
-import com.oopsies.server.dto.TicketDTO;
 import com.oopsies.server.entity.*;
 import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.payload.request.BookingRequest;
@@ -11,7 +10,6 @@ import com.oopsies.server.payload.request.OnsiteBookingRequest;
 import com.oopsies.server.payload.response.MessageResponse;
 import com.oopsies.server.repository.BookingRepository;
 import com.oopsies.server.repository.RoleRepository;
-import com.oopsies.server.repository.TicketRepository;
 import com.oopsies.server.repository.UserRepository;
 import com.oopsies.server.services.*;
 
@@ -23,6 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
+/*
+ * BookingController class is a RestController that handles all the HTTP requests related to bookings.
+ */
 @RestController
 @RequestMapping("/booking")
 public class BookingController {
@@ -39,9 +40,6 @@ public class BookingController {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired 
-    private EmailController emailController;
-
     @Autowired
     private UserServiceImpl userService;
 
@@ -54,16 +52,16 @@ public class BookingController {
     @Autowired
     private BookingRepository bookingRepository;
 
-    @Autowired
-    private TicketService ticketService;
-
-    @Autowired
-    private TicketRepository ticketRepository;
-
     public BookingController(BookingService bookingService){
-      this.bookingService = bookingService;
+        this.bookingService = bookingService;
     }
 
+    /** 
+    * createBooking method is a POST request that creates a booking for a user.
+    * @param user_id the id of the user
+    * @param bookingRequest the booking request
+    * @return ResponseEntity<?> returns a message response with the status code and message
+    */
     @PostMapping(path = "/create/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER') and #user_id == authentication.principal.id")
     public ResponseEntity<?> createBooking(@PathVariable(value="user_id") long user_id, @RequestBody BookingRequest bookingRequest){
@@ -94,6 +92,12 @@ public class BookingController {
         }
     }
 
+
+    /** 
+     *  createOnsiteBooking method is a POST request that creates a booking for a user on-site.
+     * @param bookingRequest the booking request
+     * @return ResponseEntity<?> returns a message response with the status code and message
+    */
     @PostMapping(path = "/create/on-site")
     @PreAuthorize("hasAnyRole('ROLE_OFFICER')")
     public ResponseEntity<?> createOnsiteBooking(@RequestBody OnsiteBookingRequest bookingRequest){
@@ -155,6 +159,12 @@ public class BookingController {
         }
     }
 
+
+    /**
+     * getBookingsByUserId method is a GET request that retrieves all bookings for a user.
+     * @param user_id the id of the user
+     * @return ResponseEntity<?> returns a message response with the status code and message
+     */
     @GetMapping(path = "/get/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_OFFICER') or #user_id == authentication.principal.id")
     public ResponseEntity<?> getBookingsByUserId(@PathVariable("user_id") long user_id){
@@ -164,6 +174,11 @@ public class BookingController {
         ));
     }
 
+    /*
+     * initiateRefundByBookingId method is a POST request that initiates a refund for a booking.
+     * @param booking_id the id of the booking
+     * @return ResponseEntity<?> returns a message response with the status code and message
+    */
     @PostMapping(path = "/refund/{booking_id}")
     public ResponseEntity<?> initiateRefundByBookingId(@PathVariable("booking_id") long booking_id){
         try{
@@ -185,15 +200,4 @@ public class BookingController {
             ));
         }
     }
-
-    // @GetMapping("/get/{event_id}")
-    // //get all bookings by event id. from this, we can derive ticket sales, revenue and customer attendance
-    // public ResponseEntity<?> getBookingsByEventID(@PathVariable("event_id") long eventId) {
-    //    List<BookingDTO> _bookings = bookingService.findBookingsByEventID(eventId);
-    //     return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
-    //             200, "successful", _bookings
-    //     ));
-    // }
-
-    
 }

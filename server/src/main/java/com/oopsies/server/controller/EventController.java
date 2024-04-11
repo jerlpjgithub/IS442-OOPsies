@@ -67,10 +67,9 @@ public class EventController {
     }
   }
 
-  /*
+  /**
    * updateEvent method is a PUT request that updates an event.
    * @param event_id is the id of the event that needs to be updated.
-   * @param eventRequest is the request body that contains the updated details of the event.
    * @return ResponseEntity that contains the status code, message and the updated event details.
    */
   @PutMapping(path = "/update/{event_id}")
@@ -90,7 +89,7 @@ public class EventController {
     }
   }
 
-  /*
+  /**
    * getEventsByEventId method is a GET request that retrieves an event by its id.
    * @param event_id is the id of the event that needs to be retrieved.
    * @return ResponseEntity that contains the status code, message and the event details.
@@ -108,7 +107,7 @@ public class EventController {
         200, "successful", _events));
   }
 
-  /*
+  /**
    * getAllEvents method is a GET request that retrieves all the events.
    * @return ResponseEntity that contains the status code, message and the list of events.
    */
@@ -135,7 +134,7 @@ public class EventController {
         200, "successful", _events));
   }
 
-  /*
+  /**
    * getEventsByManagerId method is a GET request that retrieves all the events created by a manager.
    * @param manager_id is the id of the manager whose events need to be retrieved.
    * @return ResponseEntity that contains the status code, message and the list of events.
@@ -174,7 +173,7 @@ public class EventController {
     }
   }
 
-  /*
+  /**
    * deleteEvent method is a POST request that deletes an event.
    * @param event_id is the id of the event that needs to be deleted.
    * @return ResponseEntity that contains the status code and message.
@@ -192,7 +191,7 @@ public class EventController {
     }
   }
 
-  /* 
+  /** 
    * exportToCSV method is a GET request that exports the bookings of an event to a CSV file.
    * @param event_id is the id of the event whose bookings need to be exported.
    * @param response is the HttpServletResponse object that is used to write the CSV file.
@@ -221,7 +220,7 @@ public class EventController {
     csvWriter.close();
   }
   
-  /*
+  /**
    * exportAllEventCSV method is a GET request that exports all the events to a CSV file.
    * @param response is the HttpServletResponse object that is used to write the CSV file.
    * @param event_manager_id is the id of the manager whose events need to be exported.
