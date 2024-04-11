@@ -161,15 +161,6 @@ export async function cancelEvent(eventId) {
   }
 }
 
-export async function getManagedEventsById(managerId) {
-  try {
-    const response = await axios.get(`${BASE_URL}/event/get/all/${managerId}`)
-    return response.data.data
-  } catch (error) {
-    throw error
-  }
-}
-
 export async function getEvent(eventId) {
   try {
     const response = await axios.get(`${BASE_URL}/event/get/${eventId}`)
@@ -191,7 +182,7 @@ export async function exportEventDetails(eventId) {
 }
 
 // TODO: Herman replace it with the actual endpoint
-export async function exportFullEventDetails() {
+export async function exportFullEventDetails(managerId) {
   try {
     const url = `${BASE_URL}/smth/smth/smth`
     const response = await axios.get(url)
