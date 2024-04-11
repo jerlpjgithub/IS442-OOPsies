@@ -62,31 +62,36 @@ public class TicketService {
 
   public boolean validateTicket(long ticket_id) {
     Ticket ticket = ticketRepository.findTicketByTicketId(ticket_id);
+
+    // Check if ticket exists
     if (ticket == null) {
       throw new IllegalArgumentException("Ticket doesn't exist");
     }
+
+    // Check if the ticket has already been redeemed
     boolean isRedeemed = ticket.isRedeemed();
     if (isRedeemed) {
-      return false;
+      throw new IllegalArgumentException("Ticket has already been redeemed");
     }
 
+    // Check if the booking has already been cancelled
     Booking booking = ticket.getBooking();
     if (booking.getCancelDate() != null) {
-      return false;
+      throw new IllegalArgumentException("Booking has been cancelled");
     }
     Event event = booking.getEvent();
     Date eventDateTime = event.getDateTime();
-    return isSameDateAndBeforeTime(new Date(), eventDateTime);
-  }
 
-  public boolean redeemTicket(long ticket_id) {
-    if (validateTicket(ticket_id)) {
-      Ticket ticket = ticketRepository.findTicketByTicketId(ticket_id);
-      ticket.setRedeemed(true);
-      ticketRepository.save(ticket);
-      return true;
+    // Check if the event has already passed
+    if (!isSameDateAndBeforeTime(new Date(), eventDateTime)) {
+      throw new IllegalArgumentException("Event has either passed or not started yet!");
     }
-    return false;
+
+    // All is good, redeem the ticket and return true
+    ticket.setRedeemed(true);
+    ticketRepository.save(ticket);
+
+    return true;
   }
 
   public boolean isSameDateAndBeforeTime(Date date1, Date date2) {
@@ -100,9 +105,11 @@ public class TicketService {
         cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
 
     if (sameDate) {
+      // Same date but let's check for the timing to ensure its before the event time
       return cal1.before(cal2);
     }
 
+    // It is not on the same date
     return false;
   }
 
@@ -122,8 +129,9 @@ public class TicketService {
     dto.setBooking_id(booking.getBookingID());
     dto.setBooking_dateTime(booking.getBookingDate());
     dto.setTicket_id(ticket.getId());
-    dto.setValid(validateTicket(ticket.getId()));
-    
+    // dto.setValid(validateTicket(ticket.getId()));
+    dto.setRedeemed(ticket.isRedeemed());
+
     return dto;
   }
 }

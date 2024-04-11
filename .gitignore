@@ -1,3 +1,4 @@
 .idea
 .vscode
 .DS_Store
+server/src/main/resources/application.properties

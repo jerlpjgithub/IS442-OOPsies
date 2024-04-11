@@ -64,6 +64,10 @@ public class EventDTO {
     this.venue = venue;
   }
 
+  public Date getCancelDate(){
+    return this.cancelDate;
+  }
+
   public boolean isEventCancelled() {
     return cancelDate != null;
   }
