@@ -114,8 +114,8 @@ export const EventPage = () => {
         </Breadcrumb>
         <div
           style={{
-            height: '100vh',
-            padding: '5px 25px 0px 25px',
+            height: '135%',
+            padding: '24px',
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
             display: 'flex',

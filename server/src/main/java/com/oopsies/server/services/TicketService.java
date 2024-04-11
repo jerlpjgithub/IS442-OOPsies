@@ -65,19 +65,19 @@ public class TicketService {
 
     // Check if ticket exists
     if (ticket == null) {
-      throw new IllegalArgumentException("Ticket doesn't exist");
+      throw new IllegalArgumentException("Ticket doesn't exist!");
     }
 
     // Check if the ticket has already been redeemed
     boolean isRedeemed = ticket.isRedeemed();
     if (isRedeemed) {
-      throw new IllegalArgumentException("Ticket has already been redeemed");
+      throw new IllegalArgumentException("Ticket has already been redeemed!");
     }
 
     // Check if the booking has already been cancelled
     Booking booking = ticket.getBooking();
     if (booking.getCancelDate() != null) {
-      throw new IllegalArgumentException("Booking has been cancelled");
+      throw new IllegalArgumentException("Booking has been cancelled!");
     }
     Event event = booking.getEvent();
     Date eventDateTime = event.getDateTime();

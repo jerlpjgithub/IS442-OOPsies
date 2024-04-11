@@ -14,7 +14,7 @@ import {
   Row,
   Col,
   Card,
-  Alert
+  Alert,
 } from 'antd'
 import {
   CalendarOutlined,
@@ -128,7 +128,7 @@ const EventPage = () => {
         </Breadcrumb>
         <div
           style={{
-            height: '100vh',
+            height: '130%',
             background: colorBgContainer,
             padding: '24px',
             borderRadius: borderRadiusLG,
@@ -232,32 +232,60 @@ const EventPage = () => {
             </div>
           </Card>
         </div>
+
         <Modal
           title="Booking Details"
           visible={isModalVisible}
           onCancel={handleCancel}
           footer={[
-            <Button key="back" onClick={handleCancel}>
-              Return
-            </Button>,
-            <Button
-              key="submit"
-              type="primary"
-              onClick={handleBooking}
-              disabled={
-                userDetails.accountBalance -
-                  calculateTotalPrice(numTickets, event.ticketPrice) <
-                0
-              }
-            >
-              Confirm Purchase
+            <Button key="submit" type="primary" onClick={handleBooking} disabled={userDetails.accountBalance - calculateTotalPrice(numTickets, event.ticketPrice) <
+              0
+            } block>
+              Purchase Tickets
             </Button>
           ]}
         >
-          <Typography.Title level={4}>
-            You are buying tickets to {event.eventName}
-          </Typography.Title>
-          <div style={{ marginBottom: '16px' }}>
+          <Alert
+            message={
+              <div
+                style={{
+                  fontSize: '14px',
+                  fontWeight: '300',
+                  marginLeft: '5px'
+                }}
+              >
+                Please note that you are limited to purchasing a
+                maximum of 5 tickets.
+              </div>
+            }
+            type="info"
+            showIcon
+          />
+           <Alert
+            message={
+              <div
+                style={{
+                  fontSize: '14px',
+                  fontWeight: '300'
+                }}
+              >
+                1. <strong>No Re-Entry:</strong> "Once you exit the venue,
+                re-entry may not be permitted. Please plan accordingly and
+                ensure you have all necessary items with you.
+                <br /> <br /> 2. <strong>Security Screening:</strong> "Please
+                be advised that all attendees are subject to security
+                screening upon entry. Your cooperation is appreciated. <br />
+                <br />
+                3. <strong>Photography and Recording:</strong> "Unauthorized
+                photography, videography, or audio recording may not be
+                permitted during the event. Please respect the artist's rights
+                and refrain from such activities."
+              </div>
+            }
+            type="warning"
+            style={{ margin: '8px 0px 16px 0px' }}
+          />
+          <div style={{ paddingTop: '15px' }}>
             Number of Tickets:{' '}
             <InputNumber
               min={1}
@@ -266,11 +294,8 @@ const EventPage = () => {
               onChange={setNumTickets}
             />
           </div>
-          <br />
-          Please understand that you are only able to purchase up to 5 tickets.
-          <Divider />
-          <Typography.Title level={5}>Payment Details</Typography.Title>
-          <Row gutter={[16, 16]}>
+          <Divider style={{ margin: '30px 0px 15px 0px' }} />
+          <Row>
             <Col xs={12}>Your Account Balance:</Col>
             <Col xs={12} style={{ textAlign: 'right' }}>
               ${userDetails.accountBalance}
@@ -282,33 +307,41 @@ const EventPage = () => {
               ${calculateTotalPrice(numTickets, event.ticketPrice)}
             </Col>
           </Row>
-          <Row gutter={[16, 16]}>
+          <Row>
             <Col xs={12}>Remaining Balance:</Col>
-            <Col
-              xs={12}
-              style={{
-                textAlign: 'right',
-                color:
-                  userDetails.accountBalance -
-                    calculateTotalPrice(numTickets, event.ticketPrice) <
+            <Col xs={12} style={{
+              textAlign: 'right', color:
+                userDetails.accountBalance -
+                  calculateTotalPrice(numTickets, event.ticketPrice) <
                   0
-                    ? 'red'
-                    : 'inherit'
-              }}
-            >
-              $
-              {userDetails.accountBalance -
-                calculateTotalPrice(numTickets, event.ticketPrice)}
+                  ? 'red'
+                  : 'inherit'
+            }}>
+              ${userDetails.accountBalance - calculateTotalPrice(numTickets, event.ticketPrice)}
             </Col>
           </Row>
+          <Divider style={{ margin: '15px 0px 15px 0px' }} />
           {userDetails.accountBalance -
             calculateTotalPrice(numTickets, event.ticketPrice) <
-            0 && (
-            <div style={{ marginTop: '16px', color: 'red' }}>
-              Insufficient balance! Please choose fewer tickets or add funds to
-              your account.
-            </div>
-          )}
+            0 &&
+            <Alert
+              message={
+                <div
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '300',
+                    marginLeft: '5px'
+                  }}
+                >
+                  Insufficient balance! Please choose fewer tickets or add funds to
+                  your account.
+                </div>
+              }
+              type="error"
+              showIcon
+              style={{ margin: '8px 0px 16px 0px' }}
+            />}
+
         </Modal>
       </Content>
     </Layout>
