@@ -127,6 +127,19 @@ export async function getAllEvents() {
   }
 }
 
+export async function getAllEventsByManager(managerId) {
+  try {
+    const url = `${BASE_URL}/event/get/all/:event_manager_id`
+    const response = await axios.get(
+      url.replace(':event_manager_id', managerId)
+    )
+
+    return response.data.data
+  } catch (error) {
+    throw error
+  }
+}
+
 export async function updateEvent(eventId, body) {
   try {
     const response = await axios.put(

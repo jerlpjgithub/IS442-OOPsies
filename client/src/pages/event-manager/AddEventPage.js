@@ -22,11 +22,11 @@ import {
 
 import {
   createEvent,
-  getAllEvents,
   updateEvent,
   cancelEvent,
   exportEventDetails,
-  exportFullEventDetails
+  exportFullEventDetails,
+  getAllEventsByManager
 } from '../../utils/api.js'
 import moment from 'moment'
 import { EventStatistics } from './EventStatistics.js'
@@ -44,7 +44,7 @@ export const AddEventPage = () => {
   const authUser = JSON.parse(localStorage.getItem('authUser'))
 
   const retrieveEvents = async () => {
-    const fetchedEvents = await getAllEvents()
+    const fetchedEvents = await getAllEventsByManager(authUser.id)
 
     setEvents(
       fetchedEvents.map((event) => ({
