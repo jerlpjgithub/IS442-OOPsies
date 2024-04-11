@@ -245,7 +245,7 @@ export const AddEventPage = () => {
             title={
               isEditAndCancelDisabled(record)
                 ? 'Unable to cancel this event as this event has already started or is cancelled.'
-                : 'Edit Event'
+                : 'Cancel Event'
             }
           >
             <Button
