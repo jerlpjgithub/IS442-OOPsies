@@ -1,5 +1,10 @@
 package com.oopsies.server.payload.request;
 
+/**
+ * Payload for on-site Booking requests
+ * Contains additional info of user's email
+ * when performing operations on Booking
+ */
 public class OnsiteBookingRequest extends BookingRequest {
     String userEmail;
 

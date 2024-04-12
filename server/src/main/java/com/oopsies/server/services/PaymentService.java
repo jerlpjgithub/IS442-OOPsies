@@ -13,6 +13,8 @@ import com.oopsies.server.entity.User;
 import com.oopsies.server.repository.PaymentRepository;
 
 /**
+ * Service for handling Payment entities
+ * This service contains methods for creating payments
  * PaymentService class is a service class that handles all the payment related operations.
  */
 @Service
@@ -46,6 +48,9 @@ public class PaymentService {
     }
     
 
+<<<<<<< HEAD
+    public void processPayment(User user, Booking booking,EventDTO event, int numTickets){
+=======
     /**
      * processPayment is a method that processes a payment for a booking.
      * @param user is the user that is making the payment.
@@ -55,11 +60,12 @@ public class PaymentService {
      * @return the paymentId of the payment object.
     */
     public long processPayment(User user, Booking booking,EventDTO event, int numTickets){
+>>>>>>> main
         double totalPrice = getTotalPrice(event, numTickets);
         user.decrementAccountBalance(totalPrice);
         userDetailsService.saveUser(user);
 
-        return createNewPayment(booking, totalPrice);
+        createNewPayment(booking, totalPrice);
     }
 
     /**
@@ -73,6 +79,9 @@ public class PaymentService {
         return ticketPrice * numTickets;
     }
 
+<<<<<<< HEAD
+   private void createNewPayment(Booking booking, double paymentAmount) {
+=======
     /**
      * createNewPayment is a method that creates a new payment object.
      * @param booking is the booking object.
@@ -80,13 +89,13 @@ public class PaymentService {
      * @return the paymentId of the payment object.
     */
    private long createNewPayment(Booking booking, double paymentAmount) {
+>>>>>>> main
        Payment newPayment = new Payment(
             booking,
             paymentAmount,
             new Date()
        );
        Payment payment = paymentRepository.save(newPayment);
-       return payment.getPaymentId();
    }
 
    /**

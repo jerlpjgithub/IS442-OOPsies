@@ -3,6 +3,9 @@ package com.oopsies.server.util;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * DateUtil is a helper class to perform datetime comparisons
+ */
 public class DateUtil {
 
     public DateUtil() {}
@@ -40,5 +43,22 @@ public class DateUtil {
         long diffInHours = diffInMilliseconds / (60 * 60 * 1000);
 
         return diffInHours < 24;
+    }
+
+    public boolean isSameDateAndBeforeTime(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+
+        boolean sameDate = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
+
+        if (sameDate) {
+            return cal1.before(cal2);
+        }
+
+        return false;
     }
 }

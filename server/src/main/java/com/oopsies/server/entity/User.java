@@ -1,15 +1,14 @@
 package com.oopsies.server.entity;
 
-import java.util.Set;
-import java.util.HashSet;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The User class represents an abstract class users within the system.

@@ -18,6 +18,11 @@ import com.oopsies.server.exception.UserInsufficientFundsException;
 import com.oopsies.server.repository.BookingRepository;
 import com.oopsies.server.util.DateUtil;
 
+/**
+ * Service for handling Booking entities.
+ * This service provides methods for creating bookings,
+ * finding bookings, and generating csv statistics
+ */
 @Service
 public class BookingService {
 

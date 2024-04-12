@@ -1,8 +1,11 @@
 package com.oopsies.server.payload.request;
 
-import com.oopsies.server.entity.Booking;
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Payload for Booking requests
+ * Contains eventId and number of tickets being bought
+ */
 public class BookingRequest {
     @NotBlank
     private long eventId;

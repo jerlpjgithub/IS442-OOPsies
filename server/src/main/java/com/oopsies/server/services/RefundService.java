@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
+ * Service for handling Refund entities
+ * This service contains methods for processing refunds
  * RefundService class is a service class that handles all the refund related operations.
  */
 @Service

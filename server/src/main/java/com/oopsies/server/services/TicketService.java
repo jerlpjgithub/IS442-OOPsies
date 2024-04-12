@@ -1,6 +1,5 @@
 package com.oopsies.server.services;
 
-import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.TicketDTO;
 import com.oopsies.server.entity.Booking;
 import com.oopsies.server.entity.Event;
@@ -8,15 +7,20 @@ import com.oopsies.server.entity.Ticket;
 import com.oopsies.server.entity.User;
 import com.oopsies.server.repository.BookingRepository;
 import com.oopsies.server.repository.TicketRepository;
+import com.oopsies.server.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Service for handling Ticket entities
+ * This service contains methods for retrieving Ticket information
+ * by booking or by user, creating new tickets, validating and redeeming
+ * Tickets
+ */
 @Service
 public class TicketService {
 
@@ -28,6 +32,12 @@ public class TicketService {
   public TicketService() {
   }
 
+  /**
+   * Finds all Tickets for a specified Booking
+   *
+   * @param booking The booking whose Tickets is being queried for
+   * @return A List of TicketDTOs
+   */
   public List<TicketDTO> getAllTicketsForBooking(Booking booking) {
     List<Ticket> tickets = ticketRepository.findTicketsByBooking(booking);
     return tickets.stream()
@@ -35,6 +45,12 @@ public class TicketService {
         .toList();
   }
 
+  /**
+   * Finds all Tickets for a specified Booking
+   *
+   * @param booking_id The booking_id of a booking whose Tickets is being queried for
+   * @return A List of TicketDTOs
+   */
   public List<TicketDTO> getAllTicketsForBooking(long booking_id) {
     Booking booking = bookingRepository.findBookingById(booking_id);
     List<Ticket> tickets = ticketRepository.findTicketsByBooking(booking);
@@ -43,6 +59,12 @@ public class TicketService {
         .toList();
   }
 
+  /**
+   * Finds all Tickets for a specified User
+   *
+   * @param user_id The user_id of a User whose Tickets is being queried for
+   * @return A List of TicketDTOs
+   */
   public List<TicketDTO> getAllTicketsForUser(long user_id) {
     List<Booking> bookings = bookingRepository.findByUserId(user_id);
     List<Ticket> tickets = new ArrayList<>();
@@ -54,12 +76,23 @@ public class TicketService {
         .toList();
   }
 
+  /**
+   * Creates a new Booking
+   *
+   * @param booking details of the booking that we are creating
+   */
   public void createNewTicket(Booking booking) {
     Ticket newTicket = new Ticket();
     newTicket.setBooking(booking);
     ticketRepository.save(newTicket);
   }
 
+  /**
+   * Validates a Ticket
+   *
+   * @param ticket_id Ticket id of Ticket that is being validated
+   * @return a boolean that represents the validity of the ticket
+   */
   public boolean validateTicket(long ticket_id) {
     Ticket ticket = ticketRepository.findTicketByTicketId(ticket_id);
 
@@ -83,7 +116,7 @@ public class TicketService {
     Date eventDateTime = event.getDateTime();
 
     // Check if the event has already passed
-    if (!isSameDateAndBeforeTime(new Date(), eventDateTime)) {
+    if (!new DateUtil().isSameDateAndBeforeTime(new Date(), eventDateTime)) {
       throw new IllegalArgumentException("Event has either passed or not started yet!");
     }
 
@@ -94,25 +127,12 @@ public class TicketService {
     return true;
   }
 
-  public boolean isSameDateAndBeforeTime(Date date1, Date date2) {
-    Calendar cal1 = Calendar.getInstance();
-    cal1.setTime(date1);
-    Calendar cal2 = Calendar.getInstance();
-    cal2.setTime(date2);
-
-    boolean sameDate = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-        cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
-        cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
-
-    if (sameDate) {
-      // Same date but let's check for the timing to ensure its before the event time
-      return cal1.before(cal2);
-    }
-
-    // It is not on the same date
-    return false;
-  }
-
+  /**
+   * Converts a Ticket to a TicketDTO
+   *
+   * @param ticket Ticket that needs to be converted into a DTO
+   * @return TicketDTO corresponding to the Ticket
+   */
   private TicketDTO convertToDTO(Ticket ticket) {
     TicketDTO dto = new TicketDTO();
     Booking booking = ticket.getBooking();
@@ -129,7 +149,6 @@ public class TicketService {
     dto.setBooking_id(booking.getBookingID());
     dto.setBooking_dateTime(booking.getBookingDate());
     dto.setTicket_id(ticket.getId());
-    // dto.setValid(validateTicket(ticket.getId()));
     dto.setRedeemed(ticket.isRedeemed());
 
     return dto;
