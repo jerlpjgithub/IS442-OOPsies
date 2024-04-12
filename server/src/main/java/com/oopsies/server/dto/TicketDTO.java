@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
+/**
+ * The TicketDTO class represents a ticket data transfer object.
+ */
 public class TicketDTO {
   @JsonProperty("userFirstMame")
   private String first_name;
@@ -30,9 +33,28 @@ public class TicketDTO {
   @JsonProperty("isValid")
   private boolean isValid;
 
+  /**
+   * Default constructor for TicketDTO.
+   */
   public TicketDTO() {
   }
 
+  /**
+   * Constructs a new TicketDTO with the specified values.
+   *
+   * @param first_name The first name of the user.
+   * @param last_name The last name of the user.
+   * @param email The email of the user.
+   * @param event_name The name of the event.
+   * @param event_venue The venue of the event.
+   * @param event_dateTime The date and time of the event.
+   * @param ticket_price The price of the ticket.
+   * @param ticket_id The ID of the ticket.
+   * @param booking_id The ID of the booking.
+   * @param booking_dateTime The date and time of the booking.
+   * @param isValid The validity of the ticket.
+   * @param redeemed The redemption status of the ticket.
+   */
   public void setFirst_name(String first_name) {
     this.first_name = first_name;
   }
