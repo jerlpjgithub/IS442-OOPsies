@@ -48,6 +48,15 @@ public class BookingService {
     this.bookingRepository = bookingRepository;
   }
 
+  /**
+   * Creates a new booking for a specified user at an event with a given number of tickets.
+   *
+   * @param user_id    The ID of the user making the booking.
+   * @param eventId    The ID of the event to book tickets for.
+   * @param numTickets The number of tickets to book.
+   * @return BookingDTO representing the created booking.
+   * @throws UserInsufficientFundsException If the user does not have sufficient funds.
+   */
   public BookingDTO createBooking(long user_id, long eventId, int numTickets) throws UserInsufficientFundsException {
     // totalGuests are the booker + their friends
     Optional<User> someUser = userDetailsService.getUserById(user_id);
@@ -109,6 +118,13 @@ public class BookingService {
     return convertToDTO(booking);
   }
 
+  /**
+   * Retrieves the current guest count for a specific user at an event.
+   *
+   * @param userId  The ID of the user.
+   * @param eventId The ID of the event.
+   * @return The current guest count for the user at the event.
+   */
   private int getCurrentGuestCount(long userId, long eventId) {
     List<Booking> currentBookings = bookingRepository.findByUserIdAndEventId(userId, eventId);
     int guestCount = 0;
@@ -119,6 +135,12 @@ public class BookingService {
     return guestCount;
   }
 
+  /**
+   * Finds all bookings made by a specific user.
+   *
+   * @param userId The ID of the user.
+   * @return List of BookingDTO representing the bookings made by the user.
+   */
   public List<BookingDTO> findBookingsByUserId(long userId) {
     List<Booking> bookings = bookingRepository.findByUserId(userId);
     return bookings.stream()
@@ -126,18 +148,35 @@ public class BookingService {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Processes a booking refund for the specified booking ID.
+   *
+   * @param booking_id The ID of the booking to be refunded.
+   * @throws Exception If there is an issue processing the refund.
+   */
   public void processBookingRefund(long booking_id) throws Exception{
     refundService.processRefund(booking_id);
   }
 
-  //add findBookingsByEventID
+  /**
+   * Finds all bookings made for a specific event.
+   *
+   * @param eventID The ID of the event.
+   * @return List of BookingDTO representing the bookings made for the event.
+   */
   public List<BookingDTO> findBookingsByEventID(long eventID) {
     List<Booking> bookings = bookingRepository.findByEventId(eventID);
     return bookings.stream()
         .map(this::convertToDTO)
         .collect(Collectors.toList());    
   }
-  
+
+  /**
+   * Converts a Booking entity to its corresponding DTO.
+   *
+   * @param booking The Booking entity to convert.
+   * @return BookingDTO representing the converted Booking entity.
+   */
   public BookingDTO convertToDTO(Booking booking) {
     BookingDTO dto = new BookingDTO();
     dto.setBookingID(booking.getBookingID());
@@ -154,6 +193,12 @@ public class BookingService {
     return dto;
   }
 
+  /**
+   * Retrieves CSV data for bookings related to a specific event.
+   *
+   * @param event_id The ID of the event.
+   * @return List of CsvDTO containing CSV data for bookings related to the event.
+   */
   public List<CsvDTO> getCsvDTOForEvent(long event_id) {
     List<Booking> bookings = bookingRepository.findByEventId(event_id);
     
@@ -161,7 +206,7 @@ public class BookingService {
 
     for(Booking booking: bookings){
       int numOfTicketsToBooking = ticketService.getAllTicketsForBooking(booking.getBookingID()).size();
-      int redeemedTickets = ticketService.getAllTicketsForBooking(booking.getBookingID()).stream().filter(x -> x.isRedeemed() == true).collect(Collectors.toList()).size();
+      int redeemedTickets = ticketService.getAllTicketsForBooking(booking.getBookingID()).stream().filter(TicketDTO::isRedeemed).toList().size();
       User userThatBooked = booking.getUser();
       CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail(), numOfTicketsToBooking, redeemedTickets);
       csvDTOs.add(CsvDTO);
@@ -170,7 +215,13 @@ public class BookingService {
     return csvDTOs;
   }
 
-
+  /**
+   * Checks if a user has a valid balance for a given price.
+   *
+   * @param user  The user to check.
+   * @param price The price to check against the user's balance.
+   * @return true if the user has a valid balance; otherwise, false.
+   */
   private boolean hasUserValidBalance(User user, double price) {
         return user.getAccountBalance() >= price;
   }

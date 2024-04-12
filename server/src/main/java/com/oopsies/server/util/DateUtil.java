@@ -3,12 +3,18 @@ package com.oopsies.server.util;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * DateUtil is a helper class to perform datetime comparisons
+ /**
+ * Utility class for datetime-related operations.
  */
 public class DateUtil {
 
     public DateUtil() {}
+     /**
+     * Checks if the given event date is before today's date.
+     *
+     * @param eventDate The date of the event.
+     * @return true if the event date is before today; otherwise, false.
+     */
     public boolean isBeforeToday(Date eventDate) {
         Date currentDate = new Date();
         Calendar eventCalendar = Calendar.getInstance();
@@ -23,6 +29,12 @@ public class DateUtil {
                 && eventCalendar.get(Calendar.DAY_OF_YEAR) <= currentCalendar.get(Calendar.DAY_OF_YEAR);
     }
 
+    /**
+     * Checks if the given event date is more than six months from today's date.
+     *
+     * @param eventDate The date of the event.
+     * @return true if the event date is more than six months from today; otherwise, false.
+     */
     public boolean isMoreThanSixMonths(Date eventDate) {
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -35,6 +47,12 @@ public class DateUtil {
         return event.after(calendar);
     }
 
+    /**
+     * Checks if the time difference between the given event date and today's date is less than 24 hours.
+     *
+     * @param eventDate The date of the event.
+     * @return true if the time difference is less than 24 hours; otherwise, false.
+     */
     public boolean isLessThanTwentyFourHours(Date eventDate) {
         Date currentDate = new Date();
         long diffInMilliseconds = eventDate.getTime() - currentDate.getTime();
@@ -45,6 +63,13 @@ public class DateUtil {
         return diffInHours < 24;
     }
 
+    /**
+     * Checks if date1 is the same date as date2 and is before date2 in terms of time.
+     *
+     * @param date1 The first date.
+     * @param date2 The second date.
+     * @return true if date1 is the same date as date2 and before date2 in time; otherwise, false.
+     */
     public boolean isSameDateAndBeforeTime(Date date1, Date date2) {
         Calendar cal1 = Calendar.getInstance();
         cal1.setTime(date1);
