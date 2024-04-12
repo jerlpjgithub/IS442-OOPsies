@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -162,8 +161,9 @@ public class BookingService {
 
     for(Booking booking: bookings){
       int numOfTicketsToBooking = ticketService.getAllTicketsForBooking(booking.getBookingID()).size();
+      int redeemedTickets = ticketService.getAllTicketsForBooking(booking.getBookingID()).stream().filter(x -> x.isRedeemed() == true).collect(Collectors.toList()).size();
       User userThatBooked = booking.getUser();
-      CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail(), numOfTicketsToBooking);
+      CsvDTO CsvDTO = new CsvDTO(booking.getBookingID(), booking.getBookingDate(), booking.getCancelDate(), userThatBooked.getFirstName() + " "+ userThatBooked.getLastName(), userThatBooked.getEmail(), numOfTicketsToBooking, redeemedTickets);
       csvDTOs.add(CsvDTO);
     }
 

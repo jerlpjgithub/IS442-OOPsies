@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import com.oopsies.server.dto.BookingDTO;
+import com.oopsies.server.dto.EventCSVDTO;
 import com.oopsies.server.dto.EventDTO;
 import com.oopsies.server.entity.Event;
 import com.oopsies.server.entity.User;
@@ -13,6 +16,7 @@ import com.oopsies.server.payload.request.EventRequest;
 import com.oopsies.server.repository.EventRepository;
 import com.oopsies.server.repository.UserRepository;
 import com.oopsies.server.util.DateUtil;
+import java.util.ArrayList;
 
 /**
  * Service for handling Event entities
@@ -35,6 +39,10 @@ public class EventService {
     @Autowired
     private RefundService refundService;
 
+    @Lazy
+    @Autowired
+    private BookingService bookingService;
+
     @Autowired
     private DataService dataService;
 
@@ -50,6 +58,35 @@ public class EventService {
         return events.stream()
                 .map(this::convertToDTO)
                 .toList();
+    }
+
+    public List<EventCSVDTO> getEventCSVDTOs(long event_manager_id){
+        List<EventDTO> eventDTOs = this.getEventsByManagerId(event_manager_id);
+        List<EventCSVDTO> eventCSVDTOs = new ArrayList<EventCSVDTO>();
+        for(EventDTO eventDTO: eventDTOs){
+            List<BookingDTO> bookings = bookingService.findBookingsByEventID(eventDTO.getId());
+            int totalTicketsSold = dataService.getTotalTicketsSold(bookings);
+            double totalRevenue = dataService.getTotalRevenue(bookings, eventDTO);
+            int attendance = dataService.getAttendance(bookings);
+            int getTotalTicketsRefunded = dataService.getNumRefunds(bookings);
+
+            EventCSVDTO eventCsvDTO= new EventCSVDTO(
+                                            eventDTO.getId(), 
+                                            eventDTO.getEventName(), 
+                                            eventDTO.getDateTime(), 
+                                            eventDTO.getVenue(), 
+                                            eventDTO.getCancelDate(),
+                                            eventDTO.getCapacity(), 
+                                            eventDTO.getCancellationFee(), 
+                                            eventDTO.getTicketPrice(), 
+                                            totalTicketsSold, 
+                                            totalRevenue, 
+                                            attendance, 
+                                            getTotalTicketsRefunded
+                                            );
+            eventCSVDTOs.add(eventCsvDTO);
+        }
+        return eventCSVDTOs;
     }
 
     public List<EventDTO> getEventsByManagerId(long manager_id) throws IllegalArgumentException{

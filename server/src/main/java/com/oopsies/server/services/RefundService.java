@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 /**
  * Service for handling Refund entities
  * This service contains methods for processing refunds
+ * RefundService class is a service class that handles all the refund related operations.
  */
 @Service
 public class RefundService {
@@ -57,6 +58,11 @@ public class RefundService {
     this.eventRepository = eventRepository;
   }
 
+  /**
+   * cancelEvent is a method that cancels an event and refunds all the users that have booked tickets for the event.
+   * @param event_id is the id of the event that is to be cancelled.
+   * @throws IllegalArgumentException if the event requested is invalid or the user is unauthorised.
+   */
   public void cancelEvent(long event_id) {
     // get event object based on event_id, check if user requesting (logged in) is
     // indeed event manager
@@ -97,12 +103,13 @@ public class RefundService {
     event.setEventCancelled(new Date());
     eventRepository.save(event);
   }
-
+  
+  /**
+   * processRefund is a method that processes a refund for a booking.
+   * @param booking_id is the id of the booking that is to be refunded.
+   * @throws Exception if the user is unauthorised, the refund has already been processed, or the refund is within 48 hours of the event start.
+   */
   public void processRefund(Long booking_id) throws Exception {
-    // TODO refactor for single purpose, booking checks should be done in booking
-    // service
-    // Check if refund has already been requested (cancelled_date for Booking has a
-    // value)
     Booking booking = bookingRepository.findBookingById(booking_id);
     if (!userDetailsService.isAuthorisedUser(booking.getUser())) {
       throw new IllegalArgumentException("Unauthorised to cancel booking");
@@ -145,6 +152,11 @@ public class RefundService {
     refundRepository.save(processedRefund);
   }
 
+  /**
+   * within48HoursOfEventStart is a helper method that checks if the refund is within 48 hours of the event start.
+   * @param event is the event that the refund is for.
+   * @return boolean returns true if the refund is within 48 hours of the event start, false otherwise.
+   */
   public static boolean within48HoursOfEventStart(Event event) {
     Date currentTime = new Date();
     Date eventTime = event.getDateTime();

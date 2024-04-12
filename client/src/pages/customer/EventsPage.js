@@ -29,7 +29,7 @@ const EventsPage = () => {
     }, []);
 
     const filteredEvents = events.filter(event =>
-        (!event.eventCancelled || new Date(event.date) > new Date()) &&
+        (!event.eventCancelled && new Date(event.dateTime) > new Date()) &&
         event.eventName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
