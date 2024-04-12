@@ -4,6 +4,16 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 
+/**
+ * The Payment class represents an abstract class users within the system.
+ * <p>
+ * The class is annotated with JPA annotations to define the table mapping,
+ * unique constraints,
+ * and relationships with other entities.
+ * <p>
+ * JsonIdentityInfo is used to handle circular references correctly when
+ * serializing entities to JSON.
+ */
 @Entity
 @Table(name = "payment")
 public class Payment {
