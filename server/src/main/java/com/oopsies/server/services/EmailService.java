@@ -2,7 +2,6 @@ package com.oopsies.server.services;
 
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.EventDTO;
-import com.oopsies.server.entity.Event;
 import com.oopsies.server.entity.Ticket;
 import com.oopsies.server.entity.User;
 import com.oopsies.server.repository.BookingRepository;
@@ -18,11 +17,13 @@ import com.oopsies.server.entity.EmailStructure;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The EmailService class provides methods for sending emails.
+ */
 @Service
 public class EmailService {
 
@@ -38,6 +39,13 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromMail;
 
+    /**
+     * Sends an email.
+     *
+     * @param toMail The email address to send the email to.
+     * @param emailStructure The structure of the email to send.
+     * @throws MessagingException If an error occurs while sending the email.
+     */
     public void sendEmail(String toMail, EmailStructure emailStructure) throws MessagingException {
 
         MimeMessage mimeMessage = emailSender.createMimeMessage();
@@ -51,11 +59,18 @@ public class EmailService {
         emailSender.send(mimeMessage);
     }
 
+    /**
+     * Creates an email for a user and a booking or refund.
+     *
+     * @param user The user to create the email for.
+     * @param bookingDTO The booking to create the email for.
+     * @param type The type of the email.
+     * @throws MessagingException If an error occurs while creating the email.
+     */
     public void createEmail(User user, BookingDTO bookingDTO, String type) throws MessagingException {
         //get booking parameters first
         String name = user.getFirstName() + " " + user.getLastName();
-         String email = user.getEmail();
-//        String email = "laiu.asher@gmail.com"; //this will need to change when we have proper user emails
+        String email = user.getEmail();
         long bookingID = bookingDTO.getBookingID();
         Date bookingDate = bookingDTO.getBookingDate();
 
