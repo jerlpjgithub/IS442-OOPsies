@@ -45,12 +45,12 @@ export const EventsPage = () => {
     const [eventName, setEventName] = useState('')
     const [ticketId, setTicketId] = useState(0)
 
-    // Doing validation to ensure cancelled or events that are over do not get rendered
-    const filteredEvents = events.filter(
-        (event) =>
-            (!event.eventCancelled && new Date(event.dateTime) > new Date()) &&
-            event.eventName.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+  // Doing validation to ensure cancelled or events that are over do not get rendered
+  const filteredEvents = events.filter(
+    (event) =>
+      (!event.eventCancelled && new Date(event.dateTime) > new Date()) &&
+      event.eventName.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
     const indexOfLastEvent = currentPage * eventsPerPage
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage

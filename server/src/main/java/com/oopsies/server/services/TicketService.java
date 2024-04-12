@@ -83,7 +83,7 @@ public class TicketService {
     Date eventDateTime = event.getDateTime();
 
     // Check if the event has already passed
-    if (!isSameDateAndBeforeTime(eventDateTime, eventDateTime)) {
+    if (!isSameDateAndBeforeTime(new Date(), eventDateTime)) {
       throw new IllegalArgumentException("Event has either passed or not started yet!");
     }
 

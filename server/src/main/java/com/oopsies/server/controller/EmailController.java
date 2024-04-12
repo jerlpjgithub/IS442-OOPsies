@@ -3,7 +3,6 @@ package com.oopsies.server.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +14,10 @@ import com.oopsies.server.services.EmailService;
 
 import jakarta.mail.MessagingException;
 
+/**
+ * The EmailController class handles HTTP requests related to emails.
+ * It uses the EmailService to perform operations.
+ */
 @RestController
 @RequestMapping("/email")
 public class EmailController {
@@ -22,13 +25,24 @@ public class EmailController {
     @Autowired
     private EmailService emailService;
 
+    /**
+     * Constructs a new EmailController with the specified EmailService.
+     *
+     * @param emailService The service to use for email operations.
+     */
     public EmailController(EmailService emailService) {
         this.emailService = emailService;
     }
 
-
+    /**
+     * Sends an email.
+     *
+     * @param email The email address to send the email to.
+     * @param emailStructure The structure of the email to send.
+     * @return A ResponseEntity with a 200 status and a success message if the email was sent successfully, or a 500 status and an error message if an exception occurred.
+     */
     @PostMapping(path = "/send/{email}")
-    // @PreAuthorize("hasAnyRole('ROLE_OFFICER') or #user_id == authentication.principal.id")
+    @PreAuthorize("hasAnyRole('ROLE_OFFICER') or #user_id == authentication.principal.id")
     public ResponseEntity<?> sendEmail(@PathVariable String email, @RequestBody EmailStructure emailStructure) {
 
         try {
@@ -39,32 +53,6 @@ public class EmailController {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error");
         }
-
-            //call EmailController method
-            // //get booking parameters first
-            // String name = "Asher Laiu";
-            // String email = "laiu.asher@gmail.com";
-            // long bookingID = bookingDTO.getBookingID();
-            // Date bookingDate = bookingDTO.getBookingDate();
-            // //get event parameters
-            // EventDTO event = bookingDTO.getEvent();
-            // String eventName = event.getEventName();
-            // Date eventDate = event.getDateTime();
-            // Date refundDate = null;
-            // String venue = event.getVenue();
-            // String type = "Booking Confirmation";
-            // // long eventID = bookingRequest.getEventId();
-
-            // EmailStructure emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName, eventDate, refundDate, venue, type);
-            // emailController.sendEmail("laiu.asher@gmail.com", emailStructure);
-    }
-
-
-    //test mapping 
-    @GetMapping("/get")
-    @PreAuthorize("hasAnyRole('ROLE_OFFICER') or #user_id == authentication.principal.id")
-    public String getEmail() {
-        return "Accessed";
     }
 
 }
