@@ -114,8 +114,8 @@ export const EventPage = () => {
         </Breadcrumb>
         <div
           style={{
-            height: '100vh',
-            padding: '5px 25px 0px 25px',
+            height: '135%',
+            padding: '24px',
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
             display: 'flex',
@@ -156,7 +156,6 @@ export const EventPage = () => {
                     }
                     type="error"
                     showIcon
-                    closable
                     style={{ marginBottom: '16px' }}
                   />
                   <div>{event.eventName}</div>
@@ -237,9 +236,11 @@ export const EventPage = () => {
               </div>
             </div>
             <div style={{ paddingTop: '25px' }}>
-              <Button type="primary" block onClick={showModal}>
-                Buy Now - $ {event.ticketPrice}
-              </Button>
+            <Tooltip title={new Date(event.dateTime) < new Date() ? "This event has already ended.": ""}>
+                <Button type="primary" block onClick={showModal} disabled={new Date(event.dateTime) < new Date()}>
+                  Buy Now - $ {event.ticketPrice}
+                </Button>
+            </Tooltip>
             </div>
           </Card>
         </div>
