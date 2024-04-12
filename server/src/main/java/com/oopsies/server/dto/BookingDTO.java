@@ -1,5 +1,4 @@
 package com.oopsies.server.dto;
-import com.oopsies.server.entity.Event;
 
 import java.util.Date;
 

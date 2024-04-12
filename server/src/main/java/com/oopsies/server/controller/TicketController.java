@@ -1,7 +1,6 @@
 package com.oopsies.server.controller;
 import com.oopsies.server.dto.TicketDTO;
 import com.oopsies.server.payload.response.MessageResponse;
-import com.oopsies.server.repository.BookingRepository;
 import com.oopsies.server.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

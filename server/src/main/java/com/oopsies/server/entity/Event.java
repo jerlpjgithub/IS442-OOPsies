@@ -2,7 +2,6 @@ package com.oopsies.server.entity;
 
 import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 /**
  * The Event class represents an abstract class users within the system.

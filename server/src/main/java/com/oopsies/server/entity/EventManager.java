@@ -1,11 +1,9 @@
 package com.oopsies.server.entity;
 
-import java.util.List;
 import java.util.Set;
 
 import com.oopsies.server.services.TicketService;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The EventManager class represents an entity model for a EventManager a subclass of User.
