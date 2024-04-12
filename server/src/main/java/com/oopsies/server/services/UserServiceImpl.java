@@ -81,15 +81,6 @@ public class UserServiceImpl implements UserServiceInterface {
         return existingUser;
     }
 
-    // Removed implementation of delete as it requires cascade deletion.
-    // @Override
-    // public void deleteUserById(Long id) {
-    // if (id == null) {
-    // throw new IllegalArgumentException("Id must not be null");
-    // }
-    // userRepository.deleteById(id);
-    // }
-
     /**
      * Searches for a User entity.
      *
