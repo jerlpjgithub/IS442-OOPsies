@@ -32,6 +32,12 @@ public class TicketService {
   public TicketService() {
   }
 
+  /**
+   * Finds all Tickets for a specified Booking
+   *
+   * @param booking The booking whose Tickets is being queried for
+   * @return A List of TicketDTOs
+   */
   public List<TicketDTO> getAllTicketsForBooking(Booking booking) {
     List<Ticket> tickets = ticketRepository.findTicketsByBooking(booking);
     return tickets.stream()
@@ -39,6 +45,12 @@ public class TicketService {
         .toList();
   }
 
+  /**
+   * Finds all Tickets for a specified Booking
+   *
+   * @param booking_id The booking_id of a booking whose Tickets is being queried for
+   * @return A List of TicketDTOs
+   */
   public List<TicketDTO> getAllTicketsForBooking(long booking_id) {
     Booking booking = bookingRepository.findBookingById(booking_id);
     List<Ticket> tickets = ticketRepository.findTicketsByBooking(booking);
@@ -47,6 +59,12 @@ public class TicketService {
         .toList();
   }
 
+  /**
+   * Finds all Tickets for a specified User
+   *
+   * @param user_id The user_id of a User whose Tickets is being queried for
+   * @return A List of TicketDTOs
+   */
   public List<TicketDTO> getAllTicketsForUser(long user_id) {
     List<Booking> bookings = bookingRepository.findByUserId(user_id);
     List<Ticket> tickets = new ArrayList<>();
@@ -58,12 +76,23 @@ public class TicketService {
         .toList();
   }
 
+  /**
+   * Creates a new Booking
+   *
+   * @param booking details of the booking that we are creating
+   */
   public void createNewTicket(Booking booking) {
     Ticket newTicket = new Ticket();
     newTicket.setBooking(booking);
     ticketRepository.save(newTicket);
   }
 
+  /**
+   * Validates a Ticket
+   *
+   * @param ticket_id Ticket id of Ticket that is being validated
+   * @return a boolean that represents the validity of the ticket
+   */
   public boolean validateTicket(long ticket_id) {
     Ticket ticket = ticketRepository.findTicketByTicketId(ticket_id);
 
@@ -98,6 +127,12 @@ public class TicketService {
     return true;
   }
 
+  /**
+   * Converts a Ticket to a TicketDTO
+   *
+   * @param ticket Ticket that needs to be converted into a DTO
+   * @return TicketDTO corresponding to the Ticket
+   */
   private TicketDTO convertToDTO(Ticket ticket) {
     TicketDTO dto = new TicketDTO();
     Booking booking = ticket.getBooking();
@@ -114,7 +149,6 @@ public class TicketService {
     dto.setBooking_id(booking.getBookingID());
     dto.setBooking_dateTime(booking.getBookingDate());
     dto.setTicket_id(ticket.getId());
-    // dto.setValid(validateTicket(ticket.getId()));
     dto.setRedeemed(ticket.isRedeemed());
 
     return dto;
