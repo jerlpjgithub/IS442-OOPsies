@@ -44,6 +44,9 @@ const HomePage = () => {
         fetchEvents();
     }, []);
 
+    const filteredEvents = events.filter(event =>
+        (!event.eventCancelled && new Date(event.dateTime) > new Date()));
+
     return (
         <Layout style={{ height: '105vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
             <Content style={{ padding: '0 48px' }}>
@@ -61,7 +64,7 @@ const HomePage = () => {
                     </div>
                     <div style={{ overflow: 'auto', width: '100%' }}>
                         <Carousel {...settings} autoplay>
-                            {chunk(events, 4).map((eventChunk, index) => (
+                            {chunk(filteredEvents, 4).map((eventChunk, index) => (
                                 <div key={index}>
                                     <Row gutter={16}>
                                         {eventChunk.map((event) => (
