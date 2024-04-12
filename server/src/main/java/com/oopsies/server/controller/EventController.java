@@ -4,12 +4,16 @@ import java.util.*;
 
 import com.oopsies.server.services.BookingService;
 import com.oopsies.server.services.DataService;
+import com.oopsies.server.services.EmailService;
 import com.oopsies.server.dto.BookingDTO;
 import com.oopsies.server.dto.CsvDTO;
 import com.oopsies.server.dto.EventCSVDTO;
 import com.oopsies.server.dto.EventDTO;
+import com.oopsies.server.entity.Booking;
+import com.oopsies.server.entity.User;
 import com.oopsies.server.payload.request.EventRequest;
 import com.oopsies.server.payload.response.MessageResponse;
+import com.oopsies.server.repository.BookingRepository;
 import com.oopsies.server.services.EventService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,12 @@ public class EventController {
 
   @Autowired
   private DataService dataService;
+
+  @Autowired 
+  private BookingRepository bookingRepository;
+
+  @Autowired 
+  private EmailService emailService;
 
   public EventController(EventService eventService) {
     this.eventService = eventService;
@@ -183,6 +193,15 @@ public class EventController {
   public ResponseEntity<?> InitiateRefundByBookingId(@PathVariable("event_id") long event_id) {
     try {
       eventService.cancelEvent(event_id);
+
+      List<Booking> listOfBookings = bookingRepository.findByEventId(event_id);
+      for (Booking booking : listOfBookings) {
+
+        User user = booking.getUser();
+
+        emailService.createEmail(user, bookingService.convertToDTO(booking), "Event Cancellation");
+      }
+
       return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
           200, "Event cancelled successfully", null));
     } catch (Exception exc) {
