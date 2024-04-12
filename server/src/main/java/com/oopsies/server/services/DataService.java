@@ -22,8 +22,13 @@ public class DataService {
   @Autowired
   private TicketService ticketService;
 
-  // to do : make sure it can handle refunds. Also might be simpler to do from
-  // eventService side. (Done)
+  /**
+   * Calculates the total number of tickets sold from a list of bookings.
+   * If a booking has been cancelled (i.e., it has a cancellation date), it is not included in the total.
+   *
+   * @param bookingList The list of bookings to calculate the total number of tickets sold from.
+   * @return The total number of tickets sold.
+   */
   public int getTotalTicketsSold(List<BookingDTO> bookingList) {
     int totalTicketsSold = 0;
 
@@ -39,6 +44,14 @@ public class DataService {
     return totalTicketsSold;
   }
 
+  /**
+   * Calculates the total revenue from a list of bookings for a specific event.
+   * The total revenue is calculated as the total number of tickets sold times the ticket price.
+   *
+   * @param bookingList The list of bookings to calculate the total revenue from.
+   * @param event The event to calculate the total revenue for.
+   * @return The total revenue.
+   */
   public double getTotalRevenue(List<BookingDTO> bookingList, EventDTO event) {
     double totalRevenue = 0.0;
     double ticketPrice = event.getTicketPrice();
@@ -49,6 +62,13 @@ public class DataService {
     return totalRevenue;
   }
 
+  /**
+   * Calculates the total number of attendees from a list of bookings.
+   * An attendee is counted if they have redeemed their ticket.
+   *
+   * @param bookingList The list of bookings to calculate the total number of attendees from.
+   * @return The total number of attendees.
+   */
   public int getAttendance(List<BookingDTO> bookingList) {
     int numRedeemed = 0;
 
@@ -66,6 +86,13 @@ public class DataService {
     return numRedeemed;
   }
 
+  /**
+   * Calculates the total number of refunds from a list of bookings.
+   * A refund is counted if the booking has been cancelled.
+   *
+   * @param bookingList The list of bookings to calculate the total number of refunds from.
+   * @return The total number of refunds.
+   */
   public int getNumRefunds(List<BookingDTO> bookingList) {
     int numRefunds = 0;
 
