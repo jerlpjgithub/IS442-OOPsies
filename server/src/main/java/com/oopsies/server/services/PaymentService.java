@@ -46,21 +46,15 @@ public class PaymentService {
         Payment payment = paymentRepository.findByBookingId(bookingId);
         return convertToDTO(payment);
     }
-    
 
-<<<<<<< HEAD
-    public void processPayment(User user, Booking booking,EventDTO event, int numTickets){
-=======
     /**
      * processPayment is a method that processes a payment for a booking.
      * @param user is the user that is making the payment.
      * @param booking is the booking object.
      * @param event is the event object.
      * @param numTickets is the number of tickets that the user is buying.
-     * @return the paymentId of the payment object.
     */
-    public long processPayment(User user, Booking booking,EventDTO event, int numTickets){
->>>>>>> main
+    public void processPayment(User user, Booking booking,EventDTO event, int numTickets){
         double totalPrice = getTotalPrice(event, numTickets);
         user.decrementAccountBalance(totalPrice);
         userDetailsService.saveUser(user);
@@ -79,17 +73,13 @@ public class PaymentService {
         return ticketPrice * numTickets;
     }
 
-<<<<<<< HEAD
-   private void createNewPayment(Booking booking, double paymentAmount) {
-=======
     /**
      * createNewPayment is a method that creates a new payment object.
-     * @param booking is the booking object.
+     *
+     * @param booking       is the booking object.
      * @param paymentAmount is the amount of the payment.
-     * @return the paymentId of the payment object.
-    */
-   private long createNewPayment(Booking booking, double paymentAmount) {
->>>>>>> main
+     */
+   private void createNewPayment(Booking booking, double paymentAmount) {
        Payment newPayment = new Payment(
             booking,
             paymentAmount,
