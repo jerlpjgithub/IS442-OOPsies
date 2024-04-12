@@ -23,4 +23,6 @@ INSERT IGNORE INTO events (id, event_name, manager_id, date_time, venue, cancel_
 (22, 'Disco Delight', (SELECT id FROM users WHERE email = 'eventManager@gmail.com'), '2024-07-17 10:00:00', 'ArtScience Museum', NULL, 1700, 180.0, 210.0),
 (23, 'Gospel Gathering', (SELECT id FROM users WHERE email = 'eventManager@gmail.com'), '2024-07-18 10:00:00', 'The Fullerton Hotel Singapore', NULL, 1800, 190.0, 220.0),
 (24, 'Techno Triumph', (SELECT id FROM users WHERE email = 'eventManager@gmail.com'), '2024-07-19 10:00:00', 'Universal Studios Singapore', NULL, 1900, 200.0, 230.0),
-(25, 'Opera Odyssey', (SELECT id FROM users WHERE email = 'eventManager@gmail.com'), '2024-07-20 10:00:00', 'The Shoppes at Marina Bay Sands', NULL, 2000, 210.0, 240.0);
+(25, 'Opera Odyssey', (SELECT id FROM users WHERE email = 'eventManager@gmail.com'), '2024-07-20 10:00:00', 'The Shoppes at Marina Bay Sands', NULL, 2000, 210.0, 240.0),
+(69, 'LessThan24Hours', (SELECT id FROM users WHERE email = 'eventManager@gmail.com'),'2024-04-13 01:00:00', 'Home', NULL, 100, 10.0, 100.0),
+(100, 'MoreThan6Months', (SELECT id FROM users WHERE email = 'eventManager@gmail.com'),'2025-04-13 09:00:00', 'Home', NULL, 100, 10.0, 100.0);

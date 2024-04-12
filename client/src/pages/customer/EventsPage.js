@@ -46,6 +46,7 @@ const EventsPage = () => {
         setCurrentPage(1);
     };
 
+
     return (
         <Layout style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
             <Content style={{
