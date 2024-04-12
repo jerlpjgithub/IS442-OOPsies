@@ -199,7 +199,7 @@ public class EventController {
 
         User user = booking.getUser();
 
-        emailService.createEmail(user, bookingService.convertToDTO(booking), "Refund Confirmation");
+        emailService.createEmail(user, bookingService.convertToDTO(booking), "Event Cancellation");
       }
 
       return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
