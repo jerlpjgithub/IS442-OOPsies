@@ -53,6 +53,15 @@ public class EmailStructure {
             "<br><br>We hope to have the opportunity to welcome you to one of our events in the future. Keep an eye on our website for updates on upcoming events! <br><br>Yours Sincerely, <br>OOPsies ", 
             name, bookingID, email, eventName, eventDate, refundDate, ticketIDs, penaltyFee, totalPrice);
 
+        } else if (type.equals("Event Cancellation")) {
+            this.subject = String.format("Event Cancellation Notice - Booking Number: %d", bookingID);
+            this.message = String.format("Dear %s, " +
+            "<br><br>We regret to inform you that the event you booked has been cancelled. We understand the inconvenience this may cause and we sincerely apologize for it. Please find the details of your booking and the cancellation below." +
+            "<br><br><b>Booking and Event Details:</b><br>Booking Reference: %s<br>Contact Email: %s" +
+            "<br>Event Name: %s<br>Event Date: %s" +
+            "<br><br><b>Cancellation Details:</b> <br>Cancellation Date: %s<br>Cancelled Tickets: %s<br>Cancellation Fee: %s<br>Refund Amount : %s" +
+            "<br><br>We hope to have the opportunity to welcome you to one of our events in the future. Keep an eye on our website for updates on upcoming events! <br><br>Yours Sincerely, <br>OOPsies ", 
+            name, bookingID, email, eventName, eventDate, refundDate, ticketIDs, 0, totalPrice);
         }
     }
 

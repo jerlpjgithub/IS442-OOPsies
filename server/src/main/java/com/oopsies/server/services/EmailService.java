@@ -76,7 +76,6 @@ public class EmailService {
 
         //get event parameters
         EventDTO event = bookingDTO.getEvent();
-
         String eventName = event.getEventName();
         Date eventDate = event.getDateTime();
         Date refundDate = bookingDTO.getCancelDate();
@@ -89,7 +88,7 @@ public class EmailService {
             ticketIDs.add(ticket.getId());
         }
 
-        EmailStructure emailStructure;
+        EmailStructure emailStructure = null;
         double ticketPrice = event.getTicketPrice();
         double totalPrice = ticketPrice * tickets.size();
 
@@ -98,14 +97,20 @@ public class EmailService {
             emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName,
                     eventDate, refundDate, venue, ticketIDs,
                     totalPrice, 0, type);
-        } else {
+
+        } else if (type.equals("Refund Confirmation")) {
             double penaltyFee = event.getCancellationFee();
             double refundedAmount = totalPrice - penaltyFee;
 
             emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName,
                     eventDate, refundDate, venue, ticketIDs, refundedAmount,
                     penaltyFee, type);
-        }
+
+        } else if (type.equals("Event Cancellation"))
+
+            emailStructure = new EmailStructure(name, email, bookingID, bookingDate, eventName,
+            eventDate, refundDate, venue, ticketIDs, totalPrice,
+            0, type);
 
         sendEmail(email, emailStructure);
     }
