@@ -1,3 +1,28 @@
+
+# IS442 Project: Ticket Booking System (G3T7)
+
+# Project Overview
+
+As part of IS442 Object Oriented Programming under Prof. Bin Zhu his project aims to build a ticketing system that manages the booking of tickets for various events, such as music concerts, theatre shows, and seminars. Disclaimer: As this is a school project, we made use of some mock data in development.
+
+# Tech Stack
+
+### Front End
+
+1. ReactJS
+2. Ant Design 5.0
+
+### Back End
+1. Spring Boot
+2. MySQL
+
+## Open Source Libararies Used
+1. Java JWT
+2. Google OAuth 
+3. Jackson Databind
+4. MySQL Connector-J
+5. superCSV
+
 # UML Diagram
 ```mermaid
 classDiagram
@@ -195,3 +220,9 @@ Ticket "*" ..> "1" Booking
 Refund "1" ..> "1" Booking
 User "*" ..> "1" Provider
 ```
+
+
+# Set up project
+To set up and run our application, firstly ensure that your computer has docker installed. If not head to <a> https://docs.docker.com/engine/install/ </a> and install docker. Next, clone this GitHub repository through GitHub Desktop or through the CLI. Once you have done that, cd into the root directory of the project and run `docker compose up`.
+
+Vist localhost:3000 in your browser to open up the web application
