@@ -3,7 +3,7 @@
 
 # Project Overview
 
-As part of IS442 Object Oriented Programming under Prof. Bin Zhu his project aims to build a ticketing system that manages the booking of tickets for various events, such as music concerts, theatre shows, and seminars. Disclaimer: As this is a school project, we made use of some mock data in development.
+As part of IS442 Object Oriented Programming under Prof. Bin Zhu, this project aims to build a ticketing system that manages the booking of tickets for various events, such as music concerts, theatre shows, and seminars. Disclaimer: As this is a school project, we made use of some mock data in development.
 
 # Demonstration
 [![Video](https://img.youtube.com/vi/P8-abY2ZRwE/0.jpg)](https://www.youtube.com/watch?v=P8-abY2ZRwE)
