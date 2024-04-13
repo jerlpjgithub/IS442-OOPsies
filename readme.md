@@ -225,4 +225,4 @@ User "*" ..> "1" Provider
 # Set up project
 To set up and run our application, firstly ensure that your computer has docker installed. If not head to <a> https://docs.docker.com/engine/install/ </a> and install docker. Next, clone this GitHub repository through GitHub Desktop or through the CLI. Once you have done that, cd into the root directory of the project and run `docker compose up`.
 
-Vist localhost:3000 in your browser to open up the web application
+Vist <a>http://localhost:3000/ </a> in your browser to open up the web application
