@@ -65,12 +65,20 @@ public class EmailStructure {
         }
     }
 
-
+    /**
+     * Returns the message of the EmailStructure.
+     *
+     * @return A string representing the message of the EmailStructure.
+     */
     public String getMessage() {
         return this.message;
-
     }
 
+    /**
+     * Returns the subject of the EmailStructure.
+     *
+     * @return A string representing the subject of the EmailStructure.
+     */
     public String getSubject() {
         return this.subject;
     }

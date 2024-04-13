@@ -30,37 +30,77 @@ public class Image {
     public Image() {}
 
     // ----------------- Getter and Setter methods (Start) ----------------
-    public Long getId() {
-        return this.id;
-    }
+/**
+ * Returns the ID of the Image.
+ *
+ * @return A Long representing the ID of the Image.
+ */
+public Long getId() {
+    return this.id;
+}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+/**
+ * Sets the ID of the Image.
+ *
+ * @param id The ID to set.
+ */
+public void setId(Long id) {
+    this.id = id;
+}
 
-    public String getName() {
-        return this.name;
-    }
+/**
+ * Returns the name of the Image.
+ *
+ * @return A string representing the name of the Image.
+ */
+public String getName() {
+    return this.name;
+}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+/**
+ * Sets the name of the Image.
+ *
+ * @param name The name to set.
+ */
+public void setName(String name) {
+    this.name = name;
+}
 
-    public String getType() {
-        return this.type;
-    }
+/**
+ * Returns the type of the Image.
+ *
+ * @return A string representing the type of the Image.
+ */
+public String getType() {
+    return this.type;
+}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+/**
+ * Sets the type of the Image.
+ *
+ * @param type The type to set.
+ */
+public void setType(String type) {
+    this.type = type;
+}
 
-    public byte[] getImageData() {
-        return this.imageData;
-    }
+/**
+ * Returns the image data of the Image.
+ *
+ * @return A byte array representing the image data of the Image.
+ */
+public byte[] getImageData() {
+    return this.imageData;
+}
 
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
+/**
+ * Sets the image data of the Image.
+ *
+ * @param imageData The image data to set.
+ */
+public void setImageData(byte[] imageData) {
+    this.imageData = imageData;
+}
     // ----------------- Getter and Setter methods (End) ----------------
 
 }

@@ -33,45 +33,89 @@ public class Ticket {
   public Ticket() {
   }
 
-  public long getId() {
+/**
+ * Returns the ID of the Ticket.
+ *
+ * @return A long representing the ID of the Ticket.
+ */
+public long getId() {
     return this.ticketId;
-  }
+}
 
-  public void setId(long id) {
+/**
+ * Sets the ID of the Ticket.
+ *
+ * @param id The ID to set.
+ */
+public void setId(long id) {
     this.ticketId = id;
-  }
+}
 
-  public Booking getBooking() {
+/**
+ * Returns the Booking associated with the Ticket.
+ *
+ * @return A Booking object representing the booking.
+ */
+public Booking getBooking() {
     return this.booking;
-  }
+}
 
-  public void setBooking(Booking booking) {
+/**
+ * Sets the Booking associated with the Ticket.
+ *
+ * @param booking The Booking to set.
+ */
+public void setBooking(Booking booking) {
     this.booking = booking;
-  }
+}
 
-  public Image getImage() {
+/**
+ * Returns the Image associated with the Ticket.
+ *
+ * @return An Image object representing the image.
+ */
+public Image getImage() {
     return this.image;
-  }
+}
 
-  public void setImage(Image image) {
+/**
+ * Sets the Image associated with the Ticket.
+ *
+ * @param image The Image to set.
+ */
+public void setImage(Image image) {
     this.image = image;
-  }
+}
 
-  public boolean isRedeemed() {
+/**
+ * Returns the redeemed status of the Ticket.
+ *
+ * @return A boolean representing the redeemed status.
+ */
+public boolean isRedeemed() {
     return this.redeemed;
-  }
+}
 
-  public void setRedeemed(boolean redeemed) {
+/**
+ * Sets the redeemed status of the Ticket.
+ *
+ * @param redeemed The redeemed status to set.
+ */
+public void setRedeemed(boolean redeemed) {
     this.redeemed = redeemed;
-  }
+}
 
-  @Override
-  public String toString() {
+/**
+ * Returns a string representation of the Ticket.
+ *
+ * @return A string representation of the Ticket.
+ */
+@Override
+public String toString() {
     return "Ticket{" +
         "ticketId=" + ticketId +
         ", bookingId=" + booking +
         ", redeemed=" + redeemed +
         ", image=" + image +
         '}';
-  }
-}
+}}

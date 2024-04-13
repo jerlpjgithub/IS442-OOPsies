@@ -174,7 +174,7 @@ public class BookingController {
         ));
     }
 
-    /*
+    /**
      * initiateRefundByBookingId method is a POST request that initiates a refund for a booking.
      * @param booking_id the id of the booking
      * @return ResponseEntity<?> returns a message response with the status code and message

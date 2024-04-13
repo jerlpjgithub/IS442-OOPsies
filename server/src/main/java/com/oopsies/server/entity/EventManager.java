@@ -36,8 +36,4 @@ public class EventManager extends User {
     public EventManager(String email, String password, String firstName, String lastName, Set<Role> role, boolean emailVerified, double accountBalance, TicketService ticketService) {
         super(email, password, firstName, lastName, role, emailVerified, accountBalance);
     }
-
-    public void setEventCancellationFee(Event event, double cancellationFee) {
-        event.setCancellationFee(cancellationFee);
-    }
 }

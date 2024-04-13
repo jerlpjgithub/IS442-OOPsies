@@ -39,28 +39,56 @@ public class Refund {
     this.refundDate = refundDate;
   }
 
-  /* Getters and Setters */
-
+  /**
+   * Returns the ID of the Refund.
+   *
+   * @return A Long representing the ID of the Refund.
+   */
   public Long getRefundId() {
     return this.refundId;
   }
 
+  /**
+   * Sets the ID of the Refund.
+   *
+   * @param refundId The ID to set.
+   */
   public void setRefundId(Long refundId) {
     this.refundId = refundId;
   }
 
+  /**
+   * Returns the Booking associated with the Refund.
+   *
+   * @return A Booking object representing the booking.
+   */
   public Booking getBooking() {
     return this.booking;
   }
 
+  /**
+   * Sets the Booking associated with the Refund.
+   *
+   * @param booking The Booking to set.
+   */
   public void setBooking(Booking booking) {
     this.booking = booking;
   }
 
+  /**
+   * Returns the refund date of the Refund.
+   *
+   * @return A Date object representing the refund date.
+   */
   public Date getRefundDate() {
     return this.refundDate;
   }
 
+  /**
+   * Sets the refund date of the Refund.
+   *
+   * @param refundDate The refund date to set.
+   */
   public void setRefundDate(Date refundDate) {
     this.refundDate = refundDate;
   }
