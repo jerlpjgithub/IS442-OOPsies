@@ -20,9 +20,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-
-/*
- * BookingController class is a RestController that handles all the HTTP requests related to bookings.
+/**
+ * BookingController class is a RestController that handles all the HTTP
+ * requests related to bookings.
  */
 @RestController
 @RequestMapping("/booking")
@@ -52,55 +52,60 @@ public class BookingController {
     @Autowired
     private BookingRepository bookingRepository;
 
-    public BookingController(BookingService bookingService){
+    /**
+     * Constructs a new BookingController with the specified BookingService.
+     *
+     * @param bookingService the BookingService to use
+     */
+    public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }
 
-    /** 
-    * createBooking method is a POST request that creates a booking for a user.
-    * @param user_id the id of the user
-    * @param bookingRequest the booking request
-    * @return ResponseEntity<?> returns a message response with the status code and message
-    */
+    /**
+     * createBooking method is a POST request that creates a booking for a user.
+     * 
+     * @param user_id        the id of the user
+     * @param bookingRequest the booking request
+     * @return ResponseEntity&lt;?&gt; returns a message response with the status code and
+     *         message
+     */
     @PostMapping(path = "/create/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER') and #user_id == authentication.principal.id")
-    public ResponseEntity<?> createBooking(@PathVariable(value="user_id") long user_id, @RequestBody BookingRequest bookingRequest){
+    public ResponseEntity<?> createBooking(@PathVariable(value = "user_id") long user_id,
+            @RequestBody BookingRequest bookingRequest) {
         try {
             long eventId = bookingRequest.getEventId();
             int numTickets = bookingRequest.getNumTickets();
             BookingDTO bookingDTO = bookingService.createBooking(user_id, eventId, numTickets);
 
-            //get user
+            // get user
             User user = userService.getUserById(user_id);
 
-            //call emailController method
+            // call emailController method
             emailService.createEmail(user, bookingDTO, "Booking Confirmation");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
-                    201, "Booking was created successfully!", bookingDTO
-            ));
-        }
-        catch (IllegalArgumentException | UserInsufficientFundsException exc) {
+                    201, "Booking was created successfully!", bookingDTO));
+        } catch (IllegalArgumentException | UserInsufficientFundsException exc) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse<>(
-                    400, exc.getMessage(), null
-            ));
-        }
-        catch (Exception exc) {
+                    400, exc.getMessage(), null));
+        } catch (Exception exc) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
-                    500, exc.getMessage(), null
-            ));
+                    500, exc.getMessage(), null));
         }
     }
 
-
-    /** 
-     *  createOnsiteBooking method is a POST request that creates a booking for a user on-site.
+    /**
+     * createOnsiteBooking method is a POST request that creates a booking for a
+     * user on-site.
+     * 
      * @param bookingRequest the booking request
-     * @return ResponseEntity<?> returns a message response with the status code and message
-    */
+     * @return ResponseEntity&lt;?&gt; returns a message response with the status code and
+     *         message
+     */
     @PostMapping(path = "/create/on-site")
     @PreAuthorize("hasAnyRole('ROLE_OFFICER')")
-    public ResponseEntity<?> createOnsiteBooking(@RequestBody OnsiteBookingRequest bookingRequest){
+    public ResponseEntity<?> createOnsiteBooking(@RequestBody OnsiteBookingRequest bookingRequest) {
         try {
             long eventId = bookingRequest.getEventId();
             int numTickets = bookingRequest.getNumTickets();
@@ -140,64 +145,60 @@ public class BookingController {
 
             BookingDTO bookingDTO = bookingService.createBooking(user.getId(), eventId, numTickets);
 
-            //call emailController method
+            // call emailController method
             emailService.createEmail(user, bookingDTO, "Booking Confirmation");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse<>(
-                    201, "Booking was created successfully!", bookingDTO
-            ));
-        }
-        catch (IllegalArgumentException | UserInsufficientFundsException exc) {
+                    201, "Booking was created successfully!", bookingDTO));
+        } catch (IllegalArgumentException | UserInsufficientFundsException exc) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse<>(
-                    400, exc.getMessage(), null
-            ));
-        }
-        catch (Exception exc) {
+                    400, exc.getMessage(), null));
+        } catch (Exception exc) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
-                    500, exc.getMessage(), null
-            ));
+                    500, exc.getMessage(), null));
         }
     }
 
-
     /**
-     * getBookingsByUserId method is a GET request that retrieves all bookings for a user.
+     * getBookingsByUserId method is a GET request that retrieves all bookings for a
+     * user.
+     * 
      * @param user_id the id of the user
-     * @return ResponseEntity<?> returns a message response with the status code and message
+     * @return ResponseEntity&lt;?&gt; returns a message response with the status code and
+     *         message
      */
     @GetMapping(path = "/get/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_OFFICER') or #user_id == authentication.principal.id")
-    public ResponseEntity<?> getBookingsByUserId(@PathVariable("user_id") long user_id){
+    public ResponseEntity<?> getBookingsByUserId(@PathVariable("user_id") long user_id) {
         List<BookingDTO> _bookings = bookingService.findBookingsByUserId(user_id);
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
-                200, "successful", _bookings
-        ));
+                200, "successful", _bookings));
     }
 
     /**
-     * initiateRefundByBookingId method is a POST request that initiates a refund for a booking.
+     * initiateRefundByBookingId method is a POST request that initiates a refund
+     * for a booking.
+     * 
      * @param booking_id the id of the booking
-     * @return ResponseEntity<?> returns a message response with the status code and message
-    */
+     * @return ResponseEntity&lt;?&gt; returns a message response with the status code and
+     *         message
+     */
     @PostMapping(path = "/refund/{booking_id}")
-    public ResponseEntity<?> initiateRefundByBookingId(@PathVariable("booking_id") long booking_id){
-        try{
+    public ResponseEntity<?> initiateRefundByBookingId(@PathVariable("booking_id") long booking_id) {
+        try {
             bookingService.processBookingRefund(booking_id);
-            
-            //send emails for refund confirmation
+
+            // send emails for refund confirmation
             Booking booking = bookingRepository.findBookingById(booking_id);
             User user = booking.getUser();
 
             emailService.createEmail(user, bookingService.convertToDTO(booking), "Refund Confirmation");
 
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(
-            200, "refund processed successfully", null
-        ));
-        }
-        catch(Exception exc){
+                    200, "refund processed successfully", null));
+        } catch (Exception exc) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse<>(
-                    500, exc.getMessage(), null
-            ));
+                    500, exc.getMessage(), null));
         }
     }
 }

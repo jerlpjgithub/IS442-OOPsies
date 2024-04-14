@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 
+/**
+ * Event class represents an event entity in the system.
+ * It contains details about the event such as its name, manager, date and time, venue, cancellation date, capacity, cancellation fee, and ticket price.
+ */
 @Entity
 @Table (name = "events")
 //@IdClass(EventId.class)

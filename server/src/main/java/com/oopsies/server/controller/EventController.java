@@ -31,7 +31,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import jakarta.servlet.http.HttpServletResponse;
 
-/*
+/**
  * EventController class is a RestController that handles all the HTTP requests related to events.
  */
 @RestController
