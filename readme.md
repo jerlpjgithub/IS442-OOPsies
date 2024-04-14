@@ -3,7 +3,7 @@
 
 # Project Overview
 
-As part of IS442 Object Oriented Programming under Prof. Bin Zhu, this project aims to build a ticketing system that manages the booking of tickets for various events, such as music concerts, theatre shows, and seminars. Disclaimer: As this is a school project, we made use of some mock data in development.
+As part of IS442 Object Oriented Programming under Prof. Bin Zhu, this project aims to build a ticketing system that manages the booking of tickets for various events, such as music concerts, theatre shows, and seminars. To ensure secure payments, we have utilised Spring Security, together with JWTs to secure our endpoints with roles-based access control. Disclaimer: As this is a school project, we made use of some mock data in development. 
 
 # Demonstration
 [![Video](https://img.youtube.com/vi/P8-abY2ZRwE/0.jpg)](https://www.youtube.com/watch?v=P8-abY2ZRwE)
@@ -21,11 +21,24 @@ As part of IS442 Object Oriented Programming under Prof. Bin Zhu, this project a
 3. Docker
 
 ## Open Source Libararies Used
+### Spring Libraries
+1. Spring Boot Devtools
+2. Spring Boot Starter Mail
+3. Spring Boot Starter Parent
+4. Spring Boot Starter Data JPA
+5. Spring Boot Starter Security
+6. Spring Security Crypto
+7. Spring Boot Starter Validation
+8. Spring Boot Starter Web
+
+### Others
 1. Java JWT
 2. Google OAuth 
 3. Jackson Databind
 4. MySQL Connector-J
 5. superCSV
+
+
 
 # UML Diagram
 ```mermaid
