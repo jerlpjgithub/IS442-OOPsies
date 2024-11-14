@@ -6,8 +6,7 @@
 As part of IS442 Object Oriented Programming under Prof. Bin Zhu, this project aims to build a ticketing system that manages the booking of tickets for various events, such as music concerts, theatre shows, and seminars. To ensure secure payments, we have utilised Spring Security, together with JWTs to secure our endpoints with roles-based access control. Disclaimer: As this is a school project, we made use of some mock data in development. 
 
 # Demonstration
-[![Video](![photo_2024-11-14_19-45-48](https://github.com/user-attachments/assets/790d0b72-8a0c-42f9-9fb0-05315a8c8c5f)
-)](https://www.youtube.com/watch?v=P8-abY2ZRwE)
+[![Video](https://www.youtube.com/watch?v=P8-abY2ZRwE)
 
 # Tech Stack
 
